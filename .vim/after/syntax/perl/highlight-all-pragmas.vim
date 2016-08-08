@@ -1,0 +1,1 @@
+/home/david/.vim/bundle/vim-perl/contrib/highlight-all-pragmas.vim

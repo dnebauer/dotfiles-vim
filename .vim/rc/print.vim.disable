@@ -1,0 +1,522 @@
+" Vim configuration: printing
+
+" TODO: Add lpr as default print utility
+" TODO: Allow selection of printer before lpr
+" TODO: Allow vim output to go to selected print utility
+" TODO: Delete highlight folder on completion
+" TODO: Select print utility
+" TODO: Save selections as defaults
+
+" Helper functions                                                     {{{1
+" function tree                                                        {{{2
+" VrcPrint
+" |-- VrcPostscriptMethod
+" |   |-- VrcEnscriptSupportsFiletype
+" |   `-- VrcHighlightSupportsFiletype
+" |-- VrcPrintUtil
+" |-- VrcGeneratePostscript
+" |   |-- VrcGenerateEnscriptPostscript
+" |   `-- VrcGenerateHighlightPostscript
+" `-- VrcPrintPostscript
+"     |-- VrcPrintWithVim
+"     |-- VrcPrintWithKprinter4
+"     |-- VrcPrintWithXpp
+"     `-- VrcPrintWithGtklp                                            }}}2
+" - function VrcPrint(fname)                                           {{{2
+"   intent: be called by 'printexpr' to handle postscript printing
+"   params: fname - input postscript file path
+"   prints: user feedback
+"   return: boolean with shell logic, opposite of vim logic
+"           i.e., zero or '' for success, non-zero number for error
+function! VrcPrint (fname)
+    " determine method for generating postscript output:
+    " - 'vim': use default vim postscript output
+    " - 'enscript' : use enscript
+    " - 'highlight' : use highlight, latex and dvips
+    let l:ps_method = VrcPostscriptMethod()
+    if l:ps_method == '' | return 1 | endif
+    " determine print utility to use
+    " - if using vim output, generate using default vim method,
+    "   so use special value of 'vim' to flag this later
+    " - values: 'vim'|'kprinter4'|'xpp'|'gtklp'
+    if l:ps_method == 'vim' | let l:print_util = 'vim'
+    else                    | let l:print_util = VrcPrintUtil()
+    endif
+    if l:print_util == '' | return 1 | endif
+    " generate output depending on generation method
+    " - returns path to postscript output file
+    silent update  " some commands operate on source file, so save changes
+    let l:ps_output = VrcGeneratePostscript(l:ps_method, a:fname)
+    if l:ps_output == '' | return 1 | endif
+    " print output
+    let l:success = VrcPrintPostscript(l:print_util, l:ps_output)
+    " delete postscript output file
+    " - this is required of 'printexpr'
+    if delete(l:ps_output) == -1 | let l:success = 0 | endif
+    " 'printexpr' uses reversed exit status, i.e., like bash
+    return !l:success
+endfunction                                                          " }}}2
+" - function VrcPostscriptMethod()                                     {{{2
+"   intent: determine which method to use to generate postscript output
+"   params: nil
+"   prints: user feedback
+"   return: string (postscript method: 'vim'|'enscript'|'highlight')
+"           empty string = cancel
+function! VrcPostscriptMethod()
+    let l:choice_options = {}  " human-readable version
+    let l:choice_apps    = {}  " used by script
+    let l:choices        = ''  " build options for 'confirm' function
+    let l:choice_number  = 1
+    let l:msg            = []
+    echomsg 'Checking for methods of generating postscript:'
+    " vim is default choice and always available
+    let l:choices                         = "&Vim default"
+    let l:choice_apps[l:choice_number]    = 'vim'
+    let l:choice_options[l:choice_number] = 'Default (vim)'
+    call add(l:msg, 'Vim default: colour syntax: yes, word wrap: no')
+    " enscript is another possible choice
+    let l:missing = []
+    for l:util in ['enscript', 'iconv']
+        if !executable(l:util)
+            call add(l:missing, l:util)
+        endif
+    endfor
+    if empty(l:missing)
+        let l:choices .= "\n&Enscript"
+        let l:choice_number += 1
+        let l:choice_apps[l:choice_number] = 'enscript'
+        let l:choice_options[l:choice_number] = 'Enscript'
+        if VrcEnscriptSupportsFiletype()
+            call add(l:msg, 'Enscript:    '
+                        \ . 'colour syntax: yes, word wrap: yes')
+        else
+            call add(l:msg, 'Enscript:    '
+                        \ . 'colour syntax: no,  word wrap: yes')
+        endif
+    else
+        echomsg 'Enscript: not available (missing: '
+                    \ . join(l:missing, ', ') . ')'
+    endif
+    " highlight is another possible choice
+    let l:missing = []
+    for l:util in ['highlight', 'latex', 'dvips', 
+                \ 'sed', 'grep', 'cut', 'mktemp']
+        if !executable(l:util)
+            call add(l:missing, l:util)
+        endif
+    endfor
+    if !empty(l:missing)
+        echomsg 'Highlight:   not available (missing: '
+                    \ . join(l:missing, ', ') . ')'
+    elseif !VrcHighlightSupportsFiletype()
+        echomsg 'Highlight:   not available (does not support file '
+                    \ . "extension '" . expand('%:e') . "')"
+    else
+        let l:choices .= "\n&Highlight"
+        let l:choice_number += 1
+        let l:choice_apps[l:choice_number] = 'highlight'
+        let l:choice_options[l:choice_number] = 'Highlight'
+        " - must support colour syntax since earlier set highlight
+        "   to unavailable if this file extension was not supported
+        call add(l:msg, 'Highlight:   colour syntax: yes, word wrap: yes')
+    endif
+    for l:line in l:msg | echomsg l:line | endfor
+    " use vim if that is only choice available
+    if len(l:choice_apps) == 1
+        echomsg 'Only one postscript method available:'
+                    \ . string(keys(l:choice_apps))
+        return string(values(l:choice_apps))
+    endif
+    " choose from multiple choices
+    let l:choices .= "\n&Cancel"
+    let l:choice_number += 1
+    let l:choice_apps[l:choice_number] = 'cancel'
+    let l:choice_apps[0] = 'cancel'
+    let l:prompt = 'Select postscript generation method:'
+    let l:choice = confirm(l:prompt, l:choices, 0, 'Question')
+    let l:choice_app = l:choice_apps[l:choice]
+    if l:choice_app == 'cancel'
+        echomsg 'Aborting print job at user request'
+        return ''
+    endif
+    let l:choice_option = l:choice_options[l:choice]
+    echomsg 'Selected postscript generation method: ' . l:choice_option
+    return l:choice_app
+endfunction                                                          " }}}2
+" - function VrcEnscriptSupportsFiletype()                             {{{2
+"   intent: determine whether enscript can colour syntax for this filetype
+"   params: nil
+"   prints: nil
+"   return: boolean
+"   depend: assumes enscript is available
+function! VrcEnscriptSupportsFiletype()
+    let l:output = systemlist('enscript --help-highlight')
+    let l:langs = []
+    for l:line in l:output
+        if l:line =~ '^Name: [A-Za-z]\+$'
+            let l:lang = tolower(strpart(l:line, 6))
+            call add(l:langs, l:lang)
+        endif
+    endfor
+    return count(l:langs, &filetype)
+endfunction                                                          " }}}2
+" - function VrcHighlightSupportsFiletype()                            {{{2
+"   intent: determine whether highlight supports 
+"           colour syntax for this filetype
+"   params: nil
+"   prints: nil
+"   return: boolean
+"   depend: assumes highlight, grep, sed, and cut are available
+"   note:   filetype is determined by file extension
+function! VrcHighlightSupportsFiletype()
+    " get list of supported file extensions
+    let l:cmd = ''
+                \ . ' ' . 'highlight --list-scripts=langs'
+                \ . ' ' . '|'
+                \ . ' ' . "grep -v '^$'"
+                \ . ' ' . '|'
+                \ . ' ' . "sed '1d'"
+                \ . ' ' . '|'
+                \ . ' ' . "sed '$d'"
+                \ . ' ' . '|'
+                \ . ' ' . "cut -d ':' -f 2"
+                \ . ' ' . '|'
+                \ . ' ' . "sed 's/^ \+//'"
+                \ . ' ' . '|'
+                \ . ' ' . "sed 's/ \+$//'"
+                \ . ' ' . '|'
+                \ . ' ' . "sed 's/ (//g'"
+                \ . ' ' . '|'
+                \ . ' ' . "sed 's/ )//g'"
+                \ . ' ' . '|'
+                \ . ' ' . "sed 's/ /\\n/g'"
+    let l:supported_exts = systemlist(l:cmd)
+    if v:shell_error
+        echo 'Problem getting list of supported highlight file extensions'
+        echo 'Command executed was:'
+        echo '  ' . l:cmd
+        if len(l:supported_exts)
+            echo 'Shell feedback:'
+            for l:line in l:supported_exts
+                echo '  ' . l:line
+            endfor
+        endif
+        return
+    endif
+    " get this file extension
+    let l:ext = expand('%:e')
+    " determine whether this extension is supported
+    return count(l:supported_exts, l:ext)
+endfunction                                                          " }}}2
+" - function VrcPrintUtil()                                            {{{2
+"   intent: determine which print utility to use
+"   params: nil
+"   prints: nil
+"   return: string (print utility name: 'kprinter4'|'xpp'|'gtklp')
+"           empty string = none located
+function! VrcPrintUtil()
+    let l:utils = {'kprinter4': 'KPrinter4', 'xpp': 'X Printing Panel',
+                \ 'gtklp': 'GtkLP'}
+    for [l:exe, l:name] in items(l:utils)
+        if executable(l:exe)
+            echomsg 'Using print utility: ' . l:name
+            return l:exe
+        endif
+    endfor
+    echoerr 'Could not find any of these print utilities:'
+    echoerr join(sort(values(l:utils)), ', ')
+    return ''
+endfunction                                                          " }}}2
+" - function VrcGeneratePostscript(method, fname)                      {{{2
+"   intent: generate postscript output
+"   params: method - postscript generation method
+"                    ['vim'|'enscript'|'highlight']
+"           fname  - input postscript file path
+"   prints: user feedback
+"   return: string (postscript file path)
+"           empty string = error generating output
+function! VrcGeneratePostscript(method, fname)
+    " check filename
+    if !filereadable(a:fname)
+        echoerr "Non-existant input file: '" . a:fname . "'"
+        return ''
+    endif
+    " 'vim': use default vim postscript output file
+    " 'enscript'|'highlight': use subsidiary methods
+    if     a:method == 'vim'
+        return a:fname
+    elseif a:method == 'enscript'
+        return VrcGenerateEnscriptPostscript(a:fname)
+    elseif a:method == 'highlight'
+        return VrcGenerateHighlightPostscript(a:fname)
+    else
+        echoerr "Invalid ps generator method: '" . a:method . "'"
+        return ''
+    endif
+endfunction                                                          " }}}2
+" - function VrcGenerateEnscriptPostscript(fname)                      {{{2
+"   intent: generate postscript output using enscript
+"   params: fname - input postscript file path
+"   prints: user feedback
+"   return: string (postscript file path)
+"           empty string = error generating output
+function! VrcGenerateEnscriptPostscript(fname)
+    " creating out own postscript output so delete default output
+    call delete(a:fname)
+    " get filepath of postscript output file to be generated
+    let l:ps_output = tempname() . '.ps'
+    let l:source = expand('%')
+    " generate postscript
+    " - iconv converts encoding to latin2
+    " - enscript generate postscript
+    "   . bug means enscript does not honour its '--footer' argument
+    "   . can fix with custom header file
+    "   . use custom header file '~/.enscript/simple2.hdr' if present
+    "   . additional bug means '$=' escape for total page count does not work
+    "   . so use 'Page X' rather than 'Page X of Y' in footer
+    let l:postscript_cmd = ''
+                \ . ' iconv'
+                \ . ' -c '
+                \ . ' --from-code=' . &encoding
+                \ . ' --to-code=iso-8859-1'
+                \ . ' ' . shellescape(l:source)
+                \ . ' |'
+                \ . ' enscript'
+    if VrcEnscriptSupportsFiletype()
+        let l:postscript_cmd .= ''
+                \ . ' --color=1'
+                \ . ' --highlight=' . &filetype
+    endif
+    let l:postscript_cmd .= ''
+                \ . ' --word-wrap'
+                \ . ' --mark-wrapped-lines=arrow'
+    if filereadable(resolve($HOME . '/.enscript/simple2.hdr'))
+        let l:postscript_cmd .= ' --fancy-header=simple2'
+    endif
+    let l:postscript_cmd .= ''
+                \ . " --header='|" . l:source . "|%D{%Y-%m-%d %H:%M}'"
+                \ . " --footer='|Page $%|'"
+                \ . ' --output=' . shellescape(l:ps_output)
+    echomsg 'Generating print job, please wait...'
+    let l:feedback = systemlist(l:postscript_cmd)
+    if v:shell_error
+        echoerr 'Problem generating postscript'
+        echoerr 'Command executed was:'
+        echoerr '  ' . l:postscript_cmd
+        if len(l:feedback)
+            echoerr 'Shell feedback:'
+            for l:line in l:feedback
+                echoerr '  ' . l:line
+            endfor
+        endif
+        return ''
+    endif
+    return l:ps_output
+endfunction                                                          " }}}2
+" - function VrcGenerateHighlightPostscript(fname)                     {{{2
+"   intent: generate postscript output using highlight, latex and dvips
+"   params: fname - input postscript file path
+"   prints: user feedback
+"   return: string (postscript file path)
+"           empty string = error generating output
+function! VrcGenerateHighlightPostscript(fname)
+    " creating out own postscript output so delete default output
+    call delete(a:fname)
+    " will be creating lots of files so need temporary directory
+    let l:tempdir_cmd = 'mktemp --directory'
+    let l:tempdir = system(l:tempdir_cmd)
+    let l:tempdir = l:tempdir[:-2]    " chomp trailing newline
+    if v:shell_error
+        echoerr 'Problem creating temporary directory'
+        echoerr 'Command executed was:'
+        echoerr '  ' . l:tempdir_cmd
+        echoerr 'Shell feedback:'
+        echoerr '  ' . l:tempdir
+        return ''
+    endif
+    " get filepath of postscript output file
+    let l:ps_output = l:tempdir . '/texput.ps'
+    let l:source = expand('%')
+    " generate postscript
+    " - highlight generates highlighted latex output
+    "   . can specify output style
+    "   . some visually appealing styles:
+    "     bright, edit-gedit, edit-msvs2008, edit-vim, nuvola, peaksea
+    "   . must support filetype because highlight was not included
+    "     as an option unless it did
+    " - latex generates dvi output from latex
+    " - dvips generates postscript output from dvi
+    let l:postscript_cmd = ''
+                \ . 'cp ' . shellescape(l:source)
+                \ . ' ' . shellescape(l:tempdir . '/')
+                \ . ' &&'
+                \ . ' cd ' . shellescape(l:tempdir)
+                \ . ' &&'
+                \ . ' highlight'
+                \ . ' --input=' . shellescape(l:source)
+                \ . ' --syntax=' . &filetype
+                \ . ' --out-format=latex'
+                \ . ' --doc-title=' . shellescape(l:source)
+                \ . ' --line-length=75'
+                \ . ' --wrap'
+                \ . ' --style=edit-vim'
+                \ . ' --output=texput.tex'
+                \ . ' &&'
+                \ . ' latex'
+                \ . ' -interaction=nonstopmode'
+                \ . ' texput.tex'
+                \ . ' ; '
+                \ . ' dvips texput.dvi'
+    echomsg 'Generating print job, please wait...'
+    let l:feedback = systemlist(l:postscript_cmd)
+    if v:shell_error
+        echoerr 'Problem generating postscript'
+        echoerr 'Command executed was:'
+        echoerr '  ' . l:postscript_cmd
+        if len(l:feedback)
+            echoerr 'Shell feedback:'
+            for l:line in l:feedback
+                echoerr '  ' . l:line
+            endfor
+        endif
+        return ''
+    endif
+    return l:ps_output
+endfunction                                                          " }}}2
+" - function VrcPrintPostscript(print_util, fname)                     {{{2
+"   intent: print postscript output file
+"   params: print_util - input postscript file path
+"           fname      - input postscript file path
+"   prints: user feedback
+"   return: boolean (success of printing)
+function! VrcPrintPostscript(print_util, fname)
+    " check input filename
+    if !filereadable(a:fname)
+        echoerr "Cannot find postscript file '" . a:fname . "'"
+        return
+    endif
+    if a:print_util == 'vim'
+        return VrcPrintWithVim(a:fname)
+    elseif a:print_util == 'kprinter4'
+        return VrcPrintWithKprinter4(a:fname)
+    elseif a:print_util == 'xpp'
+        return VrcPrintWithXpp(a:fname)
+    elseif a:print_util == 'gtklp'
+        return VrcPrintWithGtklp(a:fname)
+    else
+        echoerr "Invalid print utility: '" . a:print_util . "'"
+        return
+    endif
+endfunction                                                          " }}}2
+" - function VrcPrintWithVim(fname)                                    {{{2
+"   intent: print postscript output file using vim default method
+"   params: fname - input postscript file path
+"   prints: user feedback
+"   return: boolean (success of printing)
+function! VrcPrintWithVim(fname)
+    " use default 'printexpr' command (see ':h pexpr-option')
+    let l:cmd = 'lpr'
+    if &printdevice !=# ''
+        let l:cmd .= ' -P' . &printdevice
+    endif
+    let l:cmd .= ' ' . a:fname
+    let l:feedback = systemlist(l:cmd)
+    if v:shell_error
+        echoerr 'Error occurred during printing'
+        echoerr 'Command executed was:'
+        echoerr '  ' . l:cmd
+        if len(l:feedback)
+            echoerr 'Shell feedback:'
+            for l:line in l:feedback
+                echoerr '  ' . l:line
+            endfor
+        endif
+        return
+    endif
+    return 1
+endfunction                                                          " }}}2
+" - function VrcPrintWithKprinter4(fname)                              {{{2
+"   intent: print postscript output file using kprinter4
+"   params: fname - input postscript file path
+"   prints: user feedback
+"   return: boolean (success of printing)
+function! VrcPrintWithKprinter4(fname)
+    let l:cmd = 'kprinter4'
+    if &printdevice !=# ''
+        let l:cmd .= ' -p' . &printdevice
+    endif
+    let l:cmd .= ' ' . a:fname
+    let l:feedback = systemlist(l:cmd)
+    if v:shell_error
+        echoerr 'Error occurred during printing'
+        echoerr 'Command executed was:'
+        echoerr '  ' . l:cmd
+        if len(l:feedback)
+            echoerr 'Shell feedback:'
+            for l:line in l:feedback
+                echoerr '  ' . l:line
+            endfor
+        endif
+        return
+    endif
+    return 1
+endfunction                                                          " }}}2
+" - function VrcPrintWithXpp(fname)                                    {{{2
+"   intent: print postscript output file using xpp
+"   params: fname - input postscript file path
+"   prints: user feedback
+"   return: boolean (success of printing)
+function! VrcPrintWithXpp(fname)
+    let l:cmd = 'xpp'
+    if &printdevice !=# ''
+        let l:cmd .= ' -P' . &printdevice
+    endif
+    let l:cmd .= ' ' . a:fname
+    let l:feedback = systemlist(l:cmd)
+    if v:shell_error
+        echoerr 'Error occurred during printing'
+        echoerr 'Command executed was:'
+        echoerr '  ' . l:cmd
+        if len(l:feedback)
+            echoerr 'Shell feedback:'
+            for l:line in l:feedback
+                echoerr '  ' . l:line
+            endfor
+        endif
+        return
+    endif
+    return 1
+endfunction                                                          " }}}2
+" - function VrcPrintWithGtklp(fname)                                  {{{2
+"   intent: print postscript output file using GtkLP
+"   params: fname - input postscript file path
+"   prints: user feedback
+"   return: boolean (success of printing)
+function! VrcPrintWithGtklp(fname)
+    let l:cmd = 'gtklp'
+    if &printdevice !=# ''
+        let l:cmd .= ' -P' . &printdevice
+    endif
+    let l:cmd .= ' ' . a:fname
+    let l:feedback = systemlist(l:cmd)
+    if v:shell_error
+        echoerr 'Error occurred during printing'
+        echoerr 'Command executed was:'
+        echoerr '  ' . l:cmd
+        if len(l:feedback)
+            echoerr 'Shell feedback:'
+            for l:line in l:feedback
+                echoerr '  ' . l:line
+            endfor
+        endif
+        return
+    endif
+    return 1
+endfunction                                                          " }}}2
+                                                                     " }}}1
+" custom output available on unix-based systems
+if VrcOS() == 'unix'
+    set printexpr=VrcPrint(v:fname_in)
+endif
+
+" vim: set foldmethod=marker :

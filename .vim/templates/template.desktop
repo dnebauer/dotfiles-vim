@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+TryExec=XXX
+Exec=XXX
+Icon=utilities-terminal
+Terminal=false
+Categories=Qt;KDE;System;TerminalEmulator;
+Actions=NewWindow;
+X-DBUS-StartupType=Unique
+StartupNotify=true
+X-KDE-AuthorizeAction=shell_access

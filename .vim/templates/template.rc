@@ -1,0 +1,12 @@
+# ${cursor}dn-foo configuration file 
+
+# lines starting with '#' are ignored
+
+# lines are name-value pairs separated by whitespace
+# enclose element in double quotes if it contains a space
+
+# name
+# ----
+# explanation
+
+name "value"
