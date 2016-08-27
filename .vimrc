@@ -531,13 +531,6 @@ call dein#add('scrooloose/syntastic', {
             \ 'if' : '!has("nvim")',
             \ })
 " - neomake : asynchronous syntax checker for nvim                     {{{3
-"   TODO: setup language checkers
-let s:neomake_hook_source = join([
-            \ 'augroup vrc_neomake',
-            \ 'autocmd!',
-            \ 'autocmd BufWritePost,BufEnter * Neomake',
-            \ 'augroup END',
-            \ ], "\n")
 call dein#add('neomake/neomake', {
             \ 'if'               : 'has("nvim")',
             \ 'on_cmd'           : ['Neomake'],
