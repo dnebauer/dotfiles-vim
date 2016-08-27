@@ -531,10 +531,18 @@ call dein#add('scrooloose/syntastic', {
             \ 'if' : '!has("nvim")',
             \ })
 " - neomake : asynchronous syntax checker for nvim                     {{{3
+let s:neomake_hook_post_update = join([
+            \ 'if executable("pip")',
+            \ 'call system("pip install --upgrade vim-vint")',
+            \ 'endif',
+            \ 'if executable("pip3")',
+            \ 'call system("pip3 install --upgrade vim-vint")',
+            \ 'endif',
+            \ ], "\n")
 call dein#add('neomake/neomake', {
             \ 'if'               : 'has("nvim")',
             \ 'on_cmd'           : ['Neomake'],
-            \ 'hook_post_update' : 'pip install --upgrade vim-vint',
+            \ 'hook_post_update' : s:neomake_hook_post_update,
             \ })
 " bundles: tags                                                        {{{2
 " - misc : plugin library used by other scripts                        {{{3
@@ -751,10 +759,18 @@ if !VrcCygwin()
 endif
 " bundles: python support                                              {{{2
 "  - jedi : autocompletion                                             {{{3
+let s:jedi_hook_post_update = join([
+            \ 'if executable("pip")',
+            \ 'call system("pip install --upgrade jedi")',
+            \ 'endif',
+            \ 'if executable("pip3")',
+            \ 'call system("pip3 install --upgrade jedi")',
+            \ 'endif',
+            \ ], "\n")
 call dein#add('davidhalter/jedi-vim', {
             \ 'if'               : '!has("nvim")',
             \ 'on_ft'            : ['python'],
-            \ 'hook_post_update' : 'pip install --upgrade jedi',
+            \ 'hook_post_update' : s:jedi_hook_post_update,
             \ })
 " - deoplete-jedi : deoplete helper                                    {{{3
 "   . do not check for python3 in nvim (see note above at 'nvim issues')
@@ -763,7 +779,7 @@ call dein#add('zchee/deoplete-jedi', {
             \                    . ' && executable("python3")',
             \ 'on_ft'            : ['python'],
             \ 'depends'          : ['deoplete.nvim'],
-            \ 'hook_post_update' : 'pip install --upgrade jedi',
+            \ 'hook_post_update' : s:jedi_hook_post_update,
             \ })
 " - pep8 : indentation support                                         {{{3
 call dein#add('hynek/vim-python-pep8-indent', {
