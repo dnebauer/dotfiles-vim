@@ -7,6 +7,12 @@ function! s:LuaSupport()
             let g:deoplete#omni#functions = {}
         endif
         let g:deoplete#omni#functions.lua = 'xolox#lua#omnifunc'
+    endif
+    " vim syntax checking                                              {{{1
+    if has('vim')
+        let g:syntastic_check_on_open     = 1
+        let g:syntastic_lua_checkers      = ['luac', 'luacheck']
+        let g:syntastic_lua_luacheck_args = '--no-unused-args'
     endif                                                            " }}}1
 endfunction
 
