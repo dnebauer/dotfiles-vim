@@ -45,6 +45,12 @@ xmap T <Plug>Sneak_T
 omap t <Plug>Sneak_t
 omap T <Plug>Sneak_T
 
+" Tags                                                                 {{{1
+" - asynchronous updating                                              {{{2
+if executable('ctags')
+    let g:easytags_async = 1
+endif
+
 " Terminal window navigation (nvim-only)                               {{{1
 if exists(':Terminal')
     tnoremap <C-h> <C-\><C-n><C-w>h
