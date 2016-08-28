@@ -708,10 +708,6 @@ call dein#add('dnebauer/vim-dn-latex', {
 call dein#add('xolox/vim-lua-ftplugin', {
             \ 'on_ft' : ['lua'],
             \ })
-" - luainspect : semantic highlighting                                 {{{3
-call dein#add('xolox/vim-lua-inspect', {
-            \ 'on_ft' : ['lua'],
-            \ })
 " - manual : language support                                          {{{3
 call dein#add('indiefun/vim-lua-manual', {
             \ 'on_ft' : ['lua'],
