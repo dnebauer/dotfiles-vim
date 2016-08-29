@@ -741,6 +741,11 @@ call dein#add('perlhelp.vim', {
             \ 'if'    : 'executable("perldoc")',
             \ 'on_ft' : ['perl'],
             \ })
+" - syntastic-perl6 : syntax hecking for perl6                         {{{3
+call dein#add('nxadm/syntastic-perl6', {
+            \ 'if'    : 'has("vim")',
+            \ 'on_ft' : ['perl6'],
+            \ })
 " bundles: php support                                                 {{{2
 " - phpctags : tag generation                                          {{{3
 "   . cannot test for cygwin in dein#add 'if' statement
