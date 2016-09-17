@@ -219,6 +219,9 @@ call dein#add('sjl/gundo.vim', {
 " - DeleteTrailingWhitespace : delete trailing whitespace              {{{3
 call dein#add('vim-scripts/DeleteTrailingWhitespace')
 " - textobj-entire : select entire content of buffer                   {{{3
+"   . requires kana/vim-textobj-user
+"   . cannot load dependency via depends in vim or on_source in nvim
+call dein#add('kana/vim-textobj-user')
 call dein#add('kana/vim-textobj-entire')
 " bundles: searching and finding                                       {{{2
 " - nerdtree : tree explorer                                           {{{3
