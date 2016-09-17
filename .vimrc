@@ -218,6 +218,8 @@ call dein#add('sjl/gundo.vim', {
             \ })
 " - DeleteTrailingWhitespace : delete trailing whitespace              {{{3
 call dein#add('vim-scripts/DeleteTrailingWhitespace')
+" - textobj-entire : select entire content of buffer                   {{{3
+call dein#add('kana/vim-textobj-entire')
 " bundles: searching and finding                                       {{{2
 " - nerdtree : tree explorer                                           {{{3
 "   . only use in windows; elsewhere use :Unite file_rec/async!
@@ -710,6 +712,10 @@ call dein#add('xolox/vim-lua-ftplugin', {
             \ })
 " - manual : language support                                          {{{3
 call dein#add('indiefun/vim-lua-manual', {
+            \ 'on_ft' : ['lua'],
+            \ })
+" - lua : improved lua 5.3 syntax and indentation support              {{{3
+call dein#add('tbastos/vim-lua', {
             \ 'on_ft' : ['lua'],
             \ })
 " bundles: markdown support                                            {{{2
