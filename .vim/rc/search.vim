@@ -75,6 +75,9 @@ vnoremap <silent> # :call VrcVisual('b')<CR>
 vnoremap <silent> gv :call VrcVisual('gv')<CR>
 " - make selected text target of a substitution command [V] : \r
 vnoremap <silent> <Leader>r :call VrcVisual('replace')<CR>
+
+" Mute search highlighting as part of screen redraw                    {{{1
+nnoremap <silent> <C-l> :<C-u>nohlsearch<CR><C-l>
                                                                      " }}}1
 
 " vim: set foldmethod=marker :
