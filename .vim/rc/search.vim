@@ -78,6 +78,12 @@ vnoremap <silent> <Leader>r :call VrcVisual('replace')<CR>
 
 " Mute search highlighting as part of screen redraw                    {{{1
 nnoremap <silent> <C-l> :<C-u>nohlsearch<CR><C-l>
+
+" Fix '&' command                                                      {{{1
+" - unlike '&', '&&' preserves flags
+" - create visual mode equivelent
+nnoremap & :&&<CR>
+xnoremap & :&&<CR>
                                                                      " }}}1
 
 " vim: set foldmethod=marker :
