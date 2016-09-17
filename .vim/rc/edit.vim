@@ -37,6 +37,9 @@ xnoremap <expr> v mode() ==# 'v' ? "\<C-V>"
             \                    : mode() ==# 'V'
             \                        ? 'v'
             \                        : 'V'
+
+" Treat all numerals as decimal                                   {{{1
+set nrformats=
                                                                 " }}}1
 
 " vim: set foldmethod=marker :
