@@ -258,6 +258,8 @@ if VrcOS() !=# 'windows'
                 \ 'if' : 'executable("ranger")',
                 \ })
 endif
+" - visual-star-search : search for selected text                      {{{3
+call dein#add('bronson/vim-visual-star-search')
 " - unite : integrated information display                             {{{3
 "   . gave up loading unite on demand as the dependencies are
 "     too fragile; only works dependably if force load at start
