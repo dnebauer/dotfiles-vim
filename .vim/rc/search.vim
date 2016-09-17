@@ -13,6 +13,8 @@ nnoremap <silent> <Leader><Space><Space> :nohlsearch<CR>
 set ignorecase
 " - case sensitive matching if any capital letters
 set smartcase
+" - intelligent case selection in autocompletion
+set infercase
 
 " Find all matches in line                                             {{{1
 " - 'g' now toggles to first only
