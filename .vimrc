@@ -197,6 +197,12 @@ call dein#add('hkupty/iron.nvim', {
             \ 'if'     : 'has("nvim")',
             \ 'on_cmd' : ['IronRepl', 'IronPromptRepl'],
             \ })
+" - codi : interactive scratchpad (REPL)                               {{{3
+call dein#add('metakirby5/codi.vim', {
+            \ 'if'     :   'has("nvim") || '
+            \            . '(exists("+job") && exists("+channel"))',
+            \ 'on_cmd' : ['Codi'],
+            \ })
 " bundles: editing                                                     {{{2
 " - unimpaired : various paired mappings                               {{{3
 call dein#add('tpope/vim-unimpaired', {
