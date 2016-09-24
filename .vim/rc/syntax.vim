@@ -24,8 +24,9 @@ if has('vim')
     let g:syntastic_check_on_wq = 0
 endif
 
-" Nvim suntax checking with neomake                                    {{{1
+" Nvim syntax checking with neomake                                    {{{1
 if has('nvim')
+    " check on buffer entry and text change (lint-as-you-type)         {{{2
     function! s:LintAsYouType()
         if strlen(bufname('%')) > 0
             update
@@ -38,7 +39,7 @@ if has('nvim')
         autocmd BufEnter * Neomake
         " check on text changes ("lint-as-you-type")
         autocmd InsertLeave,TextChanged * call s:LintAsYouType()
-    augroup END
+    augroup END                                                      " }}}2
 endif
 
 " vim: set foldmethod=marker :
