@@ -30,10 +30,6 @@ vnoremap ; :
 " - rest of sneak configuration is in nav.vim
 nmap <expr> ; sneak#is_sneaking() ? '<Plug>SneakNext' : ':'
 
-" Disable F1 help key                                                  {{{1
-nnoremap <F1> <Nop>
-inoremap <F1> <Nop>
-
 " Files to ignore when file matching                                   {{{1
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,
             \.ind,.idx,.ilg,.inx,.out,.toc                           " }}}1

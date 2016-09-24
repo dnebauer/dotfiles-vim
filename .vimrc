@@ -810,6 +810,8 @@ call dein#add('machakann/vim-vimhelplint', {
             \ 'on_ft'  : ['help'],
             \ 'on_cmd' : ['VimhelpLint'],
             \ })
+" - dn-help : custom help                                              {{{3
+call dein#add('dnebauer/vim-dn-help')
 " bundles: xml support                                                 {{{2
 " - xml : xml support                                                  {{{3
 call dein#add('xml.vim', {
