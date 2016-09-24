@@ -206,8 +206,17 @@ call dein#add('metakirby5/codi.vim', {
             \ })
 " - terminal : neovim terminal emulator                                {{{3
 call dein#add('kassio/neoterm', {
-            \ 'if'     : 'exists(":terminal")',
-            \ 'on_cmd' : ['terminal'],
+            \ 'if'      : 'exists(":terminal")',
+            \ 'on_cmd'  : ['terminal',         'T',
+            \              'Tnew',             'Tmap',
+            \              'Tpos',             'TTestSetTerm',
+            \              'TTestClearStatus', 'TREPLSetTerm',
+            \              'TREPLSendLine',    'TREPLSendSelection',
+            \              'Topen',            'Tclose',
+            \              'Ttoggle'],
+            \ 'on_func' : ['termopen',         'neoterm#close',
+            \              'neoterm#do',       'neoterm#exec',
+            \              'neoterm#test#run', 'neoterm#test#rerun'],
             \ })
 " bundles: editing                                                     {{{2
 " - unimpaired : various paired mappings                               {{{3
