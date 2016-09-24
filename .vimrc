@@ -198,6 +198,7 @@ call dein#add('hkupty/iron.nvim', {
             \ 'on_cmd' : ['IronRepl', 'IronPromptRepl'],
             \ })
 " - codi : interactive scratchpad (REPL)                               {{{3
+"   . TODO: disable neomake (nvim) and syntastic (vim) while in codi
 call dein#add('metakirby5/codi.vim', {
             \ 'if'     :   'has("nvim") || '
             \            . '(exists("+job") && exists("+channel"))',
