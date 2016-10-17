@@ -21,6 +21,15 @@ nnoremap <leader>a= :Tabularize /=<CR>
 vnoremap <leader>a= :Tabularize /=<CR>
 nnoremap <leader>a: :Tabularize /:\zs<CR>
 vnoremap <leader>a: :Tabularize /:\zs<CR>
+
+" Colour column 80                                                     {{{1
+if exists('+colorcolumn')
+    highlight ColorColumn term=Reverse ctermbg=Yellow guibg=LightYellow
+    let &colorcolumn="80"
+else
+    " fallback for Vim < v7.3
+    au BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
+endif
                                                                      " }}}1
 
 " vim: set foldmethod=marker :
