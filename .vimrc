@@ -372,7 +372,7 @@ call dein#add('yuratomo/w3m.vim', {
             \             'W3mSplit',        'W3mVSplit',
             \             'W3m',             'W3mClose',
             \             'W3mCopyUrl',      'W3mReload',
-            \             'W3mAddressBar',   'W3mShowExtenalBrowser',
+            \             'W3mAddressBar',   'W3mShowExternalBrowser',
             \             'W3mSyntaxOff',    'W3mSyntaxOn',
             \             'W3mSetUserAgent', 'W3mHistory',
             \             'W3mHistoryClear'],
