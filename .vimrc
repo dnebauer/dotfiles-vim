@@ -365,6 +365,18 @@ call dein#add('whatdomain.vim', {
             \ 'on_cmd'  : ['WhatDomain'],
             \ 'on_func' : ['WhatDomain'],
             \ })
+" - w3m : console browser                                              {{{3
+call dein#add('yuratomo/w3m.vim', {
+            \ 'if'     : 'executable("w3m")',
+            \ 'on_cmd' : ['W3m',             'W3mTab',
+            \             'W3mSplit',        'W3mVSplit',
+            \             'W3m',             'W3mClose',
+            \             'W3mCopyUrl',      'W3mReload',
+            \             'W3mAddressBar',   'W3mShowExtenalBrowser',
+            \             'W3mSyntaxOff',    'W3mSyntaxOn',
+            \             'W3mSetUserAgent', 'W3mHistory',
+            \             'W3mHistoryClear'],
+            \ })
 " bundles: printing                                                    {{{2
 " - dn-print-dialog : pure vim print dialog                            {{{3
 call dein#add('dnebauer/vim-dn-print-dialog', {
