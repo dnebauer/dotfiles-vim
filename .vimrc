@@ -707,7 +707,7 @@ endfunction
 if !VrcCygwin()
     call dein#add('ternjs/tern_for_vim', {
                 \ 'if'               : '!has("nvim")',
-                \ 'on_ft'            : ['javascript'],
+                \ 'on_ft'            : ['javascript', 'javascript.jsx'],
                 \ 'hook_post_update' : function('VrcBuildTernAndJsctags'),
                 \ })
     let s:ternjs_hook_source = join([
@@ -716,7 +716,7 @@ if !VrcCygwin()
                 \ ], "\n")
     call dein#add('carlitux/deoplete-ternjs', {
                 \ 'if'               : 'has("nvim")',
-                \ 'on_ft'            : ['javascript'],
+                \ 'on_ft'            : ['javascript', 'javascript.jsx'],
                 \ 'depends'          : ['deoplete.nvim'],
                 \ 'hook_source'      : s:ternjs_hook_source,
                 \ 'hook_post_update' : 'npm install -g tern',
