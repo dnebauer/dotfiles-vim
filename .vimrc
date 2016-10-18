@@ -1,3 +1,6 @@
+" Configuration file for (n)vim
+" - uses subsidiary configuration files in 'rc' subdirectory
+
 " UTILITY FUNCTIONS:                                                 " {{{1
 " only functions used in multiple subsidiary configuration files
 " function VrcOS()                                                     {{{2
@@ -902,7 +905,7 @@ augroup END
 " - note: &colorcolumn was set in subsidiary config file 'align.vim'
 if exists('+colorcolumn')
     highlight ColorColumn term=Reverse ctermbg=Yellow guibg=LightYellow
-endif
-                                                                     " {{{1
+endif                                                                " }}}2
+                                                                     " }}}1
 
 " vim: set foldmethod=marker :
