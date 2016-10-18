@@ -42,4 +42,6 @@ function MyDiff()
     if exists('l:shxq_sav')
         let &shellxquote=l:shxq_sav
     endif
-endfunction
+endfunction                                                          " }}}1
+
+" vim: set foldmethod=marker :
