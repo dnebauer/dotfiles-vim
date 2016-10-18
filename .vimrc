@@ -894,6 +894,15 @@ augroup vrc_unknown_files
                 \ if &filetype == "" |
                 \   setlocal ft=text |
                 \ endif
-augroup END                                                          " }}}2
+augroup END
+
+" set colour column                                                    {{{2
+" - placing this line in subsidiary configuration files has no effect,
+"   but placed here it works
+" - note: &colorcolumn was set in subsidiary config file 'align.vim'
+if exists('+colorcolumn')
+    highlight ColorColumn term=Reverse ctermbg=Yellow guibg=LightYellow
+endif
+                                                                     " {{{1
 
 " vim: set foldmethod=marker :

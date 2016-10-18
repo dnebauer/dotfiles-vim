@@ -23,12 +23,18 @@ nnoremap <leader>a: :Tabularize /:\zs<CR>
 vnoremap <leader>a: :Tabularize /:\zs<CR>
 
 " Colour column 80                                                     {{{1
+" - setting highlight group 'colorcolumn' here does not have any effect,
+"   so set it in .vimrc
 if exists('+colorcolumn')
-    highlight ColorColumn term=Reverse ctermbg=Yellow guibg=LightYellow
-    let &colorcolumn="80"
+    let &colorcolumn='80'
+    "highlight ColorColumn term=Reverse ctermbg=Yellow guibg=LightYellow
 else
     " fallback for Vim < v7.3
-    au BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
+    augroup colorcolumn
+        autocmd!
+        autocmd BufWinEnter *
+                    \ let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
+    augroup END
 endif
                                                                      " }}}1
 
