@@ -803,6 +803,7 @@ call dein#add('nxadm/syntastic-perl6', {
 "   . doing so results in 'E48: Not allowed in sandbox
 if !VrcCygwin()
     call dein#add('vim-php/tagbar-phpctags.vim', {
+                \ 'if'    : 'executable("curl")',
                 \ 'on_ft' : ['php'],
                 \ 'build' : 'make',
                 \ })
