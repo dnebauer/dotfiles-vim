@@ -25,7 +25,11 @@ function! VrcVimPath(target)
         let l:os   = VrcOS()
         let l:home = escape($HOME, ' ')
         if     l:os ==# 'windows'
-            return l:home . '/vimfiles'
+            if has('vim')
+                return l:home . '/vimfiles'
+            else  " nvim
+                return resolve(expand('~/AppData/Local/nvim'))
+            endif
         elseif l:os ==# 'unix'
             return l:home . '/.vim'
         else
@@ -33,7 +37,7 @@ function! VrcVimPath(target)
         endif
     " dein plugin directory root
     elseif a:target ==# 'plug'
-        return expand('~/.cache/dein')
+        return resolve(expand('~/.cache/dein'))
     " error
     else
         echoerr "Invalid path target '" . a:target . "'"
