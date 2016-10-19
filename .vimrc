@@ -63,6 +63,28 @@ endfunction                                                          " }}}2
 
 " PLUGINS:                                                             {{{1
 " using github.com/shougo/dein.vim
+" python required by several plugins                                   {{{2
+" - in python 3.5 there is no python3 exe installed
+if VrcOS() ==# 'windows'
+    " python2
+    let s:exe = 'C:\Users\dtn\AppData\Local\Programs'
+                \ . '\Python\Python27\python.exe'
+    if filereadable(s:exe)
+        let g:python_host_prog = s:exe
+    endif
+    unlet s:exe
+    " python3
+    let s:path = 'C:\Users\dtn\AppData\Local\Programs\Python\'
+    let s:exes = [ s:path . 'Python35-32\python.exe',
+                \  s:path . 'Python35-64\python.exe']
+    for s:exe in s:exes
+        if filereadable(s:exe)
+            let g:python3_host_prog = s:exe
+            break
+        endif
+    endfor
+    unlet s:path s:exe s:exes
+endif
 " dein requirements                                                    {{{2
 " - required tools: rsync, git                                         {{{3
 for s:app in ['rsync', 'git']
