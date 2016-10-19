@@ -2,7 +2,7 @@
 
 function! s:HtmlSupport()
     " vim-specific omnicompletion                                      {{{1
-    if has('vim')
+    if exists(':shell')
         setlocal omnifunc=htmlcomplete#CompleteTags
     endif                                                            " }}}1
 endfunction

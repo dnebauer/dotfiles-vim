@@ -2,7 +2,7 @@
 
 function! s:TexSupport()
     " nvim completion using deoplete                                   {{{1
-    if has('nvim')
+    if exists(':terminal')
         " keyword patterns                                             {{{2
         if !exists('let g:deoplete#keyword_patterns')
             let g:deoplete#keyword_patterns = {}

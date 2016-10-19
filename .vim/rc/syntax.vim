@@ -1,7 +1,7 @@
 " Vim configuration: syntax checking
 
 " Vim syntax checking with syntastic                                   {{{1
-if has('vim')
+if exists(':shell')
     " - status line                                                    {{{2
     if !exists('s:edited_statusline')
         set statusline+=%#warningmsg#
@@ -25,7 +25,7 @@ if has('vim')
 endif
 
 " Nvim syntax checking with neomake                                    {{{1
-if has('nvim')
+if exists(':terminal')
     " check on buffer entry and text change (lint-as-you-type)         {{{2
     function! s:LintAsYouType()
         if strlen(bufname('%')) > 0

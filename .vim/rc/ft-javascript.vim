@@ -2,7 +2,7 @@
 
 function! s:JavascriptSupport()
     " vim omnicompletion with neocomplete                              {{{1
-    if has('vim')
+    if exists(':shell')
         setlocal omnifunc=javascriptcomplete#CompleteJS
         " these vars suggested on carlitux/deoplete-ternjs github readme
         if !exists('g:tern#command') | let g:tern#command = [] | endif
@@ -16,7 +16,7 @@ function! s:JavascriptSupport()
     endif
 
     " nvim completion using deoplete                                   {{{1
-    if has('nvim')
+    if exists(':terminal')
         if !exists('g:deoplete#omni#input_patterns')
             let g:deoplete#omni#input_patterns = {}
         endif

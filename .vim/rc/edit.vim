@@ -12,10 +12,10 @@
 "   . available always in vim and nvim
 "   unnamedplus option
 "   . use "+ register
-"   . available always in nvim
-"   . available in vim is compiled in [has('unnamedplus')]
+"   . available in nvim always
+"   . available in vim if compiled in [has('unnamedplus')]
 set clipboard=unnamed,unnamedplus
-if has('vim') && !has('unnamedplus')
+if exists(':shell') && !has('unnamedplus')
     set clipboard-=unnamedplus
 endif
 " Toggle paste : F2                                               {{{1

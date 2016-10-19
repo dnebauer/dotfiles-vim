@@ -20,7 +20,7 @@ function! s:MarkdownSupport()
     " add system dictionary to word completions                        {{{1
     setlocal complete+=k
     " vim omnicompletion                                               {{{1
-    if has('vim')
+    if exists(':shell')
         setlocal omnifunc=htmlcomplete#CompleteTags
     endif                                                            " }}}1
 endfunction

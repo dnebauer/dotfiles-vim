@@ -2,12 +2,10 @@
 
 " Encoding: utf-8                                                      {{{1
 " - cannot set in neovim after initialisation
-"   see https://github.com/carlhuda/janus/issues/633
-" - should not reset after being set
-if !exists('g:encoding_set') || !has('nvim')
+try
     set encoding=utf-8
-    let g:encoding_set = 1
-endif
+catch /^Vim:E905:/
+endtry
 scriptencoding utf-8
 setglobal fileencoding=utf-8
 

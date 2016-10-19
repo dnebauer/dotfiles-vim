@@ -28,7 +28,7 @@ function! VrcVimPath(target)
         let l:os   = VrcOS()
         let l:home = escape($HOME, ' ')
         if     l:os ==# 'windows'
-            if has('vim')
+            if exists(':shell')
                 return l:home . '/vimfiles'
             else  " nvim
                 return resolve(expand('~/AppData/Local/nvim'))
@@ -131,7 +131,7 @@ call dein#add('haya14busa/dein-command.vim', {
 "   . this is a temporary fix and another solution may be
 "     implemented in the future
 "   . variable name must be in uppercase
-if has('nvim')
+if exists(':terminal')
     let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 endif
 " bundles: utilities                                                   {{{2

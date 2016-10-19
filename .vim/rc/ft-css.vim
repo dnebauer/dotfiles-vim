@@ -1,7 +1,7 @@
 " Vim configuration: css file support
 
 " vim-specific                                                         {{{1
-if has('vim')
+if exists(':shell')
     function! s:VimCssSupport()
         " omnicompletion for neocomplete (vim)                         {{{2
         setlocal omnifunc=csscomplete#CompleteCSS                    " }}}2
@@ -13,7 +13,7 @@ if has('vim')
 endif
 
 " nvim-specific                                                        {{{1
-if has('nvim')
+if exists(':terminal')
     "  completion for deoplete (nvim)                                  {{{2
     if !exists('g:deoplete#omni#input_patterns')
         let g:deoplete#omni#input_patterns = {}
