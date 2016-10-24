@@ -17,14 +17,14 @@ function! VrcOS()
         return 'other'
     endif
 endfunction
-" function VrcVimPath()                                                {{{2
+" function VrcVimPath(type)                                            {{{2
 " intent: provide vim-related paths
-" params: nil
+" params: type - path type to return ('home'|'plug')
 " prints: nil
 " return: string (directory path)
-function! VrcVimPath(target)
+function! VrcVimPath(type)
     " vim home directory
-    if     a:target ==# 'home'
+    if     a:type ==# 'home'
         let l:os   = VrcOS()
         let l:home = escape($HOME, ' ')
         if     l:os ==# 'windows'
@@ -39,11 +39,11 @@ function! VrcVimPath(target)
             return l:home . '/.vim'
         endif
     " dein plugin directory root
-    elseif a:target ==# 'plug'
+    elseif a:type ==# 'plug'
         return resolve(expand('~/.cache/dein'))
     " error
     else
-        echoerr "Invalid path target '" . a:target . "'"
+        echoerr "Invalid path type '" . a:type . "'"
     endif
 endfunction
 " function VrcTemp()                                                   {{{2
@@ -59,6 +59,37 @@ function! VrcTemp(part)
     else
         echoerr "Invalid VrcTemp param '" . a:part . "'"
     endif
+endfunction
+" function VrcSource(dir, self)                                        {{{2
+" intent: recursively source vim files in directory
+" params: dir  - directory to recursively source
+"         self - calling script (resolved filepath)
+" prints: files that are not sourced
+"         error if passed invalid file name
+" return: nil
+function! VrcSource(dir, self)
+    " dir must exist
+    let l:dir = resolve(expand(a:dir))
+    if !isdirectory(l:dir)
+        echoerr "Invalid source directory '" . l:dir . "'"
+        return
+    endif
+    " recursively process directory contents
+    for l:path in glob(l:dir . '/**', 1, 1)
+        " ignore if not file
+        let l:type = getftype(l:path)
+        if l:type !~# 'file\|link' | continue | endif
+        " resolve links
+        let l:path = (l:type ==# 'link') ? resolve(l:path) : l:path
+        " avoid infinite recursion - do not source self!
+        if l:path ==# a:self | continue | endif
+        " must be vim file
+        " - for vim source *.vim; for nvim source *.vim and *.nvim
+        let l:match = exists(':shell') ? '^\p\+\.vim$' : '^\p\+\.n\?vim$'
+        if fnamemodify(l:path, ':t') =~? l:match
+            execute 'source' l:path
+        endif
+    endfor
 endfunction                                                          " }}}2
 
 " PLUGINS:                                                             {{{1
@@ -908,9 +939,7 @@ if dein#check_install()
 endif
 
 " SUBSIDIARY CONFIGURATION FILES:                                    " {{{1
-for s:conf_file in glob(VrcVimPath('home') . '/rc/*.vim', 0, 1)
-    execute 'source' s:conf_file
-endfor
+call VrcSource(VrcVimPath('home').'/rc', resolve(expand('<sfile>:p')))
 
 " FINAL CONFIGURATION:                                                 {{{1
 " set filetype to 'text' if not known                                  {{{2
