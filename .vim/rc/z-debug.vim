@@ -37,7 +37,7 @@ function! s:DebugPython()
     echo system([g:python3_host_prog, '-c', '"import neovim"'])
     " control check                                                    {{{2
     echo 'Control check:'
-    echo '- clipboard: ' . has('clipboard')                          " }}}2
+    echo '- clipboard: ' . has('clipboard')                        | " }}}2
 endfunction                                                          " }}}1
 
 if VrcOS() ==# 'windows' && exists(':terminal')
