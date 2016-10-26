@@ -32,9 +32,12 @@ function! s:DebugPython()
     echo '- system: g:python3_host_prog --version = '
     echon systemlist([g:python3_host_prog, '--version'])[0]
     " does python3 'neovim' module load?                               {{{3
-    echo "- system: import python3 module 'neovim'"
-    echo '          (using g:python3_host_prog)'
-    echo '          (no feedback below this line means success)'
+    " - weirdly, nvim-qt crashes ('Neovim is taking too long to
+    "   respond') if any of the next three lines are uncommented;
+    "   explanation unknown
+"    echo "- system: import python3 module 'neovim'"
+"    echo '          (using g:python3_host_prog)'
+"    echo '          (no feedback below this line means success)'
     echo system([g:python3_host_prog, '-c', '"import neovim"'])
     echo "\n"                                                      | " }}}3
 endfunction                                                          " }}}1
