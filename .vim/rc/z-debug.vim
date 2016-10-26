@@ -4,13 +4,13 @@
 function! s:DebugPython()
     " python2 checks                                                   {{{2
     echo "\nChecking python2 availability:"
-    " check whether nvim thinks it has python                          {{{3
-    echo '- has python2: ' . has('python')
-    " check whether python available on system                         {{{3
-    echo '- g:python_host_prog --version: '
+    " does nvim think it has python?                                   {{{3
+    echo '- nvim:   has python2 = ' . has('python')
+    " is python available on system using g:python_host_prog?          {{{3
+    echo '- system: g:python_host_prog --version = '
     echon systemlist([g:python_host_prog, '--version'])[0]
-    " check python system availability by alternate method             {{{3
-    echo "- alternate method using raw 'python': "
+    " is python available using raw 'python'?                          {{{3
+    echo "- system: get version using raw 'python' = "
     let g:prog_cmd = 
             \ '"import sys; ' .
             \ 'sys.path.remove(''''); ' .
@@ -19,21 +19,22 @@ function! s:DebugPython()
             \ 'exit(2*int(pkgutil.get_loader(''neovim'') is None))"'
     let g:prog_ver = system([ 'python', '-c' , g:prog_cmd ])
     echon 'Python ' . g:prog_ver
-    " test for python 'neovim' module                                  {{{3
-    echo "- import python module 'neovim' on system:"
-    echo '  (using g:python_host_prog)'
-    echo '  (no feedback below this line means success)'
+    " does python 'neovim' module load?                                {{{3
+    echo "- system: import python module 'neovim'"
+    echo '          (using g:python_host_prog)'
+    echo '          (no feedback below this line means success)'
     echo system([g:python_host_prog, '-c', '"import neovim"'])
     " python3 checks                                                   {{{2
     echo "\nChecking python3 availability:"
-    echo '- has python3: ' . has('python3')
-    " check whether python3 available on system                        {{{3
-    echo '- g:python3_host_prog --version: '
+    " does nvim think it has python3?                                  {{{3
+    echo '- nvim:   has python3 = ' . has('python3')
+    " is python3 available on system?                                  {{{3
+    echo '- system: g:python3_host_prog --version = '
     echon systemlist([g:python3_host_prog, '--version'])[0]
-    " test for python 'neovim' module                                  {{{3
-    echo "- import python3 module 'neovim' on system:"
-    echo '  (using g:python3_host_prog)'
-    echo '  (no feedback below this line means success)'
+    " does python3 'neovim' module load?                               {{{3
+    echo "- system: import python3 module 'neovim'"
+    echo '          (using g:python3_host_prog)'
+    echo '          (no feedback below this line means success)'
     echo system([g:python3_host_prog, '-c', '"import neovim"'])
     echo "\n"                                                      | " }}}3
 endfunction                                                          " }}}1
