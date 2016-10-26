@@ -3,7 +3,7 @@
 " Python not working in nvim under windows                             {{{1
 function! s:DebugPython()
     " python2 checks                                                   {{{2
-    echo 'Checking python2 availability:'
+    echo "\nChecking python2 availability:"
     " check whether nvim thinks it has python                          {{{3
     echo '- has python2: ' . has('python')
     " check whether python available on system                         {{{3
@@ -25,7 +25,7 @@ function! s:DebugPython()
     echo '  (no feedback below this line means success)'
     echo system([g:python_host_prog, '-c', '"import neovim"'])
     " python3 checks                                                   {{{2
-    echo 'Checking python3 availability:'
+    echo "\nChecking python3 availability:"
     echo '- has python3: ' . has('python3')
     " check whether python3 available on system                        {{{3
     echo '- g:python3_host_prog --version: '
@@ -35,9 +35,7 @@ function! s:DebugPython()
     echo '  (using g:python3_host_prog)'
     echo '  (no feedback below this line means success)'
     echo system([g:python3_host_prog, '-c', '"import neovim"'])
-    " control check                                                    {{{2
-    echo 'Control check:'
-    echo '- clipboard: ' . has('clipboard')                        | " }}}2
+    echo "\n"                                                      | " }}}3
 endfunction                                                          " }}}1
 
 if VrcOS() ==# 'windows' && exists(':terminal')
