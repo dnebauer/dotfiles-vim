@@ -236,7 +236,7 @@ call dein#add('dnebauer/vim-superman', {
 "   . disable plugin-set autocommands after sourcing because they
 "     a) make all new files executable (not desirable), and
 "     b) insert templates into new files (conflicts with
-"        vim-dn-utils templates)
+"        template plugins)
 call dein#add('tpope/vim-eunuch', {
             \ 'if'               : 'has("unix")',
             \ 'on_cmd'           : ['Remove',    'Unlink', 'Move',
