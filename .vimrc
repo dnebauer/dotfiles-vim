@@ -1,7 +1,7 @@
 " Configuration file for (n)vim
 " - uses subsidiary configuration files in 'rc' subdirectory
 
-" UTILITY FUNCTIONS:                                                 " {{{1
+" UTILITY FUNCTIONS:                                                   {{{1
 " only functions used in multiple subsidiary configuration files
 " function VrcOS()                                                     {{{2
 " intent: determine operating system
