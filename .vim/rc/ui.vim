@@ -114,11 +114,11 @@ function! VrcSetColorScheme(gui, term)
             colorscheme zenburn
         elseif a:gui ==# 'lucius'
             colorscheme lucius
-            "LuciusDark|LuciusDarkHighContrast|LuciusDarkLowContrast
-            "LuciusBlack|LuciusBlackHighContrast|LuciusBlackLowContrast
-            "LuciusLight|LuciusLightLowContrast
-            "LuciusWhite|LuciusWhiteLowContrast
-            LuciusDarkLowContrast
+            "LuciusDark|LuciusDarkHighContrast|LuciusDarkLowContrast|
+            "LuciusBlack|LuciusBlackHighContrast|LuciusBlackLowContrast|
+            "LuciusLight|LuciusLightLowContrast|
+            "LuciusWhite|LuciusWhiteLowContrast|
+            "LuciusDarkLowContrast
         elseif a:gui ==# 'atelierheath'
             colorscheme base16-atelierheath
         elseif a:gui ==# 'atelierforest'
