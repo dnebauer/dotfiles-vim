@@ -1,6 +1,13 @@
 " Configuration file for (n)vim
 " - uses subsidiary configuration files in 'rc' subdirectory
 
+" NOTES:                                                               {{{1
+" detect whether running vim or nvim                                   {{{2
+" - can no longer test directly for presence of nvim
+" - instead test for commands specific to each:
+"   . vim:  if exists(':shell')
+"   . nvim: if exists(':terminal')                                     }}}2
+
 " UTILITY FUNCTIONS:                                                   {{{1
 " only functions used in multiple subsidiary configuration files
 " function VrcOS()                                                     {{{2
