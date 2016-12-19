@@ -395,6 +395,12 @@ call dein#add('hewes/unite-gtags', {
 call dein#add('ujihisa/unite-font')
 " - colorscheme : unite helper - colorscheme selector                  {{{3
 call dein#add('ujihisa/unite-colorscheme')
+" bundles: cut and paste                                               {{{2
+" - highlightedyank : highlight yanked text                            {{{3
+call dein#add('machakann/vim-highlightedyank')
+if exists(':shell')
+    map y <Plug>(highlightedyank)
+endif
 " bundles: templates                                                   {{{2
 " - template : file templates                                          {{{3
 call dein#add('hotoo/template.vim')
