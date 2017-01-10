@@ -844,6 +844,11 @@ call dein#add('kannokanno/previm', {
             \ 'depends' : ['open-browser.vim'],
             \ 'on_cmd'  : ['PrevimOpen'],
             \ })
+" - toc : generate table of contents                                   {{{3
+call dein#add('mzlogin/vim-markdown-toc', {
+            \ 'on_ft'   : ['markdown','markdown.pandoc'],
+            \ 'on_cmd'  : ['GenTocGFM', 'GenTocRedcarpet', 'UpdateToc'],
+            \ })
 " bundles: perl support                                                {{{2
 " - perl : perl support                                                {{{3
 call dein#add('vim-perl/vim-perl', {
