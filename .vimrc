@@ -261,13 +261,13 @@ call dein#add('rkitover/vimpager', {
             \ })
 " - iron : read-val-print loop (REPL)                                  {{{3
 call dein#add('hkupty/iron.nvim', {
-            \ 'if'     : 'has("nvim")',
+            \ 'if'     : 'exists(":terminal")',
             \ 'on_cmd' : ['IronRepl', 'IronPromptRepl'],
             \ })
 " - codi : interactive scratchpad (REPL)                               {{{3
 "   . TODO: disable neomake (nvim) and syntastic (vim) while in codi
 call dein#add('metakirby5/codi.vim', {
-            \ 'if'     :   'has("nvim") || '
+            \ 'if'     :   'exists(":terminal") || '
             \            . '(exists("+job") && exists("+channel"))',
             \ 'on_cmd' : ['Codi'],
             \ })
@@ -384,12 +384,12 @@ call dein#add('sanford1/unite-unicode')
 " - bibtex : unite helper - BibTeX references                          {{{3
 "   . do not check for python in nvim (see note above at 'nvim issues')
 call dein#add('termoshtt/unite-bibtex', {
-            \ 'if' : '    has("nvim")'
+            \ 'if' : '    exists(":terminal")'
             \      . ' && executable("python")'
             \      . ' && executable("pybtex")',
             \ })
 call dein#add('termoshtt/unite-bibtex', {
-            \ 'if' : '    !has("nvim")'
+            \ 'if' : '    exists(":shell")'
             \      . ' && has("python")'
             \      . ' && executable("python")'
             \      . ' && executable("pybtex")',
@@ -484,12 +484,12 @@ let s:deoplete_config = join([
             \ . 'set("_", "min_pattern_length", 3)',
             \ ], "\n")
 call dein#add('shougo/deoplete.nvim', {
-            \ 'if'               : 'has("nvim")',
+            \ 'if'               : 'exists(":terminal")',
             \ 'hook_post_source' : s:deoplete_config,
             \ })
 " - neocomplete : vim completion engine                                {{{3
 call dein#add('shougo/neocomplete.vim', {
-            \ 'if'               : '     !has("nvim")'
+            \ 'if'               : '     exists(":shell")'
             \                    . ' &&  v:version >= 704'
             \                    . ' &&  has("lua")',
             \ 'hook_post_source' :  'call neocomplete#initialize()',
@@ -580,12 +580,12 @@ call dein#add('justinmk/vim-sneak')
 " - headlights : integrate plugins with vim menus                      {{{3
 "   . do not check for python in nvim (see note above at 'nvim issues')
 call dein#add('mbadran/headlights', {
-            \ 'if' : '     has("nvim")'
+            \ 'if' : '     exists(":terminal")'
             \      . ' &&  v:version >= 700'
             \      . ' &&  executable("python")',
             \ })
 call dein#add('mbadran/headlights', {
-            \ 'if' : '     !has("nvim")'
+            \ 'if' : '     exists(":shell")'
             \      . ' &&  v:version >= 700'
             \      . ' &&  has("python")'
             \      . ' &&  executable("python")',
@@ -641,7 +641,7 @@ call dein#add('myusuf3/numbers.vim')
 " bundles: syntax checking                                             {{{2
 " - syntastic : syntax checker for vim                                 {{{3
 call dein#add('scrooloose/syntastic', {
-            \ 'if' : '!has("nvim")',
+            \ 'if' : 'exists(":shell")',
             \ })
 " - neomake : asynchronous syntax checker for nvim                     {{{3
 let s:neomake_hook_post_update = join([
@@ -653,7 +653,7 @@ let s:neomake_hook_post_update = join([
             \ 'endif',
             \ ], "\n")
 call dein#add('neomake/neomake', {
-            \ 'if'               : 'has("nvim")',
+            \ 'if'               : 'exists(":terminal")',
             \ 'on_cmd'           : ['Neomake'],
             \ 'hook_post_update' : s:neomake_hook_post_update,
             \ })
@@ -678,12 +678,12 @@ call dein#add('airblade/vim-gitgutter', {
             \ 'if' : '    executable("git")'
             \      . '&&  ('
             \      . '      ('
-            \      . '            has("vim")'
+            \      . '            exists(":shell")'
             \      . '        &&  v:version > 704'
             \      . '        &&  has("patch-7.4.1826")'
             \      . '      )'
             \      . '      ||'
-            \      . '      has("nvim")'
+            \      . '      exists(":terminal")'
             \      . '    )',
             \ })
 " - fugitive : git integration                                         {{{3
@@ -692,7 +692,7 @@ call dein#add('tpope/vim-fugitive', {
             \ })
 " bundles: clang support                                               {{{2
 call dein#add('zchee/deoplete-clang', {
-            \ 'if' : 'has("nvim")',
+            \ 'if' : 'exists(":terminal")',
             \ 'on_ft' : ['c', 'cpp', 'objc'],
             \ 'depends' : ['deoplete.nvim'],
             \ })
@@ -716,7 +716,7 @@ call dein#add('fatih/vim-go', {
             \ })
 " - deoplete-go : deoplete helper                                      {{{3
 call dein#add('zchee/deoplete-go', {
-            \ 'if'        : 'has("nvim")',
+            \ 'if'        : 'exists(":terminal")',
             \ 'on_source' : ['vim-go'],
             \ 'build'     : 'make',
             \ })
@@ -791,7 +791,7 @@ endfunction
 "   . doing so results in 'E48: Not allowed in sandbox
 if !VrcCygwin()
     call dein#add('ternjs/tern_for_vim', {
-                \ 'if'               : '!has("nvim")',
+                \ 'if'               : 'exists(":shell")',
                 \ 'on_ft'            : ['javascript', 'javascript.jsx'],
                 \ 'hook_post_update' : function('VrcBuildTernAndJsctags'),
                 \ })
@@ -800,7 +800,7 @@ if !VrcCygwin()
                 \ 'let g:tern_show_signature_in_pum = 0',
                 \ ], "\n")
     call dein#add('carlitux/deoplete-ternjs', {
-                \ 'if'               : 'has("nvim")',
+                \ 'if'               : 'exists(":terminal")',
                 \ 'on_ft'            : ['javascript', 'javascript.jsx'],
                 \ 'depends'          : ['deoplete.nvim'],
                 \ 'hook_source'      : s:ternjs_hook_source,
@@ -865,7 +865,7 @@ call dein#add('perlhelp.vim', {
             \ })
 " - syntastic-perl6 : syntax hecking for perl6                         {{{3
 call dein#add('nxadm/syntastic-perl6', {
-            \ 'if'    : 'has("vim")',
+            \ 'if'    : 'exists(":shell")',
             \ 'on_ft' : ['perl6'],
             \ })
 " bundles: php support                                                 {{{2
@@ -892,14 +892,14 @@ let s:jedi_hook_post_update = join([
             \ 'endif',
             \ ], "\n")
 call dein#add('davidhalter/jedi-vim', {
-            \ 'if'               : '!has("nvim")',
+            \ 'if'               : 'exists(":shell")',
             \ 'on_ft'            : ['python'],
             \ 'hook_post_update' : s:jedi_hook_post_update,
             \ })
 " - deoplete-jedi : deoplete helper                                    {{{3
 "   . do not check for python3 in nvim (see note above at 'nvim issues')
 call dein#add('zchee/deoplete-jedi', {
-            \ 'if'               : '    has("nvim")'
+            \ 'if'               : '    exists(":terminal")'
             \                    . ' && executable("python3")',
             \ 'on_ft'            : ['python'],
             \ 'depends'          : ['deoplete.nvim'],
