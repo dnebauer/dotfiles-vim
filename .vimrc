@@ -174,6 +174,22 @@ call dein#add('haya14busa/dein-command.vim', {
 " - VimEnter                                                           {{{3
 "   . many important dein-related function calls are made at this event
 "   . all post_source hooks are called at VimEnter
+" dein configuration                                                   {{{2
+" - asynchronous plugin updates                                        {{{3
+"   . when running dein in nvim on windows, updating plugins with the
+"     default number of asynchronous processes (8) results in many
+"     updates failing
+"   . the git operation fails with the message:
+"     'Received HTTP code 407 from proxy after CONNECT'
+"   . the particular plugins affected in a run are unpredictable, i.e.,
+"     a plugin whose update fails in one run will successfully update
+"     in the following run
+"   . this brute force solution turns off asynchronous updating, so
+"     each plugin updates in sequence (but the whole run takes *much*
+"     longer)
+if exists(':terminal') && VrcOS() ==# 'windows'
+    let g:dein#install_max_processes = 1
+endif
 " nvim issues                                                          {{{2
 " - has("python") checks disabled                                      {{{3
 "   . have removed 'has("python")' from nvim checks because it
