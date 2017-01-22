@@ -1,6 +1,7 @@
-% ${cursor}title
-% author;
-% date
+---
+title: 
+header-includes:
+    - \usepackage{xcolor}
+---
 
-
-==============================================
+${cursor}
