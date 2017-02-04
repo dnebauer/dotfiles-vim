@@ -1,7 +1,6 @@
 ---
-title: 
+title: ${cursor}
 header-includes:
     - \usepackage{xcolor}
 ---
 
-${cursor}
