@@ -1,9 +1,9 @@
 .\" Hey, EMACS: -*- nroff -*-
- 
+
 .\" Filename: ${filename}.1
 .\" Author:   David Nebauer
 .\" History:  ${date} - created
- 
+
 .\" -----------------------------------------------------------------
 .\" NOTES
 .\" -----------------------------------------------------------------
@@ -49,7 +49,7 @@ Formatting [see groff_char (7) and man (7) for details]:
 .RB   : following arguments are roman alternating with bold
 .RI   : following arguments are roman alternating with italics
 .SM   : following arguments are small (scaled 9/10 of the regular size)
-.SB   : following arguments are small bold (not small alternating with bold) 
+.SB   : following arguments are small bold (not small alternating with bold)
         [note: if argument in alternating pattern contains whitespace,
                enclose in whitespace]
 .RS x : indent following lines by x characters
@@ -78,22 +78,25 @@ Numbered list:
 .\" SETUP
 .\" -----------------------------------------------------------------
 
-.\" Package: -mwww macro package of web-related functions
-.\"  note: -mwww package is part of GNU 'troff'.
-.\"        The '.g' register is only found in GNU 'troff'
-.\"        and is set to '1' (true).
-.\"        The '\n' escape returns the value of a register.
-.\"        So, this 'if' command ensures GNU 'troff' is
-.\"        running before attempting to load the -mwww
-.\"        macro package
-.if \n[.g] .mso www.tmac
-
 .\" Macro: Format URL
-.\"  usage:  .UR "http:\\www.gnu.org" "GNU Project" " of the"
-.\"  params: arg 1 = url ; arg 2 = link text/name ; arg 3 = postamble (optional)
-.de UR
+.\"  usage:  .URL "http:\\www.gnu.org" "GNU Project" " of the"
+.\"  params: 1 = url
+.\"          2 = link text/name
+.\"          3 = postamble (optional)
+.\"  note:   The www.tmac macro provides a .URL macro package; this
+.\"          is a local fallback in case www.tmac is unavailable
+.\"  credit: man(7)
+.de URL
 \\$2 \(laURL: \\$1 \(ra\\$3
 ..
+
+.\" Prefer .URL macro from www.tmac macro package if it is available
+.\"  note: In the conditional below the '\n' escape returns the value of
+.\"        a register, in this the '.g'
+.\"        The '.g' register is only found in GNU 'troff', and it is
+.\"        assumed that GNU troff will always include the www.tmac
+.\"        macro package
+.if \n[.g] .mso www.tmac
 
 .\" Macro: Ellipsis
 .\"  usage: .ellipsis
@@ -113,32 +116,32 @@ Numbered list:
 
 .TH "${filename}" "1" "${date}" "" "${FILENAME} Manual"
 .SH "NAME"
-\*[self] \- 
+\*[self] \- ${cursor}
 .SH "SYNOPSIS"
 .BR "\*[self] " "["
 .BI "\-x " "opt"
 ]
 .SH "DESCRIPTION"
-\*[self] ... ${cursor}
-.PP 
+\*[self] ...
+.PP
 para 2 ...
 .SH "OPTIONS"
-.TP 
+.TP
 .BI "\-x " "opt"
 description
-.TP 
+.TP
 .BI "\-y " "opt"
 description
 .SH "FILES"
 .I /path/to/file
-.IP 
+.IP
 description.
-.PP 
+.PP
 .I /path/to/file
-.IP 
+.IP
 description.
 .SH "SEE ALSO"
-.BR "manpage " "(1)," 
+.BR "manpage " "(1),"
 .BR "manpage " "(1)."
 .PP
 .B "Document"
@@ -148,6 +151,6 @@ description.
 </path/to/document>
 .SH "AUTHOR"
 \*[self] was written by ${author}.
-.PP 
+.PP
 This manual page was written by ${author}
 for the Debian project (but may be used by others).
