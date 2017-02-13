@@ -1,5 +1,5 @@
 ---
-title: ${cursor}
+title: '${cursor}'
 header-includes:
     - \usepackage{xcolor}
 #   following font setup is taken from Michael Franzl's blog at
