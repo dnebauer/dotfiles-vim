@@ -24,7 +24,7 @@ endfunction
 
 augroup vrc_tex_files
     autocmd!
-    autocmd FileType tex,context call a:TexSupport()
+    autocmd FileType tex,context call s:TexSupport()
 augroup END
 
 " vim: set foldmethod=marker :
