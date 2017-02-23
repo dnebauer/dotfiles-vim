@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 use Moo;    #                                                          {{{1
 use strictures 2;
@@ -11,7 +11,7 @@ use namespace::clean;    #                                             }}}1
 
     package Dn::Internal;
 
-    use Moo;                                                         # {{{1
+    use Moo;             # {{{1
     use strictures 2;
     use namespace::clean -except => [ '_options_data', '_options_config' ];
     use autodie qw(open close);
@@ -41,27 +41,27 @@ use namespace::clean;    #                                             }}}1
 
     # option (-o)                                                      {{{1
     option 'option' => (
-        is            => 'ro',
-        format        => 's',
-        required      => $TRUE,
-        short         => 'o',
-        documentation => 'An option',
+        is       => 'ro',
+        format   => 's',
+        required => $TRUE,
+        short    => 'o',
+        doc      => 'An option',
     );
 
     # flag   (-f)                                                      {{{1
     option 'flag' => (
-        is            => 'ro',
-        short         => 'f',
-        documentation => 'A flag',
+        is    => 'ro',
+        short => 'f',
+        doc   => 'A flag',
     );    #                                                            }}}1
 
     # attributes
 
     # _attr                                                            {{{1
     has '_attr_1' => (
-        is            => 'lazy',
-        isa           => Types::Standard::Str,
-        documentation => 'Shown in usage',
+        is  => 'lazy',
+        isa => Types::Standard::Str,
+        doc => 'Shown in usage',
     );
 
     method _build__attr_1 () {
@@ -82,7 +82,7 @@ use namespace::clean;    #                                             }}}1
             _add_attr => 'push',
             _has_attr => 'count',
         },
-        documentation => 'Array of values',
+        doc => 'Array of values',
     );    #                                                            }}}1
 
     # methods
@@ -104,11 +104,11 @@ use namespace::clean;    #                                             }}}1
     # prints: help message if requested
     # return: n/a, exits after displaying help
     method _help () {
-        my ($opt, $usage) = Getopt::Long::Descriptive::describe_options(
+        my ( $opt, $usage ) = Getopt::Long::Descriptive::describe_options(
             'dn-show-time %o',
             [ 'help|h', 'print usage message and exit' ],
         );
-        print($usage->text), exit if $opt->help;
+        print( $usage->text ), exit if $opt->help;
 
         return;
     }
