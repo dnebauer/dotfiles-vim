@@ -151,6 +151,8 @@ my $p = Dn::Internal->new_with_options->main;
 # POD                                                                  {{{1
 __END__
 
+=encoding utf8
+
 =head1 NAME
 
 myscript - does stuff ...
