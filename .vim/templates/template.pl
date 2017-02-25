@@ -21,8 +21,9 @@ use namespace::clean;    #                                             }}}1
     use English qw(-no_match_vars);
     use Function::Parameters;
     use Getopt::Long::Descriptive qw(describe_options);
+    use List::MoreUtils qw(uniq);
     use MooX::HandlesVia;
-    use MooX::Options;
+    use MooX::Options protect_argv => 0;
     use Path::Tiny;
     use Readonly;
     use Try::Tiny;
@@ -83,7 +84,25 @@ use namespace::clean;    #                                             }}}1
             _has_attr => 'count',
         },
         doc => 'Array of values',
-    );    #                                                            }}}1
+    );
+
+    # _files                                                           {{{1
+    has '_file_list' => (
+
+        is          => 'lazy',
+        isa         => Types::Standard::ArrayRef [Types::Standard::Str],
+        handles_via => 'Array',
+        handles     => { _files => 'elements' },
+        doc         => 'File arguments',
+    );
+
+    method _build__file_list () {
+        my @matches;
+        for my $arg (@ARGV) { push @matches, glob "$arg"; }
+        my @unique_matches = List::MoreUtils::uniq @matches;
+        my @files = grep { -r $_ } @unique_matches;
+        return [@files];
+    }    #                                                             }}}1
 
     # methods
 
