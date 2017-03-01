@@ -8,7 +8,7 @@ use version; our $VERSION = qv('0.1');
 use namespace::clean;
 
 use autodie qw(open close);
-use Carp qw(confess);
+use Carp qw(croak);
 use Dn::Common;
 use Dn::InteractiveIO;
 use Dn::Menu;
@@ -214,8 +214,6 @@ Config variables, and available settings.
 
 autodie, Carp, Dn::InteractiveIO, Dn::Common, Dn::Menu, English, experimental, Function::Parameters, Moo, MooX::HandlesVia, namespace::clean, Path::Tiny, Readonly, Sys::Syslog, strictures, Try::Tiny, Types::Common::Numeric, Types::Common::String, Types::Path::Tiny, Types::Standard, version.
 
-=back
-
 =head2 Executables
 
 wget.
@@ -240,4 +238,5 @@ This script is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
+
 # vim:fdm=marker
