@@ -148,6 +148,7 @@ method _other () {
 1;
 
 # POD                                                                  {{{1
+
 __END__
 
 =encoding utf8
@@ -169,29 +170,31 @@ Full description. May have subsections.
 
 =head2 attr_1
 
-Does stuff...
-
-Scalar string. Required.
+Does stuff...  Scalar string. Required.
 
 =head1 METHODS
 
 =head2 method1($param)
 
-=head3 Purpose
-
 Method purpose.
 
-=head3 Parameters
+=head3 Params
 
 =over
 
 =item $param
 
-Parameter details. Scalar string.
-
-Required.
+Parameter details. Scalar string. Required.
 
 =back
+
+=head3 Prints
+
+Nil.
+
+=head3 Returns
+
+Nil.
 
 =head1 DIAGNOSTICS
 
@@ -204,9 +207,7 @@ Really?
 
 =head1 CONFIGURATION AND ENVIRONMENT
 
-Config files and locations, and available settings.
-
-Config variables, and available settings.
+There are no configuration files used. There are no module/role settings.
 
 =head1 DEPENDENCIES
 
@@ -214,13 +215,9 @@ Config variables, and available settings.
 
 autodie, Carp, Dn::InteractiveIO, Dn::Common, Dn::Menu, English, experimental, Function::Parameters, Moo, MooX::HandlesVia, namespace::clean, Path::Tiny, Readonly, Sys::Syslog, strictures, Try::Tiny, Types::Common::Numeric, Types::Common::String, Types::Path::Tiny, Types::Standard, version.
 
-=head2 Executables
-
-wget.
-
 =head2 INCOMPATIBILITIES
 
-Modules this one cannot be used with, and why.
+There are no known incompatibilities with other modules.
 
 =head1 BUGS AND LIMITATIONS
 
