@@ -40,8 +40,8 @@ use namespace::clean;    #                                             }}}1
 
     # options
 
-    # option (-o)                                                      {{{1
-    option 'option' => (
+    # opt  (-o)                                                        {{{1
+    option 'opt' => (
         is       => 'ro',
         format   => 's',
         required => $TRUE,
@@ -49,7 +49,7 @@ use namespace::clean;    #                                             }}}1
         doc      => 'An option',
     );
 
-    # flag   (-f)                                                      {{{1
+    # flag (-f)                                                        {{{1
     option 'flag' => (
         is    => 'ro',
         short => 'f',
@@ -97,10 +97,11 @@ use namespace::clean;    #                                             }}}1
     );
 
     method _build__file_list () {
-        my @matches;
+        my @matches;              # get unique file names
         for my $arg (@ARGV) { push @matches, glob "$arg"; }
         my @unique_matches = List::MoreUtils::uniq @matches;
-        my @files = grep { -r $_ } @unique_matches;
+        my @files = grep { -r $_ } @unique_matches;    # ignore non-files
+
         return [@files];
     }    #                                                             }}}1
 
@@ -113,6 +114,38 @@ use namespace::clean;    #                                             }}}1
     # prints: feedback
     # return: n/a, dies on failure
     method main () {
+
+        # check args
+        $self->_check_args;
+    }
+
+    # _check_args()                                                    {{{1
+    #
+    # does:   check arguments
+    # params: nil
+    # prints: feedback
+    # return: n/a, dies on failure
+    method _check_args () {
+
+        # need at least one file                                       {{{2
+        my @files = $self->_files;
+        my $count = scalar @files;
+        if ( not $count ) {
+            warn "No files specified\n";
+            exit 1;
+        }
+
+        # ensure files are valid images [***EXAMPLE CHECK***]          {{{2
+        say "Verifying $count image files:";
+        my $progress = Term::ProgressBar::Simple->new($count);
+        for my $file (@files) {
+            my $image = $self->_new_image($file);
+            undef $image;      # avoid memory cache overflow
+            $progress++;
+        }
+        undef $progress;       # ensure final messages displayed
+
+        return;
     }
 
     # _help()                                                          {{{1
