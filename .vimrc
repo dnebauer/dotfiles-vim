@@ -313,6 +313,9 @@ call dein#add('vim-scripts/DeleteTrailingWhitespace')
 "   . cannot load dependency via depends in vim or on_source in nvim
 call dein#add('kana/vim-textobj-user')
 call dein#add('kana/vim-textobj-entire')
+" bundles: encryption                                                  {{{2
+" - gnupg : transparently edit gpg-encrypted files                     {{{3
+call dein#add('jamessan/vim-gnupg')
 " bundles: searching and finding                                       {{{2
 " - nerdtree : tree explorer                                           {{{3
 "   . only use in windows; elsewhere use :Unite file_rec/async!
