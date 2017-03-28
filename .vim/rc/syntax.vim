@@ -29,7 +29,16 @@ if exists(':terminal')
     " check on buffer entry and text change (lint-as-you-type)         {{{2
     function! s:LintAsYouType()
         if strlen(bufname('%')) > 0
-            update
+            " - nvim gives E676 error ('No matching commands for acwrite
+            "   buffer') even though there ARE matching autocommands (see
+            "   augroup command below), so catch and ignore this error
+            " - note: error occurred when editing '*.gpg' files with the
+            "   vim-gnupg plugin enabled, because the plugin sets the
+            "   buffer type to 'acwrite'
+            try
+                update
+            catch /^Vim\%((\a\+)\)\=:E676/
+            endtry
         endif
         Neomake
     endfunction
@@ -39,6 +48,7 @@ if exists(':terminal')
         autocmd BufEnter * Neomake
         " check on text changes ("lint-as-you-type")
         autocmd InsertLeave,TextChanged * call s:LintAsYouType()
+        autocmd BufWriteCmd,FileWriteCmd,FileAppendCmd * call s:LintAsYouType()
     augroup END                                                      " }}}2
 endif
 
