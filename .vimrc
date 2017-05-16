@@ -439,7 +439,7 @@ call dein#add('tyru/open-browser.vim', {
             \             'v': ['<Plug>(openbrowser-smart-search)']},
             \ })
 " - whatdomain : look up top level domain                              {{{3
-call dein#add('whatdomain.vim', {
+call dein#add('vim-scripts/whatdomain.vim', {
             \ 'on_cmd'  : ['WhatDomain'],
             \ 'on_func' : ['WhatDomain'],
             \ })
@@ -629,7 +629,7 @@ call dein#add('atelierbram/vim-colors_atelier-schemes')  " atelier
 call dein#add('w0ng/vim-hybrid')                         " hybrid
 call dein#add('jonathanfilip/vim-lucius')                " lucius
 call dein#add('nlknguyen/papercolor-theme')              " papercolor
-call dein#add('peaksea')                                 " peaksea
+call dein#add('vim-scripts/peaksea')                     " peaksea
 call dein#add('vim-scripts/print_bw.zip')                " print_bw
 call dein#add('jpo/vim-railscasts-theme')                " railscast
 call dein#add('altercation/vim-colors-solarized')        " solarized
@@ -864,7 +864,7 @@ call dein#add('dnebauer/vim-dn-perl', {
             \ 'on_ft' : ['perl'],
             \ })
 " - perlhelp : provide help with perldoc                               {{{3
-call dein#add('perlhelp.vim', {
+call dein#add('vim-scripts/perlhelp.vim', {
             \ 'if'    : 'executable("perldoc")',
             \ 'on_ft' : ['perl'],
             \ })
@@ -931,12 +931,12 @@ call dein#add('machakann/vim-vimhelplint', {
 call dein#add('dnebauer/vim-dn-help')
 " bundles: xml support                                                 {{{2
 " - xml : xml support                                                  {{{3
-call dein#add('xml.vim', {
+call dein#add('vim-scripts/xml.vim', {
             \ 'on_ft' : ['xml'],
             \ })
 " bundles: xquery support                                              {{{2
 " - indentomnicomplete : autoindent and omnicomplete                   {{{3
-call dein#add('XQuery-indentomnicompleteftplugin', {
+call dein#add('vim-scripts/XQuery-indentomnicompleteftplugin', {
             \ 'on_ft' : ['xquery'],
             \ })
 " bundles: zsh support                                                 {{{2
