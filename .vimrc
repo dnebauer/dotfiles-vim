@@ -217,8 +217,18 @@ if dein#load_state(s:plugins_dir)
                 \ })
     " bundles: utilities                                               {{{2
     " - vimproc : asynchronous execution                               {{{3
+    "   . build default is 'make' except for MinGW on windows
+    let s:vimproc_build_cmd = 'make'
+    if executable('mingw32-make') 
+                \ && ( has('win64') || has('win32') || has('win32unix') )
+        let s:vimproc_build_cmd = 'mingw32-make -f ' . (
+                    \ has('win64')     ? 'make_mingw64.mak'                :
+                    \ has('win32')     ? 'make_mingw32.mak'                :
+                    \ has('win32unix') ? 'make_mingw32.mak CC=mingw32-gcc' :
+                    \ '' )
+    endif
     call dein#add('shougo/vimproc.vim', {
-                \ 'build' : 'make',
+                \ 'build' : s:vimproc_build_cmd,
                 \ })
     " - neoinclude : completion framework helper                       {{{3
     "   . unite has trouble locating neoinclude
