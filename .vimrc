@@ -256,7 +256,7 @@ if dein#load_state(s:plugins_dir)
     " bundles: shell integration                                       {{{2
     " - vimshell : shell emulation                                     {{{3
     call dein#add('shougo/vimshell.vim', {
-                \ 'depends' : 'vimproc.vim',
+                \ 'depends' : ['vimproc.vim'],
                 \ 'on_cmd'  : ['VimShell',           'VimShellCreate',
                 \              'VimShellTab',        'VimShellPop',
                 \              'VimShellCurrentDir', 'VimShellBufferDir',
@@ -597,7 +597,9 @@ if dein#load_state(s:plugins_dir)
     " - sneak : two-character motion plugin                            {{{3
     call dein#add('justinmk/vim-sneak')
     " - vim-textobj-sentence : improve sentence text object and motion {{{3
-    call dein#add('reedes/vim-textobj-sentence')
+    call dein#add('reedes/vim-textobj-sentence', {
+                \ 'depends' : ['vim-textobject-user'],
+                \ })
     " bundles: ui                                                      {{{2
     " - headlights : integrate plugins with vim menus                  {{{3
     "   . do not check for python in nvim (see note above at 'nvim issues')
@@ -627,7 +629,7 @@ if dein#load_state(s:plugins_dir)
                 \ })
     " - airline-themes : airline helper                                {{{3
     call dein#add('vim-airline/vim-airline-themes', {
-                \ 'depends' : 'vim-airline',
+                \ 'depends' : ['vim-airline'],
                 \ })
     " - tagbar : outline viewer                                        {{{3
     call dein#add('majutsushi/tagbar', {
@@ -714,8 +716,8 @@ if dein#load_state(s:plugins_dir)
                 \ })
     " bundles: clang support                                           {{{2
     call dein#add('zchee/deoplete-clang', {
-                \ 'if' : 'exists(":terminal")',
-                \ 'on_ft' : ['c', 'cpp', 'objc'],
+                \ 'if'      : 'exists(":terminal")',
+                \ 'on_ft'   : ['c', 'cpp', 'objc'],
                 \ 'depends' : ['deoplete.nvim'],
                 \ })
     " bundles: docbook support                                         {{{2
