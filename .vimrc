@@ -577,6 +577,11 @@ if dein#load_state(s:plugins_dir)
                 \ 'on_cmd'  : ['GrammarousCheck', 'GrammarousReset',
                 \              'Unite grammarous'],
                 \ })
+    " - wordy : find usage problems                                    {{{3
+    call dein#add('reedes/vim-wordy', {
+                \ 'on_cmd'  : ['Wordy',     'NoWordy',
+                \              'NextWordy', 'PrevWordy'],
+                \ })
     " - online-thesaurus : online thesaurus                            {{{3
     call dein#add('beloglazov/vim-online-thesaurus', {
                 \ 'on_cmd' : ['Thesaurus', 'OnlineThesaurusCurrentWord'],
