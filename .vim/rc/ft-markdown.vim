@@ -17,6 +17,8 @@ function! s:MarkdownSupport()
                     \ 'sort'       : 0,
                     \ }
     endif
+    " improve sentence text object                                     {{{1
+    call textobj#sentence#init()
     " add system dictionary to word completions                        {{{1
     setlocal complete+=k
     " vim omnicompletion                                               {{{1

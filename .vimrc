@@ -596,6 +596,8 @@ if dein#load_state(s:plugins_dir)
     call dein#add('vim-scripts/matchit.zip')
     " - sneak : two-character motion plugin                            {{{3
     call dein#add('justinmk/vim-sneak')
+    " - vim-textobj-sentence : improve sentence text object and motion {{{3
+    call dein#add('reedes/vim-textobj-sentence')
     " bundles: ui                                                      {{{2
     " - headlights : integrate plugins with vim menus                  {{{3
     "   . do not check for python in nvim (see note above at 'nvim issues')
