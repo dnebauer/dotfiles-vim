@@ -662,6 +662,8 @@ if dein#load_state(s:plugins_dir)
                 \ })
     " - numbers : number <->relativenumber switching                   {{{3
     call dein#add('myusuf3/numbers.vim')
+    " - howdy : most-recently-used file list on startup                {{{3
+    call dein#add('dbmrq/vim-howdy')
     " bundles: syntax checking                                         {{{2
     " - syntastic : syntax checker for vim                             {{{3
     call dein#add('scrooloose/syntastic', {
