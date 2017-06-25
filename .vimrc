@@ -888,6 +888,11 @@ if dein#load_state(s:plugins_dir)
                 \ 'if'    : 'exists(":shell")',
                 \ 'on_ft' : ['perl6'],
                 \ })
+    " - unite-perl-module : search for perl modules                    {{{3
+    call dein#add('yuuki/unite-perl-module.vim', {
+                \ 'depends' : ['unite.vim'],
+                \ 'on_ft'   : ['perl6'],
+                \ })
     " bundles: php support                                             {{{2
     " - phpctags : tag generation                                      {{{3
     "   . cannot test for cygwin in dein#add 'if' statement
