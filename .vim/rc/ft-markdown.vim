@@ -24,7 +24,10 @@ function! s:MarkdownSupport()
     " vim omnicompletion                                               {{{1
     if exists(':shell')
         setlocal omnifunc=htmlcomplete#CompleteTags
-    endif                                                            " }}}1
+    endif
+    " customise vim-dn-markdown ftplugin                               {{{1
+    let g:DN_markdown_linkcolor_pdf = 'blue'
+    let g:DN_markdown_fontsize_pdf  = 12                              " }}}1
 endfunction
 
 augroup vrc_markdown_files
