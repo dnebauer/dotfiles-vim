@@ -40,6 +40,10 @@ xnoremap <expr> v mode() ==# 'v' ? "\<C-V>"
 
 " Treat all numerals as decimal                                   {{{1
 set nrformats=
+" Handle neovim paste behaviour                                   {{{1
+" :nnoremap p axx<Esc>i<CR><Esc>k:put<CR>kJhxxJxx
+" :nnoremap P ixx<Esc>i<CR><Esc>k:put<CR>kJhxxJxx
+" see undojoin
                                                                 " }}}1
 
 " vim: set foldmethod=marker :
