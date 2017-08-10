@@ -26,7 +26,7 @@ function! s:MarkdownSupport()
         setlocal omnifunc=htmlcomplete#CompleteTags
     endif
     " customise vim-dn-markdown ftplugin                               {{{1
-    let g:DN_markdown_linkcolor_print = 'blue'
+    let g:DN_markdown_linkcolor_print = 'blue'    
     let g:DN_markdown_fontsize_print  = 12                           " }}}1
 endfunction
 
