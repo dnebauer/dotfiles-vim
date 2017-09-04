@@ -869,7 +869,6 @@ if dein#load_state(s:plugins_dir)
     "   . customise
     let g:DN_markdown_fontsize_print     = 12
     let g:DN_markdown_linkcolor_print    = 'blue'
-    let g:DN_markdown_number_start_check = 0
     call dein#add('dnebauer/vim-dn-markdown', {
                 \ 'on_ft' : ['markdown','markdown.pandoc'],
                 \ })
@@ -882,7 +881,8 @@ if dein#load_state(s:plugins_dir)
     " - toc : generate table of contents                               {{{3
     call dein#add('mzlogin/vim-markdown-toc', {
                 \ 'on_ft'   : ['markdown','markdown.pandoc'],
-                \ 'on_cmd'  : ['GenTocGFM', 'GenTocRedcarpet', 'UpdateToc'],
+                \ 'on_cmd'  : ['GenTocGFM', 'GenTocRedcarpet',
+                \              'UpdateToc', 'RemoveToc'],
                 \ })
     " bundles: perl support                                            {{{2
     " - perl : perl support                                            {{{3
