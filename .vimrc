@@ -366,6 +366,10 @@ if dein#load_state(s:plugins_dir)
                     \ 'if' : 'executable("ranger")',
                     \ })
     endif
+    " - vinegar : enhance netrw directory browser                      {{{3
+    call dein#add('tpope/vim-vinegar')
+    "   . hide dot files
+    let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
     " - visual-star-search : search for selected text                  {{{3
     call dein#add('bronson/vim-visual-star-search')
     " - unite : integrated information display                         {{{3
