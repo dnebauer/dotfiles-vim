@@ -58,22 +58,4 @@ vnoremap ZQ <Esc>ZQ
 inoremap <C-w><C-w> <Esc>:update<CR><C-w><C-w>
 nnoremap <C-w><C-w> :update<CR><C-w><C-w>
 
-" Exit automatically if last window is a NERDTree                      {{{1
-" - function VrcExitOnNerdtree()                                       {{{2
-"   intent: exit if only window open is a NERDTree
-"   params: nil
-"   return: nil
-function! VrcExitOnNerdtree()
-    " all these conditions must be satisfied
-    if winnr('$') != 1         | return | endif
-    if !exists('b:NERDTree')   | return | endif
-    if !b:NERDTree.isTabTree() | return | endif
-    " all conditions met, so exit
-    quit
-endfunction                                                          " }}}2
-augroup vrc_close_on_nerdtree                                        " {{{2
-    autocmd!
-    autocmd BufEnter * call VrcExitOnNerdtree()
-augroup END                                                          " }}}3
-
 " vim: set foldmethod=marker :

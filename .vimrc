@@ -332,34 +332,6 @@ if dein#load_state(s:plugins_dir)
     " - gnupg : transparently edit gpg-encrypted files                 {{{3
     call dein#add('jamessan/vim-gnupg')
     " bundles: searching and finding                                   {{{2
-    " - nerdtree : tree explorer                                       {{{3
-    "   . only use in windows; elsewhere use :Unite file_rec/async!
-    if VrcOS() ==# 'windows'
-        let s:nerd_hook_source = join([
-                    \ 'augroup vrc_open_nerd',
-                    \ 'autocmd!',
-                    \ 'autocmd StdinReadPre * let s:std_in = 1',
-                    \ 'augroup END',
-                    \ ], "\n")
-        let s:nerd_hook_post_source = join([
-                    \ 'if argc() == 0 && !exists("s:std_in") '
-                    \ . '&& line("$") <= 1',
-                    \ 'NERDTree',
-                    \ 'endif',
-                    \ ], "\n")
-        call dein#add('scrooloose/nerdtree', {
-                    \ 'on_cmd'           : ['NERDTree', 'NERDTreeToggle'],
-                    \ 'hook_source'      : s:nerd_hook_source,
-                    \ 'hook_post_source' : s:nerd_hook_post_source,
-                    \ })
-    endif
-    " - nerdtree-git-plugun : show file git status                     {{{3
-    "   . NERDTree is only used in windows
-    if VrcOS() ==# 'windows'
-        call dein#add('xuyuanp/nerdtree-git-plugin', {
-                    \ 'if' : 'executable("git")',
-                    \ })
-    endif
     " - ranger : curses-based file explorer                            {{{3
     if VrcOS() !=# 'windows'
         call dein#add('francoiscabrol/ranger.vim', {
