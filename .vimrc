@@ -329,60 +329,28 @@ if dein#load_state(s:plugins_dir)
     let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
     " - visual-star-search : search for selected text                  {{{3
     call dein#add('bronson/vim-visual-star-search')
-    " - unite : integrated information display                         {{{3
-    "   . gave up loading unite on demand as the dependencies are
+    " - denite : integrated information display                        {{{3
+    "   . gave up loading denite on demand as the dependencies are
     "     too fragile; only works dependably if force load at start
     "   . call functions after dein#end [see unite.vim issue #330]
-    let s:unite_hook_post_source = join([
-                \ 'call unite#filters#matcher_default#use(["matcher_fuzzy"])',
-                \ 'call unite#custom#profile("default", '
-                \ . '"context", {"start_insert" : 1})',
-                \ 'call unite#custom#source("grep", '
-                \ . '"matchers", "matcher_fuzzy")',
-                \ 'call unite#custom#source("buffer,file,file_rec", '
-                \ . '"sorters" ,"sorter_selecta")',
+    let s:denite_hook_post_source = join([
+                \ 'call denite#custom#source("grep", '
+                \ . '"matchers", ["matcher_fuzzy"])',
+                \ 'call denite#custom#source("buffer,file,file_rec", '
+                \ . '"sorters", ["sorter_rank"])',
                 \ ], "\n")
-    call dein#add('shougo/unite.vim', {
-                \ 'depends'          : ['vimproc.vim', 'neoinclude'],
-                \ 'hook_post_source' : s:unite_hook_post_source,
+    call dein#add('shougo/denite.nvim', {
+                \ 'depends'          : ['neoinclude.vim', 'neomru.vim'],
+                \ 'hook_post_source' : s:denite_hook_post_source,
                 \ })
-    " - neomru : unite helper - recently used files                    {{{3
+    " - neomru : denite helper - recently used files                   {{{3
     call dein#add('shougo/neomru.vim')
-    " - help : unite helper - help                                     {{{3
-    call dein#add('shougo/unite-help')
-    " - tag : unite helper - tags                                      {{{3
-    call dein#add('tsukkee/unite-tag')
-    " - session : unite helper - session support                       {{{3
-    call dein#add('shougo/unite-session')
-    " - history : unite helper - command and search history            {{{3
-    call dein#add('thinca/vim-unite-history')
-    " - neoyank : unite helper - yank history                          {{{3
-    call dein#add('shougo/neoyank.vim')
-    " - outline : unite helper - document outline                      {{{3
-    call dein#add('shougo/unite-outline')
-    " - unicode : unite helper - insert unicode                        {{{3
-    call dein#add('sanford1/unite-unicode')
-    " - bibtex : unite helper - BibTeX references                      {{{3
-    "   . do not check for python in nvim (see note above at 'nvim issues')
-    call dein#add('termoshtt/unite-bibtex', {
-                \ 'if' : '    exists(":terminal")'
-                \      . ' && executable("python")'
-                \      . ' && executable("pybtex")',
-                \ })
-    call dein#add('termoshtt/unite-bibtex', {
-                \ 'if' : '    exists(":shell")'
-                \      . ' && has("python")'
-                \      . ' && executable("python")'
-                \      . ' && executable("pybtex")',
-                \ })
-    " - global : unite helper - global/gtags                           {{{3
-    call dein#add('hewes/unite-gtags', {
+    " - session : denite helper - extra sources                        {{{3
+    call dein#add('chemzqm/denite-extra')
+    " - global : denite helper - global/gtags                          {{{3
+    call dein#add('ozelentok/denite-gtags', {
                 \ 'if' : 'executable("global")',
                 \ })
-    " - fonts : unite helper - font selector                           {{{3
-    call dein#add('ujihisa/unite-font')
-    " - colorscheme : unite helper - colorscheme selector              {{{3
-    call dein#add('ujihisa/unite-colorscheme')
     " bundles: cut and paste                                           {{{2
     " - highlightedyank : highlight yanked text                        {{{3
     call dein#add('machakann/vim-highlightedyank')
