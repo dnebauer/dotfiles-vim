@@ -104,17 +104,14 @@ endfunction                                                          " }}}2
 " python required by several plugins                                   {{{2
 " - in python 3.5 there is no python3 exe installed
 if VrcOS() ==# 'windows'
+    let s:path = expand("$APPDATA") . '\Local\Programs\Python'
     " python2
-    let s:exe = 'C:\Users\dtn\AppData\Local\Programs'
-                \ . '\Python\Python27\python.exe'
-    if filereadable(s:exe)
-        let g:python_host_prog = s:exe
-    endif
+    let s:exe = s:path . '\Python27\python.exe'
+    if filereadable(s:exe) | let g:python_host_prog = s:exe | endif
     unlet s:exe
     " python3
-    let s:path = 'C:\Users\dtn\AppData\Local\Programs\Python\'
-    let s:exes = [ s:path . 'Python35-32\python.exe',
-                \  s:path . 'Python35-64\python.exe']
+    let s:exes = [s:path . '\Python35-32\python.exe',
+                \ s:path . '\Python35-64\python.exe']
     for s:exe in s:exes
         if filereadable(s:exe)
             let g:python3_host_prog = s:exe
@@ -122,6 +119,14 @@ if VrcOS() ==# 'windows'
         endif
     endfor
     unlet s:path s:exe s:exes
+endif
+if exists(':terminal')
+    if !has('python')
+        echohl WarningMsg | echomsg 'Cannot load Python2' | echohl ErrorMsg
+    endif
+    if !has('python3')
+        echohl WarningMsg | echomsg 'Cannot load Python3' | echohl ErrorMsg
+    endif
 endif
 " dein requirements                                                    {{{2
 " - required tools: rsync, git                                         {{{3
@@ -170,16 +175,6 @@ endif
 if exists(':terminal') && VrcOS() ==# 'windows'
     let g:dein#install_max_processes = 1
 endif
-" nvim issues                                                          {{{2
-" - has("python") checks disabled                                      {{{3
-"   . have removed 'has("python")' from nvim checks because it
-"     results in nvim throwing endless errors, beginning with:
-"       Error detected while processing
-"       +/usr/share/nvim/runtime/autoload/provider/pythonx.vim
-"       E48: Not allowed in sandbox: function!
-"       + provider#pythonx#Require(host) abort
-"       E121: Undefined variable: a:host
-"       E15: Invalid expression: (a:host.orig_name ==# 'python') ? 2 : 3
 " set plugin directories                                               {{{2
 let s:plugins_dir = VrcVimPath('plug')
 function! VrcPluginsDir()
