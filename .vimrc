@@ -313,6 +313,15 @@ if dein#load_state(s:plugins_dir)
     "   . cannot load dependency via depends in vim or on_source in nvim
     call dein#add('kana/vim-textobj-user')
     call dein#add('kana/vim-textobj-entire')
+    " - unicode : unicode/digraph handling                             {{{2
+    call dein#add('chrisbra/unicode.vim', {
+                \ 'on_cmd'  : ['Digraphs',      'SearchUnicode',
+                \              'SearchUnicode', 'UnicodeName',
+                \              'UnicodeTable',  'DownloadUnicode'],
+                \ 'on_map'  : {'n': ['<C-x><C-g>', '<C-x><C-z>', '<F4>']},
+                \ 'on_func' : ['unicode#FindDigraphBy', 'unicode#UnicodeName',
+                \              'unicode#FindUnicodeBy', 'unicode#Digraph'],
+                \ })
     " bundles: encryption                                              {{{2
     " - gnupg : transparently edit gpg-encrypted files                 {{{3
     call dein#add('jamessan/vim-gnupg')
