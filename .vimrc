@@ -577,7 +577,6 @@ if dein#load_state(s:plugins_dir)
                 \             'TagbarDebug',         'TagbarDebugEnd'],
                 \ })
     " - [various] : colour schemes                                     {{{3
-    "   TODO: possibly load based on colorscheme-related commands
     call dein#add('atelierbram/vim-colors_atelier-schemes')  " atelier
     call dein#add('w0ng/vim-hybrid')                         " hybrid
     call dein#add('jonathanfilip/vim-lucius')                " lucius
