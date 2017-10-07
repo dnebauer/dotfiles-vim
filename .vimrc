@@ -180,16 +180,6 @@ endif
 "       + provider#pythonx#Require(host) abort
 "       E121: Undefined variable: a:host
 "       E15: Invalid expression: (a:host.orig_name ==# 'python') ? 2 : 3
-" - fix cursor shape                                                   {{{3
-"   . from https://github.com/neovim/neovim/wiki/FAQ
-"     +#how-can-i-change-the-cursor-shape-in-the-terminal
-"   . make cursor a pipe in insert mode and a block in normal mode
-"   . this is a temporary fix and another solution may be
-"     implemented in the future
-"   . variable name must be in uppercase
-if exists(':terminal')
-    let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
-endif
 " set plugin directories                                               {{{2
 let s:plugins_dir = VrcVimPath('plug')
 function! VrcPluginsDir()
