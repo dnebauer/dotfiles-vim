@@ -586,6 +586,7 @@ if dein#load_state(s:plugins_dir)
     call dein#add('vim-scripts/print_bw.zip')                " print_bw
     call dein#add('jpo/vim-railscasts-theme')                " railscast
     call dein#add('altercation/vim-colors-solarized')        " solarized
+    call dein#add('icymind/NeoSolarized')                    " neosolarized
     call dein#add('jnurmine/zenburn', {
                 \ 'if' : '     v:version >= 704'
                 \      . ' &&  has("patch-7.4.1826")',

@@ -100,6 +100,9 @@ function! VrcSetColorScheme(gui, term)
         if     a:gui ==# 'solarized'
             set background=dark
             colorscheme solarized
+        elseif a:gui ==# 'neosolarized'
+            set background=dark
+            colorscheme neosolarized
         elseif a:gui ==# 'peaksea'
             set background=dark
             colorscheme peaksea
@@ -135,6 +138,8 @@ function! VrcSetColorScheme(gui, term)
         set t_Co=256    " improves all themes in terminals
         if     a:term ==# 'solarized'
             colorscheme solarized
+        elseif a:term ==# 'neosolarized'
+            colorscheme neosolarized
         elseif a:term ==# 'peaksea'
             colorscheme peaksea
         elseif a:term ==# 'desert'
