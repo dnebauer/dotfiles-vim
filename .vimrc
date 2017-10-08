@@ -314,14 +314,10 @@ if dein#load_state(s:plugins_dir)
     call dein#add('kana/vim-textobj-user')
     call dein#add('kana/vim-textobj-entire')
     " - unicode : unicode/digraph handling                             {{{2
-    call dein#add('chrisbra/unicode.vim', {
-                \ 'on_cmd'  : ['Digraphs',      'SearchUnicode',
-                \              'SearchUnicode', 'UnicodeName',
-                \              'UnicodeTable',  'DownloadUnicode'],
-                \ 'on_map'  : {'n': ['<C-x><C-g>', '<C-x><C-z>', '<F4>']},
-                \ 'on_func' : ['unicode#FindDigraphBy', 'unicode#UnicodeName',
-                \              'unicode#FindUnicodeBy', 'unicode#Digraph'],
-                \ })
+    "   . using 'on_cmd' results in error in airline plugin:
+    "     'E117: Unknown function: airline#extensions#unicode#init'
+    "   . so load on startup
+    call dein#add('chrisbra/unicode.vim')
     " bundles: encryption                                              {{{2
     " - gnupg : transparently edit gpg-encrypted files                 {{{3
     call dein#add('jamessan/vim-gnupg')
@@ -635,9 +631,13 @@ if dein#load_state(s:plugins_dir)
     call dein#add('xolox/vim-shell', {
                 \ 'if' : 'executable("ctags")',
                 \ })
+    "" - easytags : automated tag generation                            {{{3
+    "call dein#add('xolox/vim-easytags', {
+    "            \ 'if' : 'executable("ctags")',
+    "            \ })
     " - easytags : automated tag generation                            {{{3
-    call dein#add('xolox/vim-easytags', {
-                \ 'if' : 'executable("ctags")',
+    call dein#add('jsfaint/gen_tags.vim', {
+                \ 'if' : 'executable("ctags") || executable("gtags")',
                 \ })
     " bundles: version control                                         {{{2
     " - gitgutter : git giff symbols in gutter                         {{{3
