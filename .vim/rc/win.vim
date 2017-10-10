@@ -1,17 +1,17 @@
 " Vim configuration: MS Windows-specific
 
-" Windows only                                                         {{{1
+" Windows only    {{{1
 if VrcOS() !=# 'windows'
     finish
 endif
 
-" Set mouse and selection behaviour                                    {{{1
+" Set mouse and selection behaviour    {{{1
 behave mswin
 
-" Set cut, copy and paste keys                                         {{{1
+" Set cut, copy and paste keys    {{{1
 source $VIMRUNTIME/mswin.vim
 
-" Set diffexpr (no 'diff' in windows)                                  {{{1
+" Set diffexpr (no 'diff' in windows)    {{{1
 set diffexpr=MyDiff()
 function MyDiff()
     let l:opt = '-a --binary '
@@ -42,6 +42,6 @@ function MyDiff()
     if exists('l:shxq_sav')
         let &shellxquote=l:shxq_sav
     endif
-endfunction                                                          " }}}1
+endfunction    " }}}1
 
 " vim: set foldmethod=marker :

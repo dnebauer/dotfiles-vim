@@ -1,12 +1,12 @@
 " Vim configuration: xml file support
 
 function! s:XmlSupport()
-    " fold by syntax                                                   {{{1
+    " fold by syntax    {{{1
     setlocal foldmethod=syntax
-    " vim omnicompletion                                               {{{1
+    " vim omnicompletion    {{{1
     if exists(':shell')
         setlocal omnifunc=xmlcomplete#CompleteTags
-    endif                                                            " }}}1
+    endif    " }}}1
 endfunction
 
 augroup vrc_xml_files

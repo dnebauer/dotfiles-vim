@@ -1,8 +1,8 @@
 " Vim configuration: bash file support
 
 function! s:BashSupport()
-    " syntax checker shellcheck follows files ('-x')                   {{{1
-    " syntastic (vim)                                                  {{{2
+    " syntax checker shellcheck follows files ('-x')    {{{1
+    " syntastic (vim)    {{{2
     if exists(':shell')
         " - ensure relevant variable exists and is a list
         if exists('g:syntastic_bash_shellcheck_args')
@@ -20,7 +20,7 @@ function! s:BashSupport()
             call add(g:syntastic_bash_shellcheck_args, l:arg)
         endif
     endif
-    " neomake (nvim)                                                   {{{2
+    " neomake (nvim)    {{{2
     if exists(':terminal')
         " - ensure relevant variable exists and is a list
         if exists('g:neomake_bash_shellcheck_args')
@@ -37,8 +37,8 @@ function! s:BashSupport()
         if !count(g:neomake_bash_shellcheck_args, l:arg)
             call add(g:neomake_bash_shellcheck_args, l:arg)
         endif
-    endif                                                            " }}}2
-                                                                     " }}}1
+    endif    " }}}2
+    " }}}1
 endfunction
 
 augroup vrc_bash_files

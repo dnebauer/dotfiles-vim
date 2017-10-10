@@ -1,8 +1,8 @@
 " Vim configuration: sh file support
 
 function! s:ShSupport()
-    " syntax checker shellcheck follows files ('-x')                   {{{1
-    " syntastic (vim)                                                  {{{2
+    " syntax checker shellcheck follows files ('-x')    {{{1
+    " syntastic (vim)    {{{2
     if exists(':shell')
         " - ensure relevant variable exists and is a list
         if exists('g:syntastic_sh_shellcheck_args')
@@ -20,7 +20,7 @@ function! s:ShSupport()
             call add(g:syntastic_sh_shellcheck_args, l:arg)
         endif
     endif
-    " neomake (nvim)                                                   {{{2
+    " neomake (nvim)    {{{2
     if exists(':terminal')
         " - ensure relevant variable exists and is a list
         if exists('g:neomake_sh_shellcheck_args')
@@ -37,8 +37,8 @@ function! s:ShSupport()
         if !count(g:neomake_sh_shellcheck_args, l:arg)
             call add(g:neomake_sh_shellcheck_args, l:arg)
         endif
-    endif                                                            " }}}2
-                                                                     " }}}1
+    endif    " }}}2
+    " }}}1
 endfunction
 
 augroup vrc_sh_files

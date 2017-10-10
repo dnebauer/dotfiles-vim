@@ -1,10 +1,10 @@
 " Vim configuration: nsis file support
 
 function! s:NsisSupport()
-    " autodetect nsis header files                                     {{{1
+    " autodetect nsis header files    {{{1
     " - vim autodetects nsis script files ('*.nsi') as filetype 'nsis'
     " - vim does not autodetect nsis header files ('*.nsh') filetype
-    setlocal filetype=nsis                                           " }}}1
+    setlocal filetype=nsis    " }}}1
 endfunction
 
 augroup vrc_nsis_files

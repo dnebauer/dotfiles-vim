@@ -1,6 +1,6 @@
 " Vim configuration: user interface
 
-" Basic settings                                                       {{{1
+" Basic settings    {{{1
 " - minimum number of lines visible above/below cursor
 set scrolloff=3
 " - show mode in last line
@@ -45,7 +45,7 @@ set showmatch
 set updatetime=250
 let g:gitgutter_max_signs = 2000
 
-" GUI options                                                          {{{1
+" GUI options    {{{1
 " - a,A = visual selection globally available for pasting,
 " - g = inactive menu items display but greyed out,
 " - i = use vim icon,
@@ -57,7 +57,7 @@ let g:gitgutter_max_signs = 2000
 "   that occurred ~ ver 1:6.3-013+2
 set guioptions=aAgimLtT
 
-" Console menu (<F4>)                                                  {{{1
+" Console menu (<F4>)    {{{1
 if !has('gui_running')
     source $VIMRUNTIME/menu.vim
     set wildmenu
@@ -66,7 +66,7 @@ if !has('gui_running')
     nnoremap <F4> :emenu <C-Z>
 endif
 
-" Fonts                                                                {{{1
+" Fonts    {{{1
 " - useful utilities for determining fonts: xfontsel, xlsfonts
 " - guifont: any spaces after commas must be escaped
 "            cannot use quotes around font name
@@ -85,11 +85,11 @@ else  " no gui
     set guifont=-unknown-freesans-medium-r-normal--0-0-0-0-p-0-iso10646-1
 endif
 
-" Outline viewer (<F8>)                                                {{{1
+" Outline viewer (<F8>)    {{{1
 nnoremap <F8> :TagbarToggle<CR>
 
-" Colour scheme                                                        {{{1
-" function VrcSetColorScheme(gui, term)                                {{{2
+" Colour scheme    {{{1
+" function VrcSetColorScheme(gui, term)    {{{2
 " intent: set colour scheme
 " params: gui  - gvim colour scheme key
 "         term - vim colour scheme key
@@ -167,8 +167,8 @@ function! VrcSetColorScheme(gui, term)
             echoerr l:msg
         endif
     endif
-endfunction                                                     " }}}2
-" - set colour schemes                                            {{{2
+endfunction    " }}}2
+" - set colour schemes    {{{2
 "   1 - gui/gvim = solarized|peaksea|desert|hybrid|railscasts|zenburn|
 "                  lucius|atelierheath|atelierforest|papercolor
 "   2 - term/vim = solarized|peaksea|desert|hybrid|railscasts|zenburn|
@@ -181,8 +181,8 @@ call VrcSetColorScheme('peaksea', 'desert')
 "     may load the default colour scheme before toggling
 call togglebg#map('<F5>')
 
-" Status line                                                          {{{1
+" Status line    {{{1
 " - display all buffers when only one is open
-let g:airline#extensions#tabline#enabled = 1                         " }}}1
+let g:airline#extensions#tabline#enabled = 1    " }}}1
 
 " vim: set foldmethod=marker :

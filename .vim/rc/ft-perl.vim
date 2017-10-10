@@ -1,7 +1,7 @@
 " Vim configuration: perl file support
 
 function! s:PerlSupport()
-    " tagbar support                                                   {{{1
+    " tagbar support    {{{1
     " - from https://github.com/majutsushi/tagbar/wiki
     " - based on ctags settings in ctags config file
     " - ctags config file provided by debian package 'dn-ctags-conf'
@@ -12,14 +12,14 @@ function! s:PerlSupport()
             \                 'r:role'],
             \ 'sro'        : '::',
             \ 'kind2scope' : {},
-            \ }                                                      " }}}1
-    " vim omnicompletion                                               {{{1
+            \ }    " }}}1
+    " vim omnicompletion    {{{1
     " - plugin: perlomni.vim
     if !exists('g:neocomplete#sources#omni#input_patterns')
         let g:neocomplete#sources#omni#input_patterns = {}
     endif
     let g:neocomplete#sources#omni#input_patterns.perl =
-                \ '[^. \t]->\%(\h\w*\)\?\|\h\w*::\%(\h\w*\)\?'       " }}}1
+                \ '[^. \t]->\%(\h\w*\)\?\|\h\w*::\%(\h\w*\)\?'    " }}}1
 endfunction
 
 augroup vrc_perl_files

@@ -1,11 +1,11 @@
 " Vim configuration: java file support
 
 function! s:JavaSupport()
-    " vim omnicompletion                                               {{{1
+    " vim omnicompletion    {{{1
     if exists(':shell')
         setlocal omnifunc=javacomplete#Complete
     endif
-    " nvim completion with deoplete                                    {{{1
+    " nvim completion with deoplete    {{{1
     if exists(':terminal')
         if !exists('g:deoplete#omni#input_patterns')
             let g:deoplete#omni#input_patterns = {}
@@ -17,7 +17,7 @@ function! s:JavaSupport()
                     \ '\s[A-Z][a-z]',
                     \ '^\s*@[A-Z][a-z]',
                     \ ]
-    endif                                                            " }}}1
+    endif    " }}}1
 endfunction
 
 augroup vrc_java_files

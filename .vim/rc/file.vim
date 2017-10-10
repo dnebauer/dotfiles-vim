@@ -1,7 +1,7 @@
 " Vim configuration: file exploring
 
-" Directory of active buffer : %%                                      {{{1
+" Directory of active buffer : %%    {{{1
 cnoremap <expr> %%  getcmdtype() == ':' ? expand('%:h').'/' : '%%'
-                                                                     " }}}1
+" }}}1
 
 " vim: set foldmethod=marker :

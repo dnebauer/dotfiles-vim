@@ -1,8 +1,8 @@
 " Vim configuration: txt2tags file support
 
 function! s:Txt2tagsSupport()
-    " force filetype to 'txt2tags' for syntax support                  {{{1
-    setlocal filetype=txt2tags                                       " }}}1
+    " force filetype to 'txt2tags' for syntax support    {{{1
+    setlocal filetype=txt2tags    " }}}1
 endfunction
 
 augroup vrc_txt2tags_files

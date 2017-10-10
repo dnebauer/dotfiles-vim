@@ -1,9 +1,9 @@
 " Vim configuration: saving and closing buffers
 
-" Reread file if changed outside vim                                   {{{1
+" Reread file if changed outside vim    {{{1
 set autoread
 
-" History                                                              {{{1
+" History    {{{1
 " - don't keep a backup file
 set nobackup
 " - remember marks for 20 previous files
@@ -25,9 +25,9 @@ if VrcOS() ==# 'windows'
     set undodir=C:/Windows/Temp
 endif
 
-" Autosave if buffer loses focus                                       {{{1
+" Autosave if buffer loses focus    {{{1
 set autowrite
-" - function VrcSaveOnFocusLost()                                      {{{2
+" - function VrcSaveOnFocusLost()    {{{2
 "   intent: save buffer if focus is lost
 "   params: nil
 "   return: nil
@@ -37,13 +37,13 @@ function! VrcSaveOnFocusLost()
         :wall
     catch /^Vim\((\a\+)\)\=:E141:/ |
     endtry
-endfunction                                                          " }}}2
+endfunction    " }}}2
 augroup vrc_save_on_focus_lost
     autocmd!
     autocmd FocusLost * call VrcSaveOnFocusLost()
 augroup END
 
-" Save and exit mappings                                               {{{1
+" Save and exit mappings    {{{1
 " - save file [N,V,I] : <C-s>
 nnoremap <C-s> :update<CR>
 vnoremap <C-s> <Esc>:update<CR>gv
@@ -57,5 +57,6 @@ vnoremap ZQ <Esc>ZQ
 " - update and switch windows [N,I] : <C-w><C-w>
 inoremap <C-w><C-w> <Esc>:update<CR><C-w><C-w>
 nnoremap <C-w><C-w> :update<CR><C-w><C-w>
+" }}}1
 
 " vim: set foldmethod=marker :

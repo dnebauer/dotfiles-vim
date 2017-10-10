@@ -1,7 +1,7 @@
 " Vim configuration: haskell file support
 
 function! s:HaskellSupport()
-    " tagbar support                                                   {{{1
+    " tagbar support    {{{1
     " - from https://github.com/majutsushi/tagbar/wiki
     if executable('hasktags')
         let g:tagbar_type_haskell = {
@@ -25,7 +25,7 @@ function! s:HaskellSupport()
             \ 'scope2kind' : { 'module' : 'm', 'class' : 'c',
             \                  'data'   : 'd', 'type'  : 't'},
         \ }
-    endif                                                            " }}}1
+    endif    " }}}1
 endfunction
 
 augroup vrc_haskell_files

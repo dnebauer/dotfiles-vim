@@ -1,7 +1,7 @@
 " Vim configuration: javascript file support
 
 function! s:JavascriptSupport()
-    " vim omnicompletion with neocomplete                              {{{1
+    " vim omnicompletion with neocomplete    {{{1
     if exists(':shell')
         setlocal omnifunc=javascriptcomplete#CompleteJS
         " these vars suggested on carlitux/deoplete-ternjs github readme
@@ -15,7 +15,7 @@ function! s:JavascriptSupport()
         endif
     endif
 
-    " nvim completion using deoplete                                   {{{1
+    " nvim completion using deoplete    {{{1
     if exists(':terminal')
         if !exists('g:deoplete#omni#input_patterns')
             let g:deoplete#omni#input_patterns = {}
@@ -24,7 +24,7 @@ function! s:JavascriptSupport()
         " these vars suggested on carlitux/deoplete-ternjs github readme
         let g:tern_request_timeout       = 1
         let g:tern_show_signature_in_pum = 0  " disable full signature
-    endif                                                            " }}}1
+    endif    " }}}1
 endfunction
 
 augroup vrc_javascript_files

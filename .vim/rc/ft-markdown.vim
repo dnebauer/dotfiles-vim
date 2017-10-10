@@ -1,7 +1,7 @@
 " Vim configuration: markdown file support
 
 function! s:MarkdownSupport()
-    " tagbar support                                                   {{{1
+    " tagbar support    {{{1
     " - from https://github.com/majutsushi/tagbar/wiki
     let l:bin = VrcPluginsDir()
                 \ . '/repos/github.com'
@@ -17,14 +17,14 @@ function! s:MarkdownSupport()
                     \ 'sort'       : 0,
                     \ }
     endif
-    " improve sentence text object                                     {{{1
+    " improve sentence text object    {{{1
     call textobj#sentence#init()
-    " add system dictionary to word completions                        {{{1
+    " add system dictionary to word completions    {{{1
     setlocal complete+=k
-    " vim omnicompletion                                               {{{1
+    " vim omnicompletion    {{{1
     if exists(':shell')
         setlocal omnifunc=htmlcomplete#CompleteTags
-    endif
+    endif    " }}}1
 endfunction
 
 augroup vrc_markdown_files

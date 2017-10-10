@@ -1,7 +1,7 @@
 " Vim configuration: vim (and vimrc) file support
 
 function! s:VimSupport()
-    " syntax checker: set syntastic to use 'vint'                      {{{1
+    " syntax checker: set syntastic to use 'vint'    {{{1
     " - syntastic is used in vim
     if exists(':shell')
         " - ensure vint is installed
@@ -31,19 +31,19 @@ function! s:VimSupport()
         else
             echoerr "Vim syntax checker 'vint' is not available"
         endif
-    endif                                                            " }}}1"
-    " K command: use internal vim help                                 {{{1
-    setlocal keywordprg=:help                                        " }}}1
+    endif    " }}}1
+    " K command: use internal vim help    {{{1
+    setlocal keywordprg=:help    " }}}1
 endfunction
-" have to wrap next function in exists() check                         {{{1
+" have to wrap next function in exists() check    {{{1
 " sourcing .vimrc results in trying to define this
 " function it is executing, which results in E127
-" "Cannot redefine function ... It is in use";
-" do check for existence before defining                               }}}1
+" 'Cannot redefine function ... It is in use';
+" do check for existence before defining    }}}1
 if !exists('*s:VimrcSupport')
     function! s:VimrcSupport()
-        " reload after changing                                        {{{1
-        source $HOME/.vimrc                                          " }}}1
+        " reload after changing    {{{1
+        source $HOME/.vimrc    " }}}1
     endfunction
 endif
 

@@ -1,14 +1,14 @@
 " Vim configuration: tex file support
 
 function! s:TexSupport()
-    " nvim completion using deoplete                                   {{{1
+    " nvim completion using deoplete    {{{1
     if exists(':terminal')
-        " keyword patterns                                             {{{2
+        " keyword patterns    {{{2
         if !exists('let g:deoplete#keyword_patterns')
             let g:deoplete#keyword_patterns = {}
         endif
         let g:deoplete#keyword_patterns.tex = '[^\w|\s][a-zA-Z_]\w*'
-        " input patterns                                               {{{2
+        " input patterns    {{{2
         if !exists('g:deoplete#omni#input_patterns')
             let g:deoplete#omni#input_patterns = {}
         endif
@@ -19,7 +19,7 @@ function! s:TexSupport()
                     \ . '|includegraphics\*?%(\s*\[[^]]*\]){0,2}\s*\{[^}]*'
                     \ . '|%(include%(only)?|input)\s*\{[^}]*'
                     \ . ')'
-    endif                                                            " }}}1
+    endif    " }}}1
 endfunction
 
 augroup vrc_tex_files

@@ -1,10 +1,10 @@
 " Vim configuration: html file support
 
 function! s:HtmlSupport()
-    " vim-specific omnicompletion                                      {{{1
+    " vim-specific omnicompletion    {{{1
     if exists(':shell')
         setlocal omnifunc=htmlcomplete#CompleteTags
-    endif                                                            " }}}1
+    endif    " }}}1
 endfunction
 
 augroup vrc_html_files
