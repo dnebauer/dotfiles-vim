@@ -204,7 +204,7 @@ if dein#load_state(s:plugins_dir)
     " - vimproc : asynchronous execution                               {{{3
     "   . build default is 'make' except for MinGW on windows
     let s:vimproc_build_cmd = 'make'
-    if executable('mingw32-make') 
+    if executable('mingw32-make')
                 \ && ( has('win64') || has('win32') || has('win32unix') )
         let s:vimproc_build_cmd = 'mingw32-make -f ' . (
                     \ has('win64')     ? 'make_mingw64.mak'                :
@@ -313,7 +313,7 @@ if dein#load_state(s:plugins_dir)
     "   . cannot load dependency via depends in vim or on_source in nvim
     call dein#add('kana/vim-textobj-user')
     call dein#add('kana/vim-textobj-entire')
-    " - unicode : unicode/digraph handling                             {{{2
+    " - unicode : unicode/digraph handling                             {{{3
     "   . using 'on_cmd' results in error in airline plugin:
     "     'E117: Unknown function: airline#extensions#unicode#init'
     "   . so load on startup
@@ -631,14 +631,23 @@ if dein#load_state(s:plugins_dir)
     call dein#add('xolox/vim-shell', {
                 \ 'if' : 'executable("ctags")',
                 \ })
-    "" - easytags : automated tag generation                            {{{3
-    "call dein#add('xolox/vim-easytags', {
-    "            \ 'if' : 'executable("ctags")',
-    "            \ })
+    " - [select] : specify which tag plugin(s) to load                 {{{3
+    let s:tag_plugins = ['gen_tags']  " can be 'easytags'±'gen_tags'
     " - easytags : automated tag generation                            {{{3
-    call dein#add('jsfaint/gen_tags.vim', {
-                \ 'if' : 'executable("ctags") || executable("gtags")',
-                \ })
+    if count(s:tag_plugins, 'easytags')
+        call dein#add('xolox/vim-easytags', {
+                    \ 'if' : 'executable("ctags")',
+                    \ })
+    endif
+    " - gen_tags : automated tag generation                            {{{3
+    if count(s:tag_plugins, 'gen_tags')
+        if !executable('ctags') | let g:loaded_gentags#ctags = 1 | endif
+        if !executable('gtags') | let g:loaded_gentags#gtags = 1 | endif
+        call dein#add('jsfaint/gen_tags.vim', {
+                    \ 'if' : 'executable("ctags") || executable("gtags")',
+                    \ })
+    endif
+    unlet s:tag_plugins
     " bundles: version control                                         {{{2
     " - gitgutter : git giff symbols in gutter                         {{{3
     call dein#add('airblade/vim-gitgutter', {
@@ -707,7 +716,7 @@ if dein#load_state(s:plugins_dir)
                 \ 'on_ft' : ['java'],
                 \ })
     " bundles: javascript support                                      {{{2
-    " - tern + jcstags : javascript tag generator                      {{{3
+    " - tern + jsctags : javascript tag generator                      {{{3
     " - jsctags install details                                        {{{4
     "   . provides tag support for javascript
     "   . is installed by npm as binaries

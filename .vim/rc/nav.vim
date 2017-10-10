@@ -47,8 +47,29 @@ omap T <Plug>Sneak_T
 
 " Tags                                                                 {{{1
 " - asynchronous updating                                              {{{2
-if executable('ctags')
-    let g:easytags_async = 1
+"   . easytags plugin
+if exists(':UpdateTags') | let g:easytags_async = 1 | endif
+" - autogeneration                                                     {{{2
+"   . gen_tags plugin
+if exists(':GenCtags') | let g:gen_tags#ctags_auto_gen = 1 | endif
+if exists(':GenGTAGS') | let g:gen_tags#gtags_auto_gen = 1 | endif
+" - other tools providing ctags-compatible output                      {{{2
+" -- phpctags                                                          {{{3
+" --- easytags plugin
+if !exists('g:easytags_languages') | let g:easytags_languages = {} | endif
+let s:cmd = $HOME . '/.cache/dein/repos/github.com/vim-php/'
+            \ . 'tagbar-phpctags.vim/bin/phpctags'
+if filereadable(s:cmd)
+    let g:easytags_languages.php = {'cmd' : s:cmd} 
+endif
+unlet s:cmd
+" -- jsctags                                                           {{{3
+" --- easytags plugin
+if filereadable('jsctags')
+    let g:easytags_languages.php = {
+                \ 'cmd'          : 'jsctags',
+                \ 'recurse_flag' : '',
+                \ }
 endif
 
 " Terminal window navigation (nvim-only)                               {{{1
