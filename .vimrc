@@ -354,7 +354,7 @@ if dein#load_state(s:plugins_dir)
     call dein#add('chemzqm/denite-extra')
     " - global : denite helper - global/gtags    {{{3
     call dein#add('ozelentok/denite-gtags', {
-                \ 'if' : 'executable("global")',
+                \ 'if' : 'executable("global") && executable("gtags")',
                 \ })
     " bundles: cut and paste    {{{2
     " - highlightedyank : highlight yanked text    {{{3
@@ -631,23 +631,33 @@ if dein#load_state(s:plugins_dir)
     call dein#add('xolox/vim-shell', {
                 \ 'if' : 'executable("ctags")',
                 \ })
-    " - [select] : specify which tag plugin(s) to load    {{{3
-    let s:tag_plugins = ['gen_tags']  " can be 'easytags'±'gen_tags'
-    " - easytags : automated tag generation    {{{3
-    if count(s:tag_plugins, 'easytags')
-        call dein#add('xolox/vim-easytags', {
-                    \ 'if' : 'executable("ctags")',
-                    \ })
-    endif
+    " - [tag generators] : decide which tag plugin to load    {{{3
+    "   . prefer gen_tags over easytags unless
+    "     file 'vimrc_prefer_easytags' is present
+    "   . to use gen_tags, need executables 'global' and 'gtags'
+    "   . to use easytags, need executable 'ctags'
+    let s:prefer_easytags = resolve(expand('<sfile>:p:h'))
+                \ . '/.vimrc_prefer_easytags'
+    let s:added_plugin = 0
     " - gen_tags : automated tag generation    {{{3
-    if count(s:tag_plugins, 'gen_tags')
+    if !s:added_plugin && !filereadable(s:prefer_easytags) 
+                \ && executable('global') && executable('gtags')
         if !executable('ctags') | let g:loaded_gentags#ctags = 1 | endif
-        if !executable('gtags') | let g:loaded_gentags#gtags = 1 | endif
-        call dein#add('jsfaint/gen_tags.vim', {
-                    \ 'if' : 'executable("ctags") || executable("gtags")',
-                    \ })
+        call dein#add('jsfaint/gen_tags.vim')
+        let s:added_plugin = 1
     endif
-    unlet s:tag_plugins
+    " - easytags : automated tag generation    {{{3
+    if !s:added_plugin && executable('ctags')
+        call dein#add('xolox/vim-easytags')
+        let s:added_plugin = 1
+    endif
+    " - [tag generators] : warn user if none loaded    {{{3
+    if !s:added_plugin
+        echomsg 'Did not load any of these tag generation plugins:'
+        echomsg '- xolox/vim-easytags'
+        echomsg '- jsfaint/gen_tags.vim'
+    endif
+    unlet s:prefer_easytags s:added_plugin
     " bundles: version control    {{{2
     " - gitgutter : git giff symbols in gutter    {{{3
     call dein#add('airblade/vim-gitgutter', {
