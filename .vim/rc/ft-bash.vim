@@ -3,7 +3,7 @@
 function! s:BashSupport()
     " syntax checker shellcheck follows files ('-x')    {{{1
     " syntastic (vim)    {{{2
-    if exists(':shell')
+    if exists(':shell') && exists(':SyntasticCheck')
         " - ensure relevant variable exists and is a list
         if exists('g:syntastic_bash_shellcheck_args')
             if type(g:syntastic_bash_shellcheck_args) != type([])
@@ -21,7 +21,7 @@ function! s:BashSupport()
         endif
     endif
     " neomake (nvim)    {{{2
-    if exists(':terminal')
+    if exists(':terminal') && exists(':Neomake')
         " - ensure relevant variable exists and is a list
         if exists('g:neomake_bash_shellcheck_args')
             if type(g:neomake_bash_shellcheck_args) != type([])

@@ -3,7 +3,7 @@
 function! s:VimSupport()
     " syntax checker: set syntastic to use 'vint'    {{{1
     " - syntastic is used in vim
-    if exists(':shell')
+    if exists(':shell') && exists(':SyntasticCheck')
         " - ensure vint is installed
         let l:check_cmd = 'python -c "import vint"'
         call system(l:check_cmd)
