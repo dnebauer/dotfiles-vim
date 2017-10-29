@@ -643,39 +643,77 @@ if dein#load_state(s:plugins_dir)
     " - numbers : number <->relativenumber switching    {{{3
     call dein#add('myusuf3/numbers.vim')
     " bundles: linting    {{{2
-    function! VrcUpdateLintEngines(engines)    " {{{4
+    function! VrcPipInstall(pkg)    " {{{4
+        if executable('pip')
+            call system('pip install --upgrade ' . a:pkg)
+        endif
+        if executable('pip3')
+            call system('pip3 install --upgrade ' . a:pkg)
+        endif
+    endfunction
+    function! VrcNpmInstall(pkg)    " {{{4
+        let l:install_pkg = 1
+        if executable('npm-name')
+            call system('npm-name ' . a:pkg)
+            let l:install_pkg = v:shell_error
+        endif
+        if l:install_pkg
+            call system('npm --global install ' . a:pkg)
+        endif
+        call system('npm --global update ' . a:pkg)
+    endfunction
+    function! VrcGemInstall(pkg)    " {{{4
+        if executable('gem')
+            call system('sudo gem install ' . a:pkg)
+        endif
+    endfunction
+    function! VrcUpdateLinters(engines)    " {{{4
         if type(a:engines) != type([])  " script error
             echoerr 'Engines variable is not a list'
             return
         endif
         for l:engine in a:engines
-            if     l:engine ==# 'vint'
-                if executable('pip')
-                    call system('pip install --upgrade vim-vint')
-                endif
-                if executable('pip3')
-                    call system('pip3 install --upgrade vim-vint')
-                endif
-                continue
+            if     l:engine ==# 'autopep8'              " autopep8
+                call VrcPipInstall('autopep8')
+            elseif l:engine ==# 'flake8'                " flake8
+                call VrcPipInstall('flake8')
+            elseif l:engine ==# 'mdl'                   " mdl
+                call VrcGemInstall('mdl')
+            elseif l:engine ==# 'proselint'             " proselint
+                call VrcPipInstall('proselint')
+            elseif l:engine ==# 'remark-lint'           " remark-lint
+                call VrcNpmInstall('remark-lint')
+            elseif l:engine ==# 'rubocop'               " rubocop
+                call VrcGemInstall('rubocop')
+            elseif     l:engine ==# 'vim-vint'          " vim-vint
+                call VrcPipInstall('vim-vint')
+            elseif l:engine ==# 'write-good'            " write-good
+                call VrcNpmInstall('write-good')
+            else
+                echoerr "Unknown linter keyword '" . l:engine . "'"
             endif
         endfor
     endfunction    " }}}4
     " - ale : linter for vim/nvim    {{{3
-    function! VrcAleLintEngines()    " {{{4
-        call VrcUpdateLintEngines(['vint'])
+    function! VrcAleLinters()    " {{{4
+        call VrcUpdateLinters([
+                    \ 'write-good',  'proselint', 'mdl',
+                    \ 'remark-lint', 'vim-vint',  'flake8',
+                    \ 'autopep8', 'rubocop',
+                    \ ])
     endfunction    " }}}4
     if VrcLinterEngine() ==# 'ale'
         call dein#add('w0rp/ale', {
-                    \ 'hook_post_update' : function('VrcAleLintEngines'),
+                    \ 'hook_post_update' : function('VrcAleLinters'),
                     \ })
     endif
     " - neomake : linter for vim/nvim    {{{3
-    function! VrcNeomakeLintEngines()    " {{{4
-        call VrcUpdateLintEngines(['vint'])
+    function! VrcNeomakeLinters()    " {{{4
+        call VrcUpdateLinters(['vim-vint'])
     endfunction    " }}}4
     if VrcLinterEngine() ==# 'neomake'
         call dein#add('neomake/neomake', {
-                    \ 'hook_post_update' : function('VrcNeomakeLintEngines'),
+                    \ 'hook_post_update' : function('VrcNeomakeLinters'),
                     \ })
     endif
     " - syntastic : linter for vim    {{{3
