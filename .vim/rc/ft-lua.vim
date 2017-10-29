@@ -9,11 +9,17 @@ function! s:LuaSupport()
         let g:deoplete#omni#functions.lua = 'xolox#lua#omnifunc'
     endif
     " linting    {{{1
-    if exists(':SyntasticCheck')  " syntastic
+    " ale    {{{2
+    if VrcLinterEngine() ==# 'ale'
+        let g:ale_lua_luacheck_options = '--no-unused-args'
+    endif
+    " syntastic    {{{2
+    if VrcLinterEngine() ==# 'syntastic'
         let g:syntastic_check_on_open     = 1
         let g:syntastic_lua_checkers      = ['luac', 'luacheck']
         let g:syntastic_lua_luacheck_args = '--no-unused-args'
-    endif    " }}}1
+    endif
+    " }}}1
 endfunction
 
 augroup vrc_lua_files

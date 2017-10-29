@@ -19,7 +19,17 @@ function! s:PerlSupport()
         let g:neocomplete#sources#omni#input_patterns = {}
     endif
     let g:neocomplete#sources#omni#input_patterns.perl =
-                \ '[^. \t]->\%(\h\w*\)\?\|\h\w*::\%(\h\w*\)\?'    " }}}1
+                \ '[^. \t]->\%(\h\w*\)\?\|\h\w*::\%(\h\w*\)\?'
+    " linting    {{{1
+    " ale    {{{2
+    " - include t/lib in module search path    {{{3
+    let g:ale_perl_perl_options = '-c -Mwarnings -Ilib -It/lib'
+    " - show Perl::Critic rules that are violated    {{{3
+    let g:ale_perl_perlcritic_showrules = 1
+    " - display Perl::Critic violations as warnings, not errors    {{{3
+    if !exists('g:ale_type_map') | let g:ale_type_map = {} | endif
+    let g:ale_type_map.perlcritic = {'ES': 'WS', 'E': 'W'}
+    " }}}1
 endfunction
 
 augroup vrc_perl_files

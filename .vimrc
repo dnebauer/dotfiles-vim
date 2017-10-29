@@ -9,7 +9,9 @@
 "   . nvim: if exists(':terminal')    }}}2
 
 " UTILITY FUNCTIONS:    {{{1
-" only functions used in multiple subsidiary configuration files
+" include here only functions that:
+" - are used in multiple subsidiary configuration files
+" - pass a script variable to a subsidiary configuration file or files
 " function VrcOS()    {{{2
 " intent: determine operating system
 " params: nil
@@ -97,7 +99,45 @@ function! VrcSource(dir, self)
             execute 'source' l:path
         endif
     endfor
-endfunction    " }}}2
+endfunction
+" function VrcPluginsDir()    {{{2
+" intent: provide plugins directory
+" params: nil
+" prints: nil
+" return: plugins directory
+let s:plugins_dir = VrcVimPath('plug')
+function! VrcPluginsDir()
+    return s:plugins_dir
+endfunction
+" function VrcLinterEngine()    {{{2
+" intent: provide linter engine
+" params: nil
+" prints: nil
+" return: linter engine ('ale'|'neomake'|'syntastic')
+" note:   previous approach relying on detection of commands specific to
+"         loaded linting engine, e.g., ':SyntasticCheck' for syntastic,
+"         ':Neomake' for neomake and ':ALELint' for ale, did not work because
+"         commands are not instantiated when subsidiary configuration are
+"         processed
+let s:linter = 'ale'
+" override linter choice in special cases
+" syntastic works in vim, but not nvim    {{{3
+" - default to neomake if running nvim
+if s:linter ==# 'syntastic' && !exists(':shell')
+    let s:linter = 'neomake'
+    echomsg 'Cannot use syntastic as linting engine -- it requires vim'
+    echomsg 'Instead using neomake as linting engine'
+endif
+" use syntastic for docbk files    {{{3
+" - plugin vim-dn-docbk defines custom linters for syntastic
+if &filetype ==# 'docbk' && s:linter !=# 'syntastic'
+    echomsg 'The vim-dn-docbk plugin uses the syntastic linting engine'
+    echomsg 'Switching from ' . s:linter . ' to syntastic'
+    let s:linter = 'syntastic'
+endif  " }}}3
+function! VrcLinterEngine()
+    return s:linter
+endfunction  " }}}2
 
 " PLUGINS:    {{{1
 " using github.com/shougo/dein.vim
@@ -137,6 +177,7 @@ for s:app in ['rsync', 'git']
         finish
     endif
 endfor
+unlet s:app
 " - required settings    {{{3
 "   vint: -ProhibitSetNoCompatible
 set nocompatible
@@ -176,11 +217,7 @@ if exists(':terminal') && VrcOS() ==# 'windows'
     let g:dein#install_max_processes = 1
 endif
 " set plugin directories    {{{2
-let s:plugins_dir = VrcVimPath('plug')
-function! VrcPluginsDir()
-    return s:plugins_dir
-endfunction
-let s:dein_dir = s:plugins_dir . '/repos/github.com/shougo/dein.vim'
+let s:dein_dir = VrcPluginsDir() . '/repos/github.com/shougo/dein.vim'
 " ensure dein is installed    {{{2
 if !isdirectory(s:dein_dir)
     execute '!git clone https://github.com/shougo/dein.vim' s:dein_dir
@@ -215,6 +252,7 @@ if dein#load_state(s:plugins_dir)
     call dein#add('shougo/vimproc.vim', {
                 \ 'build' : s:vimproc_build_cmd,
                 \ })
+    unlet s:vimproc_build_cmd
     " - neoinclude : completion framework helper    {{{3
     "   . unite has trouble locating neoinclude
     "     unless it is predictably loaded first
@@ -281,7 +319,7 @@ if dein#load_state(s:plugins_dir)
                 \ 'on_cmd' : ['IronRepl', 'IronPromptRepl'],
                 \ })
     " - codi : interactive scratchpad (REPL)    {{{3
-    "   . TODO: disable neomake (nvim) and syntastic (vim) while in codi
+    "   . TODO: disable linting engines while in codi
     call dein#add('metakirby5/codi.vim', {
                 \ 'if'     :   'exists(":terminal") || '
                 \            . '(exists("+job") && exists("+channel"))',
@@ -348,6 +386,7 @@ if dein#load_state(s:plugins_dir)
                 \ 'depends'          : ['neoinclude.vim', 'neomru.vim'],
                 \ 'hook_post_source' : s:denite_hook_post_source,
                 \ })
+    unlet s:denite_hook_post_source
     " - neomru : denite helper - recently used files    {{{3
     call dein#add('shougo/neomru.vim')
     " - session : denite helper - extra sources    {{{3
@@ -441,6 +480,7 @@ if dein#load_state(s:plugins_dir)
                 \ 'if'               : 'exists(":terminal")',
                 \ 'hook_post_source' : s:deoplete_config,
                 \ })
+    unlet s:deoplete_config
     " - neocomplete : vim completion engine    {{{3
     call dein#add('shougo/neocomplete.vim', {
                 \ 'if'               : '     exists(":shell")'
@@ -465,6 +505,7 @@ if dein#load_state(s:plugins_dir)
                 \ 'on_event'    : ['CompleteDone'],
                 \ 'hook_source' : s:echodoc_hook_source,
                 \ })
+    unlet s:echodoc_hook_source
     " - neopairs : completion helper closes paired structures    {{{3
     call dein#add('shougo/neopairs.vim', {
                 \ 'on_source' : ['neocomplete.vim', 'deoplete.nvim'],
@@ -559,13 +600,13 @@ if dein#load_state(s:plugins_dir)
                 \ 'let g:airline#extensions#branch#empty_message = ""',
                 \ 'let g:airline#extensions#branch#displayed_head_limit = 10',
                 \ 'let g:airline#extensions#branch#format = 2',
-                \ 'let g:airline#extensions#syntastic#enabled = 1',
                 \ 'let g:airline#extensions#tagbar#enabled = 1',
                 \ ], "\n")
     call dein#add('vim-airline/vim-airline', {
                 \ 'if'          : 'v:version >= 702',
                 \ 'hook_source' : s:airline_hook_source,
                 \ })
+    unlet s:airline_hook_source
     " - airline-themes : airline helper    {{{3
     call dein#add('vim-airline/vim-airline-themes', {
                 \ 'depends' : ['vim-airline'],
@@ -601,25 +642,48 @@ if dein#load_state(s:plugins_dir)
                 \ })
     " - numbers : number <->relativenumber switching    {{{3
     call dein#add('myusuf3/numbers.vim')
-    " bundles: syntax checking    {{{2
-    " - syntastic : syntax checker for vim    {{{3
-    call dein#add('scrooloose/syntastic', {
-                \ 'if' : 'exists(":shell")',
-                \ })
-    " - neomake : asynchronous syntax checker for nvim    {{{3
-    let s:neomake_hook_post_update = join([
-                \ 'if executable("pip")',
-                \ 'call system("pip install --upgrade vim-vint")',
-                \ 'endif',
-                \ 'if executable("pip3")',
-                \ 'call system("pip3 install --upgrade vim-vint")',
-                \ 'endif',
-                \ ], "\n")
-    call dein#add('neomake/neomake', {
-                \ 'if'               : 'exists(":terminal")',
-                \ 'on_cmd'           : ['Neomake'],
-                \ 'hook_post_update' : s:neomake_hook_post_update,
-                \ })
+    " bundles: linting    {{{2
+    function! VrcUpdateLintEngines(engines)    " {{{4
+        if type(a:engines) != type([])  " script error
+            echoerr 'Engines variable is not a list'
+            return
+        endif
+        for l:engine in a:engines
+            if     l:engine ==# 'vint'
+                if executable('pip')
+                    call system('pip install --upgrade vim-vint')
+                endif
+                if executable('pip3')
+                    call system('pip3 install --upgrade vim-vint')
+                endif
+                continue
+            endif
+        endfor
+    endfunction    " }}}4
+    " - ale : linter for vim/nvim    {{{3
+    function! VrcAleLintEngines()    " {{{4
+        call VrcUpdateLintEngines(['vint'])
+    endfunction    " }}}4
+    if VrcLinterEngine() ==# 'ale'
+        call dein#add('w0rp/ale', {
+                    \ 'hook_post_update' : function('VrcAleLintEngines'),
+                    \ })
+    endif
+    " - neomake : linter for vim/nvim    {{{3
+    function! VrcNeomakeLintEngines()    " {{{4
+        call VrcUpdateLintEngines(['vint'])
+    endfunction    " }}}4
+    if VrcLinterEngine() ==# 'neomake'
+        call dein#add('neomake/neomake', {
+                    \ 'hook_post_update' : function('VrcNeomakeLintEngines'),
+                    \ })
+    endif
+    " - syntastic : linter for vim    {{{3
+    if VrcLinterEngine() ==# 'syntastic'
+        call dein#add('scrooloose/syntastic', {
+                    \ 'if' : 'exists(":shell")',
+                    \ })
+    endif    " }}}3
     " bundles: tags    {{{2
     " - misc : plugin library used by other scripts    {{{3
     call dein#add('xolox/vim-misc', {
@@ -792,6 +856,7 @@ if dein#load_state(s:plugins_dir)
                     \ 'hook_source'      : s:ternjs_hook_source,
                     \ 'hook_post_update' : 'npm install -g tern',
                     \ })
+        unlet s:ternjs_hook_source
     endif
     " bundles: latex support    {{{2
     " - vimtex : latex support    {{{3
@@ -854,10 +919,12 @@ if dein#load_state(s:plugins_dir)
                 \ 'on_ft' : ['perl'],
                 \ })
     " - syntastic-perl6 : syntax hecking for perl6    {{{3
-    call dein#add('nxadm/syntastic-perl6', {
-                \ 'if'    : 'exists(":shell")',
-                \ 'on_ft' : ['perl6'],
-                \ })
+    if VrcLinterEngine() ==# 'syntastic'
+        call dein#add('nxadm/syntastic-perl6', {
+                    \ 'if'    : 'exists(":shell")',
+                    \ 'on_ft' : ['perl6'],
+                    \ })
+    endif
     " - unite-perl-module : search for perl modules    {{{3
     call dein#add('yuuki/unite-perl-module.vim', {
                 \ 'depends' : ['unite.vim'],
@@ -900,6 +967,7 @@ if dein#load_state(s:plugins_dir)
                 \ 'depends'          : ['deoplete.nvim'],
                 \ 'hook_post_update' : s:jedi_hook_post_update,
                 \ })
+    unlet s:jedi_hook_post_update
     " - pep8 : indentation support    {{{3
     call dein#add('hynek/vim-python-pep8-indent', {
                 \ 'on_ft' : 'python',
@@ -938,6 +1006,7 @@ if dein#load_state(s:plugins_dir)
   call dein#end()
   call dein#save_state()
 endif
+unlet s:dein_dir
 " required settings    {{{2
 filetype on
 filetype plugin on
@@ -955,6 +1024,7 @@ endif
 
 " SUBSIDIARY CONFIGURATION FILES:                                    "    {{{1
 call VrcSource(VrcVimPath('home').'/rc', resolve(expand('<sfile>:p')))
+unlet s:plugins_dir s:linter
 
 " FINAL CONFIGURATION:    {{{1
 " set filetype to 'text' if not known    {{{2

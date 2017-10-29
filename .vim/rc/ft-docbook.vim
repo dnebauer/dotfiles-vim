@@ -5,6 +5,8 @@ function! s:DocbookSupport()
     setlocal foldmethod=syntax
     " syntax checking    {{{1
     " - used by vim-dn-docbk ftplugin
+    " - note that vim-dn-docbk ftplugin customises syntastic linting engine,
+    "   so vimrc/init.vim switches to syntastic for docbk files
     let g:dn_docbk_relaxng_schema =
                 \ '/usr/share/xml/docbook/schema/rng/5.0/docbook.rng'
     let g:dn_docbk_schematron_schema =
