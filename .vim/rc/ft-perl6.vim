@@ -1,7 +1,7 @@
 " Vim configuration: perl6 file support
 
 function! s:Perl6Support()
-    " vim syntax checking    {{{1
+    " linting    {{{1
     " - plugin: syntastic-perl6
     if exists(':SyntasticCheck')
         let g:syntastic_perl6_checkers             = ['perl6latest']

@@ -65,7 +65,10 @@ function! s:GoSupport()
     let g:go_highlight_build_constraints = 1
     " - open new terminals in horizontal split    {{{2
     let g:go_term_mode = 'split'
-    " - syntastic    {{{2
+    " - ensure command output is displayed    {{{2
+    let g:go_list_type = 'quickfix'
+    " linting    {{{1
+    " syntastic    {{{2
     if exists(':SyntasticCheck')
         if !exists('g:syntastic_go_checkers')
             let g:syntastic_go_checkers = []
@@ -83,10 +86,7 @@ function! s:GoSupport()
                     \ 'mode'              : 'active',
                     \ 'passive_filetypes' : ['go']
                     \ }
-    endif
-    " - ensure command output is displayed    {{{2
-    let g:go_list_type = 'quickfix'
-" }}}1
+    endif    " }}}1
 endfunction
 
 augroup vrc_go_files

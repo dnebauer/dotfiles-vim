@@ -8,8 +8,8 @@ function! s:LuaSupport()
         endif
         let g:deoplete#omni#functions.lua = 'xolox#lua#omnifunc'
     endif
-    " vim syntax checking    {{{1
-    if exists(':shell') && exists(':SyntasticCheck')
+    " linting    {{{1
+    if exists(':SyntasticCheck')  " syntastic
         let g:syntastic_check_on_open     = 1
         let g:syntastic_lua_checkers      = ['luac', 'luacheck']
         let g:syntastic_lua_luacheck_args = '--no-unused-args'

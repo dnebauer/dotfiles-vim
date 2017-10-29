@@ -1,9 +1,8 @@
 " Vim configuration: vim (and vimrc) file support
 
 function! s:VimSupport()
-    " syntax checker: set syntastic to use 'vint'    {{{1
-    " - syntastic is used in vim
-    if exists(':shell') && exists(':SyntasticCheck')
+    " linter: vint    {{{1
+    if exists(':SyntasticCheck')  " syntastic
         " - ensure vint is installed
         let l:check_cmd = 'python -c "import vint"'
         call system(l:check_cmd)
