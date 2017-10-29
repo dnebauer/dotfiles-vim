@@ -643,6 +643,7 @@ if dein#load_state(s:plugins_dir)
     " - numbers : number <->relativenumber switching    {{{3
     call dein#add('myusuf3/numbers.vim')
     " bundles: linting    {{{2
+    " - utility functions    {{{3
     function! VrcPipInstall(pkg)    " {{{4
         if executable('pip')
             call system('pip install --upgrade ' . a:pkg)
@@ -694,7 +695,6 @@ if dein#load_state(s:plugins_dir)
             endif
         endfor
     endfunction    " }}}4
-    " - ale : linter for vim/nvim    {{{3
     function! VrcAleLinters()    " {{{4
         call VrcUpdateLinters([
                     \ 'write-good',  'proselint', 'mdl',
@@ -702,15 +702,16 @@ if dein#load_state(s:plugins_dir)
                     \ 'autopep8', 'rubocop',
                     \ ])
     endfunction    " }}}4
+    function! VrcNeomakeLinters()    " {{{4
+        call VrcUpdateLinters(['vim-vint'])
+    endfunction    " }}}4
+    " - ale : linter for vim/nvim    {{{3
     if VrcLinterEngine() ==# 'ale'
         call dein#add('w0rp/ale', {
                     \ 'hook_post_update' : function('VrcAleLinters'),
                     \ })
     endif
     " - neomake : linter for vim/nvim    {{{3
-    function! VrcNeomakeLinters()    " {{{4
-        call VrcUpdateLinters(['vim-vint'])
-    endfunction    " }}}4
     if VrcLinterEngine() ==# 'neomake'
         call dein#add('neomake/neomake', {
                     \ 'hook_post_update' : function('VrcNeomakeLinters'),
