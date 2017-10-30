@@ -105,9 +105,8 @@ endfunction
 " params: nil
 " prints: nil
 " return: plugins directory
-let s:plugins_dir = VrcVimPath('plug')
 function! VrcPluginsDir()
-    return s:plugins_dir
+    return VrcVimPath('plug')
 endfunction
 " function VrcLinterEngine()    {{{2
 " intent: provide linter engine
@@ -229,8 +228,8 @@ endif
 if &runtimepath !~# '/dein.vim'
     execute 'set runtimepath+=' . s:dein_dir
 endif
-if dein#load_state(s:plugins_dir)
-    call dein#begin(s:plugins_dir)
+if dein#load_state(VrcPluginsDir())
+    call dein#begin(VrcPluginsDir())
     call dein#add(s:dein_dir)
     call dein#add('shougo/dein.vim')
     " dein commands    {{{2
@@ -1063,7 +1062,7 @@ endif
 
 " SUBSIDIARY CONFIGURATION FILES:                                    "    {{{1
 call VrcSource(VrcVimPath('home').'/rc', resolve(expand('<sfile>:p')))
-unlet s:plugins_dir s:linter
+unlet s:linter
 
 " FINAL CONFIGURATION:    {{{1
 " set filetype to 'text' if not known    {{{2
