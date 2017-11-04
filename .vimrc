@@ -118,25 +118,30 @@ endfunction
 "         ':Neomake' for neomake and ':ALELint' for ale, did not work because
 "         commands are not instantiated when subsidiary configuration are
 "         processed
-let s:linter = 'ale'
+if !exists('*VrcLinterEngine')
+    function VrcLinterEngine()
+        return 'ale'
+    endfunction
+endif
 " override linter choice in special cases
 " syntastic works in vim, but not nvim    {{{3
 " - default to neomake if running nvim
-if s:linter ==# 'syntastic' && !exists(':shell')
-    let s:linter = 'neomake'
+if VrcLinterEngine() ==# 'syntastic' && !exists(':shell')
     echomsg 'Cannot use syntastic as linting engine -- it requires vim'
     echomsg 'Instead using neomake as linting engine'
+    function! VrcLinterEngine()
+        return 'neomake'
+    endfunction
 endif
 " use syntastic for docbk files    {{{3
 " - plugin vim-dn-docbk defines custom linters for syntastic
-if &filetype ==# 'docbk' && s:linter !=# 'syntastic'
+if &filetype ==# 'docbk' && VrcLinterEngine() !=# 'syntastic'
     echomsg 'The vim-dn-docbk plugin uses the syntastic linting engine'
-    echomsg 'Switching from ' . s:linter . ' to syntastic'
-    let s:linter = 'syntastic'
+    echomsg 'Switching from ' . VrcLinterEngine() . ' to syntastic'
+    function! VrcLinterEngine()
+        return 'syntastic'
+    endfunction
 endif  " }}}3
-function! VrcLinterEngine()
-    return s:linter
-endfunction  " }}}2
 
 " PLUGINS:    {{{1
 " using github.com/shougo/dein.vim
@@ -1062,7 +1067,6 @@ endif
 
 " SUBSIDIARY CONFIGURATION FILES:                                    "    {{{1
 call VrcSource(VrcVimPath('home').'/rc', resolve(expand('<sfile>:p')))
-unlet s:linter
 
 " FINAL CONFIGURATION:    {{{1
 " set filetype to 'text' if not known    {{{2
