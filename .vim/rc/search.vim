@@ -3,8 +3,10 @@
 " Highlighting matches    {{{1
 " - highlight all current matches
 set hlsearch
-" - don't highlight previous matches initially
-set highlight=ln
+" - don't highlight previous matches initially (deprecated in nvim)
+if exists(':shell')
+    set highlight=ln
+endif
 " - turn off match highlighing [N] : \<Space><Space>
 nnoremap <silent> <Leader><Space><Space> :nohlsearch<CR>
 
