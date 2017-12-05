@@ -360,6 +360,8 @@ if dein#load_state(VrcPluginsDir())
     "     'E117: Unknown function: airline#extensions#unicode#init'
     "   . so load on startup
     call dein#add('chrisbra/unicode.vim')
+    " - multiple-cursors : multiple selections    {{{3
+    call dein#add('terryma/vim-multiple-cursors')
     " bundles: encryption    {{{2
     " - gnupg : transparently edit gpg-encrypted files    {{{3
     call dein#add('jamessan/vim-gnupg')
