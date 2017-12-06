@@ -148,7 +148,7 @@ endif  " }}}3
 " python required by several plugins    {{{2
 " - in python 3.5 there is no python3 exe installed
 if VrcOS() ==# 'windows'
-    let s:path = expand("$APPDATA") . '\Local\Programs\Python'
+    let s:path = expand('$APPDATA') . '\Local\Programs\Python'
     " python2
     let s:exe = s:path . '\Python27\python.exe'
     if filereadable(s:exe) | let g:python_host_prog = s:exe | endif
