@@ -587,19 +587,6 @@ if dein#load_state(VrcPluginsDir())
                 \ 'depends' : ['vim-textobject-user'],
                 \ })
     " bundles: ui    {{{2
-    " - headlights : integrate plugins with vim menus    {{{3
-    "   . do not check for python in nvim (see note above at 'nvim issues')
-    call dein#add('mbadran/headlights', {
-                \ 'if' : '     exists(":terminal")'
-                \      . ' &&  v:version >= 700'
-                \      . ' &&  executable("python")',
-                \ })
-    call dein#add('mbadran/headlights', {
-                \ 'if' : '     exists(":shell")'
-                \      . ' &&  v:version >= 700'
-                \      . ' &&  has("python")'
-                \      . ' &&  executable("python")',
-                \ })
     " - airline : status line    {{{3
     let s:airline_hook_source = join([
                 \ 'let g:airline#extensions#branch#enabled = 1',
