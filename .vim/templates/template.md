@@ -1,5 +1,14 @@
 ---
 title: "${cursor}"
+author: 
+date: 
+# clever referencing #
+eqnos-cleveref: on
+eqnos-plus-name: equation
+fignos-cleveref: on
+fignos-plus-name: figure
+tablenos-cleveref: on
+# customise latex header
 header-includes:
 # run mode #
 # :: run non-interactively
