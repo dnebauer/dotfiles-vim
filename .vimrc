@@ -449,6 +449,10 @@ if dein#load_state(VrcPluginsDir())
                 \             'W3mSetUserAgent', 'W3mHistory',
                 \             'W3mHistoryClear'],
                 \ })
+    " - address : notmuch email addresses    {{{3
+    call dein#add('adborden/vim-notmuch-address', {
+                \ 'on_ft' : ['mail'],
+                \ })
     " bundles: printing    {{{2
     " - dn-print-dialog : pure vim print dialog    {{{3
     call dein#add('dnebauer/vim-dn-print-dialog', {
