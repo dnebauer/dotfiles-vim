@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # File: ${filename}.sh
 # Author: ${author}
