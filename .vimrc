@@ -164,14 +164,6 @@ if VrcOS() ==# 'windows'
     endfor
     unlet s:path s:exe s:exes
 endif
-if exists(':terminal')
-    if !has('python')
-        echohl WarningMsg | echomsg 'Cannot load Python2' | echohl ErrorMsg
-    endif
-    if !has('python3')
-        echohl WarningMsg | echomsg 'Cannot load Python3' | echohl ErrorMsg
-    endif
-endif
 " dein requirements    {{{2
 " - required tools: rsync, git    {{{3
 for s:app in ['rsync', 'git']
