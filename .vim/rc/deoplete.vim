@@ -1,7 +1,7 @@
 " Vim configuration: deoplete plugin
 
 " Nvim and deoplete only    {{{1
-if !exists(':terminal') || !has('g:loaded_deoplete')
+if !has('nvim') || !has('g:loaded_deoplete')
     finish
 endif
 

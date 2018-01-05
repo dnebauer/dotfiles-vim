@@ -43,7 +43,7 @@ function! s:DebugPython()
     " }}}2
 endfunction
 
-if VrcOS() ==# 'windows' && exists(':terminal')
+if VrcOS() ==# 'windows' && has('nvim')
     call s:DebugPython()
 endif
 

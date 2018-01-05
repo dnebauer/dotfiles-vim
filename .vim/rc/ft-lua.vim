@@ -2,7 +2,7 @@
 
 function! s:LuaSupport()
     " nvim completion using deoplete    {{{1
-    if exists(':terminal')
+    if has('nvim')
         if !exists('g:deoplete#omni#functions')
             let g:deoplete#omni#functions = {}
         endif

@@ -2,11 +2,11 @@
 
 function! s:JavaSupport()
     " vim omnicompletion    {{{1
-    if exists(':shell')
+    if !has('nvim')
         setlocal omnifunc=javacomplete#Complete
     endif
     " nvim completion with deoplete    {{{1
-    if exists(':terminal')
+    if has('nvim')
         if !exists('g:deoplete#omni#input_patterns')
             let g:deoplete#omni#input_patterns = {}
         endif

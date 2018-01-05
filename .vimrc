@@ -3,10 +3,11 @@
 
 " NOTES:    {{{1
 " detect whether running vim or nvim    {{{2
-" - can no longer test directly for presence of nvim
-" - instead test for commands specific to each:
-"   . vim:  if exists(':shell')
-"   . nvim: if exists(':terminal')    }}}2
+" - now that vim has ':terminal' command cannot distinguish between
+"   vim|nvim using ':shell' and ':terminal', respectively
+" - vim no longer has('vim') but nvim has('nvim') so use that
+"   . vim:  if !has('nvim')
+"   . nvim: if has('nvim')    }}}2
 
 " UTILITY FUNCTIONS:    {{{1
 " include here only functions that:
@@ -37,10 +38,10 @@ function! VrcVimPath(type)
         let l:os   = VrcOS()
         let l:home = escape($HOME, ' ')
         if     l:os ==# 'windows'
-            if exists(':shell')
-                return l:home . '/vimfiles'
-            else  " nvim
+            if has('nvim')  " nvim
                 return resolve(expand('~/AppData/Local/nvim'))
+            else  " vim
+                return l:home . '/vimfiles'
             endif
         elseif l:os ==# 'unix'
             return l:home . '/.vim'
@@ -94,7 +95,7 @@ function! VrcSource(dir, self)
         if l:path ==# a:self | continue | endif
         " must be vim file
         " - for vim source *.vim; for nvim source *.vim and *.nvim
-        let l:match = exists(':shell') ? '^\p\+\.vim$' : '^\p\+\.n\?vim$'
+        let l:match = !has('nvim') ? '^\p\+\.vim$' : '^\p\+\.n\?vim$'
         if fnamemodify(l:path, ':t') =~? l:match
             execute 'source' l:path
         endif
@@ -126,7 +127,7 @@ endif
 " override linter choice in special cases
 " syntastic works in vim, but not nvim    {{{3
 " - default to neomake if running nvim
-if VrcLinterEngine() ==# 'syntastic' && !exists(':shell')
+if VrcLinterEngine() ==# 'syntastic' && has('nvim')
     echomsg 'Cannot use syntastic as linting engine -- it requires vim'
     echomsg 'Instead using neomake as linting engine'
     function! VrcLinterEngine()
@@ -209,7 +210,7 @@ endif
 "   . this brute force solution turns off asynchronous updating, so
 "     each plugin updates in sequence (but the whole run takes *much*
 "     longer)
-if exists(':terminal') && VrcOS() ==# 'windows'
+if has('nvim') && VrcOS() ==# 'windows'
     let g:dein#install_max_processes = 1
 endif
 " set plugin directories    {{{2
@@ -311,13 +312,13 @@ if dein#load_state(VrcPluginsDir())
                 \ })
     " - iron : read-val-print loop (REPL)    {{{3
     call dein#add('hkupty/iron.nvim', {
-                \ 'if'     : 'exists(":terminal")',
+                \ 'if'     : 'has("nvim")',
                 \ 'on_cmd' : ['IronRepl', 'IronPromptRepl'],
                 \ })
     " - codi : interactive scratchpad (REPL)    {{{3
     "   . TODO: disable linting engines while in codi
     call dein#add('metakirby5/codi.vim', {
-                \ 'if'     :   'exists(":terminal") || '
+                \ 'if'     :   'has("nvim") || '
                 \            . '(exists("+job") && exists("+channel"))',
                 \ 'on_cmd' : ['Codi'],
                 \ })
@@ -396,7 +397,7 @@ if dein#load_state(VrcPluginsDir())
     " bundles: cut and paste    {{{2
     " - highlightedyank : highlight yanked text    {{{3
     call dein#add('machakann/vim-highlightedyank')
-    if exists(':shell')
+    if !has('nvim')
         map y <Plug>(highlightedyank)
     endif
     " bundles: templates    {{{2
@@ -479,13 +480,13 @@ if dein#load_state(VrcPluginsDir())
                 \ . 'set("_", "min_pattern_length", 3)',
                 \ ], "\n")
     call dein#add('shougo/deoplete.nvim', {
-                \ 'if'               : 'exists(":terminal")',
+                \ 'if'               : 'has("nvim")',
                 \ 'hook_post_source' : s:deoplete_config,
                 \ })
     unlet s:deoplete_config
     " - neocomplete : vim completion engine    {{{3
     call dein#add('shougo/neocomplete.vim', {
-                \ 'if'               : '     exists(":shell")'
+                \ 'if'               : '     !has("nvim")'
                 \                    . ' &&  v:version >= 704'
                 \                    . ' &&  has("lua")',
                 \ 'hook_post_source' :  'call neocomplete#initialize()',
@@ -709,7 +710,7 @@ if dein#load_state(VrcPluginsDir())
     " - syntastic : linter for vim    {{{3
     if VrcLinterEngine() ==# 'syntastic'
         call dein#add('scrooloose/syntastic', {
-                    \ 'if' : 'exists(":shell")',
+                    \ 'if' : '!has("nvim")',
                     \ })
     endif    " }}}3
     " bundles: tags    {{{2
@@ -756,12 +757,12 @@ if dein#load_state(VrcPluginsDir())
                 \ 'if' : '    executable("git")'
                 \      . '&&  ('
                 \      . '      ('
-                \      . '            exists(":shell")'
+                \      . '            !has("nvim")'
                 \      . '        &&  v:version > 704'
                 \      . '        &&  has("patch-7.4.1826")'
                 \      . '      )'
                 \      . '      ||'
-                \      . '      exists(":terminal")'
+                \      . '      has("nvim")'
                 \      . '    )',
                 \ })
     " - fugitive : git integration    {{{3
@@ -770,7 +771,7 @@ if dein#load_state(VrcPluginsDir())
                 \ })
     " bundles: clang support    {{{2
     call dein#add('zchee/deoplete-clang', {
-                \ 'if'      : 'exists(":terminal")',
+                \ 'if'      : 'has("nvim")',
                 \ 'on_ft'   : ['c', 'cpp', 'objc'],
                 \ 'depends' : ['deoplete.nvim'],
                 \ })
@@ -794,7 +795,7 @@ if dein#load_state(VrcPluginsDir())
                 \ })
     " - deoplete-go : deoplete helper    {{{3
     call dein#add('zchee/deoplete-go', {
-                \ 'if'        : 'exists(":terminal")',
+                \ 'if'        : 'has("nvim")',
                 \ 'on_source' : ['vim-go'],
                 \ 'build'     : 'make',
                 \ })
@@ -869,7 +870,7 @@ if dein#load_state(VrcPluginsDir())
     "   . doing so results in 'E48: Not allowed in sandbox
     if !VrcCygwin()
         call dein#add('ternjs/tern_for_vim', {
-                    \ 'if'               : 'exists(":shell")',
+                    \ 'if'               : '!has("nvim")',
                     \ 'on_ft'            : ['javascript', 'javascript.jsx'],
                     \ 'hook_post_update' : function('VrcBuildTernAndJsctags'),
                     \ })
@@ -878,7 +879,7 @@ if dein#load_state(VrcPluginsDir())
                     \ 'let g:tern_show_signature_in_pum = 0',
                     \ ], "\n")
         call dein#add('carlitux/deoplete-ternjs', {
-                    \ 'if'               : 'exists(":terminal")',
+                    \ 'if'               : 'has("nvim")',
                     \ 'on_ft'            : ['javascript', 'javascript.jsx'],
                     \ 'depends'          : ['deoplete.nvim'],
                     \ 'hook_source'      : s:ternjs_hook_source,
@@ -949,7 +950,7 @@ if dein#load_state(VrcPluginsDir())
     " - syntastic-perl6 : syntax hecking for perl6    {{{3
     if VrcLinterEngine() ==# 'syntastic'
         call dein#add('nxadm/syntastic-perl6', {
-                    \ 'if'    : 'exists(":shell")',
+                    \ 'if'    : '!has("nvim")',
                     \ 'on_ft' : ['perl6'],
                     \ })
     endif
@@ -982,14 +983,14 @@ if dein#load_state(VrcPluginsDir())
                 \ 'endif',
                 \ ], "\n")
     call dein#add('davidhalter/jedi-vim', {
-                \ 'if'               : 'exists(":shell")',
+                \ 'if'               : '!has("nvim")',
                 \ 'on_ft'            : ['python'],
                 \ 'hook_post_update' : s:jedi_hook_post_update,
                 \ })
     " - deoplete-jedi : deoplete helper    {{{3
     "   . do not check for python3 in nvim (see note above at 'nvim issues')
     call dein#add('zchee/deoplete-jedi', {
-                \ 'if'               : '    exists(":terminal")'
+                \ 'if'               : '    has("nvim")'
                 \                    . ' && executable("python3")',
                 \ 'on_ft'            : ['python'],
                 \ 'depends'          : ['deoplete.nvim'],

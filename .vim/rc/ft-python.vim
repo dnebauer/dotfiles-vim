@@ -2,11 +2,11 @@
 
 function! s:PythonSupport()
     " vim omnicompletion    {{{1
-    if exists(':shell')
+    if !has('nvim')
         setlocal omnifunc=pythoncomplete#Complete
     endif
     " nvim completion with deoplete    {{{1
-    if exists(':terminal') && exists('g:loaded_deoplete')
+    if has('nvim') && exists('g:loaded_deoplete')
         if !exists('g:deoplete#omni#input_patterns')
             let g:deoplete#omni#input_patterns = {}
         endif

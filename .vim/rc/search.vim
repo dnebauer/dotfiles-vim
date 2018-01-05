@@ -4,7 +4,7 @@
 " - highlight all current matches
 set hlsearch
 " - don't highlight previous matches initially (deprecated in nvim)
-if exists(':shell')
+if !has('nvim')
     set highlight=ln
 endif
 " - turn off match highlighing [N] : \<Space><Space>
