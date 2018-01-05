@@ -5,11 +5,19 @@ if !has('nvim') || !has('g:loaded_deoplete')
     finish
 endif
 
+" Run at startup    {{{1
+let g:deoplete#enable_at_startup = 1
+
 " Smartcase    {{{1
 let g:deoplete#enable_smart_case  = 1
 
 " Close parentheses automatically    {{{1
 let g:neopairs#enable = 1
+
+" Matchers    {{{1
+call deoplete#custom#set('_', 'matchers', [
+            \ 'matcher_fuzzy',
+            \ ])'
 
 " Converters    {{{1
 call deoplete#custom#set('_', 'converters', [
@@ -17,6 +25,14 @@ call deoplete#custom#set('_', 'converters', [
             \ 'converter_remove_overlap', 'converter_truncate_abbr',
             \ 'converter_truncate_menu',  'converter_auto_delimiter',
             \ ])
+
+" Disabled syntaxes    {{{1
+call deoplete#custom#set('_', 'disabled_syntaxes', [
+            \ 'Comment', 'String',
+            \ ])
+
+" Minimum pattern length    {{{1
+call deoplete#custom#set('_', 'min_pattern_length', 3)
 
 " Keywords    {{{1
 " - default

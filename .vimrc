@@ -458,32 +458,9 @@ if dein#load_state(VrcPluginsDir())
                 \ })
     " bundles: completion    {{{2
     " - deoplete : nvim completion engine    {{{3
-    "   . previously enabled at InsertEnter but is currently
-    "     (nvim: 0.1.3, python-neovim: 0.1.9) failing with
-    "     numerous error messages so enable at startup to make
-    "     troubleshooting easier
-    "   . attempting to set g:deoplete#enable_at_startup using
-    "     hook_source failed for unknown reasons, so instead
-    "     start plugin at VimEnter (using hook_post_source)
-    "   . plugin author recommends initialising it at VimEnter
-    "     and requires all configuration to be done by then
-    let s:deoplete_config = join([
-                \ 'call deoplete#initialize()',
-                \ 'call deoplete#enable()',
-                \ 'call deoplete#custom#'
-                \ . 'set("_", "matchers", ["matcher_fuzzy"])',
-                \ 'call deoplete#custom#'
-                \ . 'set("_", "converters", ["converter_remove_paren"])',
-                \ 'call deoplete#custom#'
-                \ . 'set("_", "disabled_syntaxes", ["Comment", "String"])',
-                \ 'call deoplete#custom#'
-                \ . 'set("_", "min_pattern_length", 3)',
-                \ ], "\n")
     call dein#add('shougo/deoplete.nvim', {
-                \ 'if'               : 'has("nvim")',
-                \ 'hook_post_source' : s:deoplete_config,
+                \ 'if' : 'has("nvim")',
                 \ })
-    unlet s:deoplete_config
     " - neocomplete : vim completion engine    {{{3
     call dein#add('shougo/neocomplete.vim', {
                 \ 'if'               : '     !has("nvim")'
