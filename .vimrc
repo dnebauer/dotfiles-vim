@@ -251,8 +251,6 @@ if dein#load_state(VrcPluginsDir())
                 \ })
     unlet s:vimproc_build_cmd
     " - neoinclude : completion framework helper    {{{3
-    "   . unite has trouble locating neoinclude
-    "     unless it is predictably loaded first
     call dein#add('shougo/neoinclude.vim')
     " - dn-utils : general utilities    {{{3
     call dein#add('dnebauer/vim-dn-utils')
@@ -374,7 +372,6 @@ if dein#load_state(VrcPluginsDir())
     " - denite : integrated information display    {{{3
     "   . gave up loading denite on demand as the dependencies are
     "     too fragile; only works dependably if force load at start
-    "   . call functions after dein#end [see unite.vim issue #330]
     let s:denite_hook_post_source = join([
                 \ 'call denite#custom#source("grep", '
                 \ . '"matchers", ["matcher_fuzzy"])',
@@ -528,9 +525,8 @@ if dein#load_state(VrcPluginsDir())
                 \ })
     " - grammarous : grammar checker    {{{3
     call dein#add('rhysd/vim-grammarous', {
-                \ 'depends' : ['unite.vim'],
                 \ 'on_cmd'  : ['GrammarousCheck', 'GrammarousReset',
-                \              'Unite grammarous'],
+                \              'Denite grammarous'],
                 \ })
     " - wordy : find usage problems    {{{3
     call dein#add('reedes/vim-wordy', {
@@ -931,11 +927,6 @@ if dein#load_state(VrcPluginsDir())
                     \ 'on_ft' : ['perl6'],
                     \ })
     endif
-    " - unite-perl-module : search for perl modules    {{{3
-    call dein#add('yuuki/unite-perl-module.vim', {
-                \ 'depends' : ['unite.vim'],
-                \ 'on_ft'   : ['perl6'],
-                \ })
     " bundles: php support    {{{2
     " - phpctags : tag generation    {{{3
     "   . cannot test for cygwin in dein#add 'if' statement
