@@ -391,6 +391,10 @@ if dein#load_state(VrcPluginsDir())
     call dein#add('ozelentok/denite-gtags', {
                 \ 'if' : 'executable("global") && executable("gtags")',
                 \ })
+    " - ale : denite helper - ale errors/warnings    {{{3
+    if VrcLinterEngine() ==# 'ale'
+        call dein#add('iyuuya/denite-ale')
+    endif
     " bundles: cut and paste    {{{2
     " - highlightedyank : highlight yanked text    {{{3
     call dein#add('machakann/vim-highlightedyank')
