@@ -13,6 +13,7 @@
 " include here only functions that:
 " - are used in multiple subsidiary configuration files
 " - pass a script variable to a subsidiary configuration file or files
+" - used in multiple locations in this file
 " function VrcOS()    {{{2
 " intent: determine operating system
 " params: nil
@@ -142,7 +143,108 @@ if &filetype ==# 'docbk' && VrcLinterEngine() !=# 'syntastic'
     function! VrcLinterEngine()
         return 'syntastic'
     endfunction
-endif  " }}}3
+endif
+" function VrcPipInstall(pkg, [name])    {{{2
+" intent: install python package
+" params: pkg  - package name
+"         name - short version of package name (optional)
+" prints: nil
+" return: boolean - whether package successfully installed
+function! VrcPipInstall(pkg, ...)
+    let l:retval = 0
+    let l:name = a:pkg
+    if a:0 && strlen(a:1) > 0 | let l:name = a:1 | endif
+    let l:installers = ['pip', 'pip3']
+    let l:installer_available = 0
+    for l:installer in l:installers
+        if executable(l:installer) | let l:installer_available = 1 | endif
+    endfor
+    if !l:installer_available
+        echoerr 'no python installers (' . join(l:installers, ', ')
+                    \ . ') available'
+        echoerr 'cannot install python package ' . l:name
+        return l:retval
+    endif
+    for l:installer in l:installers
+        if !executable(l:installer) | continue | endif
+        let l:install_cmd = l:installer . ' install --upgrade ' . a:pkg
+        let l:feedback = system(l:install_cmd)
+        if v:shell_error
+            echoerr 'Unable to install ' . l:name . ' with ' . l:installer
+            if strlen(l:feedback) > 0
+                echoerr 'Error message: ' . l:feedback
+            endif
+        else
+            let l:retval = 1
+        endif
+    endfor
+    return l:retval
+endfunction
+" function VrcNpmInstall(pkg, [name])    {{{2
+" intent: install node package
+" params: pkg  - package name
+"         name - short version of package name (optional)
+" prints: nil
+" return: boolean - whether package successfully installed
+function! VrcNpmInstall(pkg, ...)
+    let l:retval = 0
+    let l:name = a:pkg
+    if a:0 && strlen(a:1) > 0 | let l:name = a:1 | endif
+    if !executable('npm')
+        echoerr 'npm not available: cannot install node package ' . l:name
+        return
+    endif
+    let l:install_pkg = 1
+    if executable('npm-name')
+        call system('npm-name ' . a:pkg)
+        let l:install_pkg = v:shell_error
+    endif
+    if l:install_pkg
+        let l:feedback = system('npm --global install ' . a:pkg)
+        if v:shell_error
+            echoerr 'Unable to install ' . l:name . ' with npm'
+            if strlen(l:feedback) > 0
+                echoerr 'Error message: ' . l:feedback
+            endif
+            return l:retval
+        endif
+    endif
+    let l:feedback = system('npm --global update ' . a:pkg)
+    if v:shell_error
+        echoerr 'Unable to update ' . l:name . ' with npm'
+        if strlen(l:feedback) > 0
+            echoerr 'Error message: ' . l:feedback
+        endif
+    else
+        let l:retval = 1
+    endif
+    return l:retval
+endfunction
+" function VrcGemInstall(pkg, [name])    {{{2
+" intent: install ruby package
+" params: pkg  - package name
+"         name - short version of package name (optional)
+" prints: nil
+" return: boolean - whether package successfully installed
+function! VrcGemInstall(pkg, ...)
+    let l:retval = 0
+    let l:name = a:pkg
+    if a:0 && strlen(a:1) > 0 | let l:name = a:1 | endif
+    if !executable('gem')
+        echoerr 'gem not available: cannot install ruby package ' . l:name
+        return l:retval
+    endif
+    let l:feedback = system('sudo gem install ' . a:pkg)
+    if v:shell_error
+        echoerr 'Unable to install ' . l:name . ' with gem'
+        if strlen(l:feedback) > 0
+            echoerr 'Error message: ' . l:feedback
+        endif
+    else
+        let l:retval = 1
+    endif
+    return l:retval
+endfunction
 
 " PLUGINS:    {{{1
 " using github.com/shougo/dein.vim
@@ -611,30 +713,6 @@ if dein#load_state(VrcPluginsDir())
     call dein#add('myusuf3/numbers.vim')
     " bundles: linting    {{{2
     " - utility functions    {{{3
-    function! VrcPipInstall(pkg)    " {{{4
-        if executable('pip')
-            call system('pip install --upgrade ' . a:pkg)
-        endif
-        if executable('pip3')
-            call system('pip3 install --upgrade ' . a:pkg)
-        endif
-    endfunction
-    function! VrcNpmInstall(pkg)    " {{{4
-        let l:install_pkg = 1
-        if executable('npm-name')
-            call system('npm-name ' . a:pkg)
-            let l:install_pkg = v:shell_error
-        endif
-        if l:install_pkg
-            call system('npm --global install ' . a:pkg)
-        endif
-        call system('npm --global update ' . a:pkg)
-    endfunction
-    function! VrcGemInstall(pkg)    " {{{4
-        if executable('gem')
-            call system('sudo gem install ' . a:pkg)
-        endif
-    endfunction
     function! VrcUpdateLinters(engines)    " {{{4
         if type(a:engines) != type([])  " script error
             echoerr 'Engines variable is not a list'
@@ -813,12 +891,13 @@ if dein#load_state(VrcPluginsDir())
     "   . npm install command used below assumes npm is configured to
     "     install in global mode without needing superuser privileges
     "   . update of tern is used as trigger to reinstall jsctags
-    function! VrcBuildTernAndJsctags()                               "    {{{4
+    function! VrcBuildTernAndJsctags()    " {{{4
         " called by post-install hook below
-        call VrcBuildTern()
-        call VrcBuildJsctags()
-    endfunction
-    function! VrcBuildTern()                                         "    {{{4
+        if !executable('npm')
+            echoerr 'npm not available: cannot build tern-for-vim and jsctags'
+            return
+        endif
+        " build tern
         let l:feedback = system('npm install')
         if v:shell_error
             echoerr 'Unable to build tern-for-vim plugin'
@@ -826,20 +905,11 @@ if dein#load_state(VrcPluginsDir())
                 echoerr 'Error message: ' . l:feedback
             endif
         endif
+        " build jsctags
+        call VrcNpmInstall('git+https://github.com/ramitos/jsctags.git',
+                    \ 'jsctags')
     endfunction
-    function! VrcBuildJsctags()                                      "    {{{4
-        let l:cmd = 'npm install -g ' .
-                    \ 'git+https://github.com/ramitos/jsctags.git'
-        unlet l:feedback
-        let l:feedback = system(l:cmd)
-        if v:shell_error
-            echoerr 'Unable to install jsctags binaries'
-            if strlen(l:feedback) > 0
-                echoerr 'Error message: ' . l:feedback
-            endif
-        endif
-    endfunction
-    function! VrcCygwin()                                            "    {{{4
+    function! VrcCygwin()    " {{{4
         return system('uname -o') =~# '^Cygwin'
     endfunction
     " - install    {{{4
@@ -851,18 +921,20 @@ if dein#load_state(VrcPluginsDir())
                     \ 'on_ft'            : ['javascript', 'javascript.jsx'],
                     \ 'hook_post_update' : function('VrcBuildTernAndJsctags'),
                     \ })
-        let s:ternjs_hook_source = join([
-                    \ 'let g:tern_request_timeout = 1',
-                    \ 'let g:tern_show_signature_in_pum = 0',
-                    \ ], "\n")
+        function! VrcConfigureTernjs()
+            let g:tern_request_timeout       = 1
+            let g:tern_show_signature_in_pum = 0
+        endfunction
+        function! VrcBuildTernjs()
+            call VrcNpmInstall('tern')
+        endfunction
         call dein#add('carlitux/deoplete-ternjs', {
                     \ 'if'               : 'has("nvim")',
                     \ 'on_ft'            : ['javascript', 'javascript.jsx'],
                     \ 'depends'          : ['deoplete.nvim'],
-                    \ 'hook_source'      : s:ternjs_hook_source,
-                    \ 'hook_post_update' : 'npm install -g tern',
+                    \ 'hook_source'      : function('VrcConfigureTernjs'),
+                    \ 'hook_post_update' : function('VrcBuildTernjs'),
                     \ })
-        unlet s:ternjs_hook_source
     endif
     " bundles: latex support    {{{2
     " - vimtex : latex support    {{{3
@@ -887,26 +959,48 @@ if dein#load_state(VrcPluginsDir())
                 \ 'on_ft' : ['lua'],
                 \ })
     " bundles: markdown support    {{{2
+    " - vim-pandoc : pandoc integration    {{{3
+    "   . uses panzer
+    function! VrcBuildPandoc()
+        call VrcPipInstall('git+https://github.com/msprev/panzer', 'panzer')
+        call VrcPipInstall('git+https://github.com/msprev/pandocinject',
+                    \ 'pandocinject')
+    endfunction
+    call dein#add('vim-pandoc/vim-pandoc', {
+                \ 'if'               : 'v:version >= 704 && has("python3")',
+                \ 'on_ft'            : ['markdown', 'markdown.pandoc'],
+                \ 'hook_post_update' : function('VrcBuildPandoc'),
+                \ })
+    " - vim-pandoc-syntax : pandoc md syntax    {{{3
+    call dein#add('vim-pandoc/vim-pandoc-syntax', {
+                \ 'if'    : 'v:version >= 704 && has("python3")',
+                \ 'on_ft' : ['markdown', 'markdown.pandoc'],
+                \ })
+    " - vim-pandoc-after : third-party plugin integration    {{{3
+    call dein#add('vim-pandoc/vim-pandoc-after', {
+                \ 'if'    : 'v:version >= 704 && has("python3")',
+                \ 'on_ft' : ['markdown', 'markdown.pandoc'],
+                \ })
     " - markdown2ctags : tag generator    {{{3
     call dein#add('jszakmeister/markdown2ctags', {
-                \ 'on_ft' : ['markdown','markdown.pandoc'],
+                \ 'on_ft' : ['markdown', 'markdown.pandoc'],
                 \ })
     " - dn-markdown : md support    {{{3
     "   . customise
-    let g:DN_markdown_fontsize_print     = 12
-    let g:DN_markdown_linkcolor_print    = 'blue'
+    let g:DN_markdown_fontsize_print  = 12
+    let g:DN_markdown_linkcolor_print = 'blue'
     call dein#add('dnebauer/vim-dn-markdown', {
-                \ 'on_ft' : ['markdown','markdown.pandoc'],
+                \ 'on_ft' : ['markdown', 'markdown.pandoc'],
                 \ })
     " - previm : realtime preview    {{{3
     call dein#add('kannokanno/previm', {
-                \ 'on_ft'   : ['markdown','markdown.pandoc'],
+                \ 'on_ft'   : ['markdown', 'markdown.pandoc'],
                 \ 'depends' : ['open-browser.vim'],
                 \ 'on_cmd'  : ['PrevimOpen'],
                 \ })
     " - toc : generate table of contents    {{{3
     call dein#add('mzlogin/vim-markdown-toc', {
-                \ 'on_ft'   : ['markdown','markdown.pandoc'],
+                \ 'on_ft'   : ['markdown', 'markdown.pandoc'],
                 \ 'on_cmd'  : ['GenTocGFM', 'GenTocRedcarpet',
                 \              'UpdateToc', 'RemoveToc'],
                 \ })
@@ -946,18 +1040,13 @@ if dein#load_state(VrcPluginsDir())
     endif
     " bundles: python support    {{{2
     "  - jedi : autocompletion    {{{3
-    let s:jedi_hook_post_update = join([
-                \ 'if executable("pip")',
-                \ 'call system("pip install --upgrade jedi")',
-                \ 'endif',
-                \ 'if executable("pip3")',
-                \ 'call system("pip3 install --upgrade jedi")',
-                \ 'endif',
-                \ ], "\n")
+    function! VrcBuildJedi()
+        call VrcPipInstall('jedi')
+    endfunction
     call dein#add('davidhalter/jedi-vim', {
                 \ 'if'               : '!has("nvim")',
                 \ 'on_ft'            : ['python'],
-                \ 'hook_post_update' : s:jedi_hook_post_update,
+                \ 'hook_post_update' : function('VrcBuildJedi'),
                 \ })
     " - deoplete-jedi : deoplete helper    {{{3
     "   . do not check for python3 in nvim (see note above at 'nvim issues')
@@ -966,9 +1055,8 @@ if dein#load_state(VrcPluginsDir())
                 \                    . ' && executable("python3")',
                 \ 'on_ft'            : ['python'],
                 \ 'depends'          : ['deoplete.nvim'],
-                \ 'hook_post_update' : s:jedi_hook_post_update,
+                \ 'hook_post_update' : function('VrcBuildJedi'),
                 \ })
-    unlet s:jedi_hook_post_update
     " - pep8 : indentation support    {{{3
     call dein#add('hynek/vim-python-pep8-indent', {
                 \ 'on_ft' : 'python',
