@@ -22,10 +22,9 @@ function! s:MarkdownSupport()
     let g:pandoc#filetypes#pandoc_markdown = 0
     let g:pandoc#after#modules#enabled     = ['neosnippet']
     let g:pandoc#modules#enabled           = [
-                \ 'formatting', 'folding',    'command',
-                \ 'templates',  'keyboard',   'bibliographies',
-                \ 'yaml',       'completion', 'toc',
-                \ 'chdir',      'hypertext']
+                \ 'formatting', 'folding', 'command',
+                \ 'keyboard',   'yaml',    'completion',
+                \ 'toc',        'chdir',   'hypertext']
     let g:pandoc#formatting#mode                            = 'h'
     let g:pandoc#formatting#smart_autoformat_on_cursormoved = 1
     let g:pandoc#command#latex_engine                       = 'xelatex'
@@ -46,6 +45,8 @@ function! s:MarkdownSupport()
     if !has('nvim')
         setlocal omnifunc=htmlcomplete#CompleteTags
     endif    " }}}1
+    " change filetype to trigger vim-pandoc plugin
+    set filetype=markdown.pandoc
 endfunction
 
 augroup vrc_markdown_files
