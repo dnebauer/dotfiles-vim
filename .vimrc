@@ -474,17 +474,15 @@ if dein#load_state(VrcPluginsDir())
     " - denite : integrated information display    {{{3
     "   . gave up loading denite on demand as the dependencies are
     "     too fragile; only works dependably if force load at start
-    let s:denite_hook_post_source = join([
-                \ 'call denite#custom#source("grep", '
-                \ . '"matchers", ["matcher_fuzzy"])',
-                \ 'call denite#custom#source("buffer,file,file_rec", '
-                \ . '"sorters", ["sorter_rank"])',
-                \ ], "\n")
+    function! VrcConfigureDenite()    " {{{4
+        call denite#custom#source('grep', 'matchers', ['matcher_fuzzy'])
+        call denite#custom#source('buffer,file,file_rec', 'sorters',
+                    \ ['sorter_rank'])
+    endfunction    " }}}4
     call dein#add('shougo/denite.nvim', {
                 \ 'depends'          : ['neoinclude.vim', 'neomru.vim'],
-                \ 'hook_post_source' : s:denite_hook_post_source,
+                \ 'hook_post_source' : function('VrcConfigureDenite'),
                 \ })
-    unlet s:denite_hook_post_source
     " - neomru : denite helper - recently used files    {{{3
     call dein#add('shougo/neomru.vim')
     " - session : denite helper - extra sources    {{{3
@@ -580,15 +578,14 @@ if dein#load_state(VrcPluginsDir())
                 \ 'on_ft' : ['vim'],
                 \ })
     " - echodoc : plugin helper that prints to echo area    {{{3
-    let s:echodoc_hook_source = join([
-                \ 'let g:echodoc_enable_at_startup = 1',
-                \ 'set cmdheight=2',
-                \ ], "\n")
+    function VrcConfigureEchodoc()    " {{{4
+        let g:echodoc_enable_at_startup = 1
+        set cmdheight=2
+    endfunction    " }}}4
     call dein#add('shougo/echodoc.vim', {
                 \ 'on_event'    : ['CompleteDone'],
-                \ 'hook_source' : s:echodoc_hook_source,
+                \ 'hook_source' : function('VrcConfigureEchodoc'),
                 \ })
-    unlet s:echodoc_hook_source
     " - neopairs : completion helper closes paired structures    {{{3
     call dein#add('shougo/neopairs.vim', {
                 \ 'on_source' : ['neocomplete.vim', 'deoplete.nvim'],
@@ -664,18 +661,17 @@ if dein#load_state(VrcPluginsDir())
                 \ })
     " bundles: ui    {{{2
     " - airline : status line    {{{3
-    let s:airline_hook_source = join([
-                \ 'let g:airline#extensions#branch#enabled = 1',
-                \ 'let g:airline#extensions#branch#empty_message = ""',
-                \ 'let g:airline#extensions#branch#displayed_head_limit = 10',
-                \ 'let g:airline#extensions#branch#format = 2',
-                \ 'let g:airline#extensions#tagbar#enabled = 1',
-                \ ], "\n")
+    function VrcConfigureAirline()    " {{{4
+        let g:airline#extensions#branch#enabled              = 1
+        let g:airline#extensions#branch#empty_message        = ''
+        let g:airline#extensions#branch#displayed_head_limit = 10
+        let g:airline#extensions#branch#format               = 2
+        let g:airline#extensions#tagbar#enabled              = 1
+    endfunction    " }}}4
     call dein#add('vim-airline/vim-airline', {
                 \ 'if'          : 'v:version >= 702',
-                \ 'hook_source' : s:airline_hook_source,
+                \ 'hook_source' : function('VrcConfigureAirline'),
                 \ })
-    unlet s:airline_hook_source
     " - airline-themes : airline helper    {{{3
     call dein#add('vim-airline/vim-airline-themes', {
                 \ 'depends' : ['vim-airline'],
@@ -961,11 +957,11 @@ if dein#load_state(VrcPluginsDir())
     " bundles: markdown support    {{{2
     " - vim-pandoc : pandoc integration    {{{3
     "   . uses panzer
-    function! VrcBuildPandoc()
+    function! VrcBuildPandoc()    " {{{4
         call VrcPipInstall('git+https://github.com/msprev/panzer', 'panzer')
         call VrcPipInstall('git+https://github.com/msprev/pandocinject',
                     \ 'pandocinject')
-    endfunction
+    endfunction    " }}}4
     call dein#add('vim-pandoc/vim-pandoc', {
                 \ 'if'               : 'v:version >= 704 && has("python3")',
                 \ 'on_ft'            : ['markdown', 'markdown.pandoc'],
@@ -985,13 +981,15 @@ if dein#load_state(VrcPluginsDir())
     call dein#add('jszakmeister/markdown2ctags', {
                 \ 'on_ft' : ['markdown', 'markdown.pandoc'],
                 \ })
-    " - dn-markdown : md support    {{{3
-    "   . customise
-    let g:DN_markdown_fontsize_print  = 12
-    let g:DN_markdown_linkcolor_print = 'blue'
-    call dein#add('dnebauer/vim-dn-markdown', {
-                \ 'on_ft' : ['markdown', 'markdown.pandoc'],
-                \ })
+    "" - dn-markdown : md support    {{{3
+    ""   . customise
+    "function! VrcConfigureDnMarkdown()
+    "    let g:DN_markdown_fontsize_print  = 12
+    "    let g:DN_markdown_linkcolor_print = 'blue'
+    "endfunction
+    "call dein#add('dnebauer/vim-dn-markdown', {
+    "            \ 'on_ft' : ['markdown', 'markdown.pandoc'],
+    "            \ })
     " - previm : realtime preview    {{{3
     call dein#add('kannokanno/previm', {
                 \ 'on_ft'   : ['markdown', 'markdown.pandoc'],
@@ -1040,9 +1038,9 @@ if dein#load_state(VrcPluginsDir())
     endif
     " bundles: python support    {{{2
     "  - jedi : autocompletion    {{{3
-    function! VrcBuildJedi()
+    function! VrcBuildJedi()    " {{{4
         call VrcPipInstall('jedi')
-    endfunction
+    endfunction    " }}}4
     call dein#add('davidhalter/jedi-vim', {
                 \ 'if'               : '!has("nvim")',
                 \ 'on_ft'            : ['python'],
