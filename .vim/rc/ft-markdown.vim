@@ -37,6 +37,7 @@ function! s:MarkdownSupport()
                 \ . '/vim-pandoc-templates'
     let g:pandoc#compiler#command   = 'panzer'
     let g:pandoc#compiler#arguments = '---quiet ---strict'
+                \ . ' ---panzer-support ' . VrcPanzerPath()
     " improve sentence text object    {{{1
     call textobj#sentence#init()
     " add system dictionary to word completions    {{{1

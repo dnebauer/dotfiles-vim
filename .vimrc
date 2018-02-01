@@ -30,13 +30,13 @@ function! VrcOS()
 endfunction
 " function VrcVimPath(type)    {{{2
 " intent: provide vim-related paths
-" params: type - path type to return ('home'|'plug')
+" params: type - path type to return ('home'|'plug'|'panzer')
 " prints: nil
 " return: string (directory path)
 function! VrcVimPath(type)
     " vim home directory
+    let l:os = VrcOS()
     if     a:type ==# 'home'
-        let l:os   = VrcOS()
         let l:home = escape($HOME, ' ')
         if     l:os ==# 'windows'
             if has('nvim')  " nvim
@@ -52,6 +52,16 @@ function! VrcVimPath(type)
     " dein plugin directory root
     elseif a:type ==# 'plug'
         return resolve(expand('~/.cache/dein'))
+    " panzer support directory
+    elseif a:type ==# 'panzer'
+        let l:home = escape($HOME, ' ')
+        if     l:os ==# 'windows'
+            return resolve(expand('~/AppData/Local/panzer'))
+        elseif l:os ==# 'unix'
+            return l:home . '/.config/panzer'
+        else
+            return l:home . '/.config/panzer'
+        endif
     " error
     else
         echoerr "Invalid path type '" . a:type . "'"
@@ -109,6 +119,22 @@ endfunction
 " return: plugins directory
 function! VrcPluginsDir()
     return VrcVimPath('plug')
+endfunction
+" function VrcPanzerPath()    {{{2
+" intent: provide path to panzer support directory
+" params: nil
+" prints: nil
+" return: string (directory path)
+function! VrcPanzerPath()
+    let l:os   = VrcOS()
+    let l:home = escape($HOME, ' ')
+    if     l:os ==# 'windows'
+        return resolve(expand('~/AppData/Local/panzer'))
+    elseif l:os ==# 'unix'
+        return l:home . '/.config/panzer'
+    else
+        return l:home . '/.config/panzer'
+    endif
 endfunction
 " function VrcLinterEngine()    {{{2
 " intent: provide linter engine
