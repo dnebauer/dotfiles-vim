@@ -1,5 +1,5 @@
 ---
-title: "${cursor}"
+title: "[${cursor}][source]"
 author: 
 date: 
 style:  # Latex@pt (@=8-12,14,17,20), PaginateSections
@@ -11,4 +11,6 @@ style:  # Latex@pt (@=8-12,14,17,20), PaginateSections
 
 [comment]: # (URLs)
 
-   
+   [author]: 
+
+   [source]: 
