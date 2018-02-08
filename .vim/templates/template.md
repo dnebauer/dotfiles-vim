@@ -1,10 +1,8 @@
 ---
-title: "[${cursor}][source]"
-author: 
-date: 
-style:  # Latex@pt (@=8-12,14,17,20), PaginateSections
-  - Standard
-  - Latex12pt
+title:  "[${cursor}][source]"
+author: "[][author]"
+date:   
+style:  [Standard, Latex12pt]  # pt=8-12,14,17,20; PaginateSections
 ---
 
 
