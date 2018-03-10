@@ -1007,15 +1007,10 @@ if dein#load_state(VrcPluginsDir())
     call dein#add('jszakmeister/markdown2ctags', {
                 \ 'on_ft' : ['markdown', 'markdown.pandoc'],
                 \ })
-    "" - dn-markdown : md support    {{{3
-    ""   . customise
-    "function! VrcConfigureDnMarkdown()
-    "    let g:DN_markdown_fontsize_print  = 12
-    "    let g:DN_markdown_linkcolor_print = 'blue'
-    "endfunction
-    "call dein#add('dnebauer/vim-dn-markdown', {
-    "            \ 'on_ft' : ['markdown', 'markdown.pandoc'],
-    "            \ })
+    " - dn-md-utils : markdown utilities    {{{3
+    call dein#add('dnebauer/vim-dn-md-utils', {
+                \ 'on_ft' : ['markdown', 'markdown.pandoc'],
+                \ })
     " - previm : realtime preview    {{{3
     call dein#add('kannokanno/previm', {
                 \ 'on_ft'   : ['markdown', 'markdown.pandoc'],
