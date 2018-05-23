@@ -892,6 +892,10 @@ if dein#load_state(VrcPluginsDir())
     call dein#add('mattn/emmet-vim', {
                 \ 'on_ft' : ['html', 'css'],
                 \ })
+    " - matchtagalways : highlight tag pairs    {{{3
+    call dein#add('Valloric/MatchTagAlways', {
+                \ 'on_ft' : ['html', 'xhtml', 'xml', 'jinja'],
+                \ })
     " bundles: java support    {{{2
     " - javacomplete2 - completion    {{{3
     call dein#add('artur-shaik/vim-javacomplete2', {
@@ -1102,6 +1106,8 @@ if dein#load_state(VrcPluginsDir())
     call dein#add('vim-scripts/xml.vim', {
                 \ 'on_ft' : ['xml'],
                 \ })
+    " - matchtagalways : highlight tag pairs    {{{3
+    "   . defined in html support section
     " bundles: xquery support    {{{2
     " - indentomnicomplete : autoindent and omnicomplete    {{{3
     call dein#add('vim-scripts/XQuery-indentomnicompleteftplugin', {
