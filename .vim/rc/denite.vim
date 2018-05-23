@@ -47,12 +47,20 @@ if VrcOS() ==# 'windows'
     nnoremap <silent> [denite]f :call <SID>Denite_Find_on_Windows()<CR>
     function! s:Denite_Find_on_Windows()
         " possible utilities to use:
+        " - RipGrep (rg)
+        "   https://github.com/BurntSushi/ripgrep
         " - Silver Searcher (ag)
         "   https://github.com/ggreer/the_silver_searcher
         " - Platinum Searcher (pt)
         "   https://github.com/monochromegane/the_platinum_searcher
         " they are listed in preference order
         let l:utils = [
+                    \  {
+                    \   'utility': 'RipGrep',
+                    \   'exename': 'rg',
+                    \   'command': ['rg', '--follow', '--color', 'never',
+                    \               '--hidden', ''],
+                    \  },
                     \  {
                     \   'utility': 'Silver Searcher',
                     \   'exename': 'ag',
@@ -99,7 +107,7 @@ if VrcOS() ==# 'windows'
         " - run unite command this time
         Unite -buffer-name=files file_rec
     endfunction
-else
+else  " non-windows operating system
     nnoremap <silent> [denite]f :<C-u>Denite
                 \ -buffer-name=files
                 \ file_rec<CR>
