@@ -681,10 +681,12 @@ if dein#load_state(VrcPluginsDir())
     call dein#add('vim-scripts/matchit.zip')
     " - sneak : two-character motion plugin    {{{3
     call dein#add('justinmk/vim-sneak')
-    " - vim-textobj-sentence : improve sentence text object and motion    {{{3
+    " - vim-textobj-sentence : improve sentence text object/motion    {{{3
     call dein#add('reedes/vim-textobj-sentence', {
                 \ 'depends' : ['vim-textobject-user'],
                 \ })
+    " - vim-lastplace : reopen files at last edit position    {{{3
+    call dein#add('farmergreg/vim-lastplace')
     " bundles: ui    {{{2
     " - airline : status line    {{{3
     function VrcConfigureAirline()    " {{{4
