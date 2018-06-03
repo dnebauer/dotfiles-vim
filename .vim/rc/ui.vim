@@ -182,6 +182,40 @@ call VrcSetColorScheme('peaksea', 'desert')
 call togglebg#map('<F5>')
 
 " Status line    {{{1
+" - vcs integration
+let g:airline#extensions#branch#enabled              = 1
+let g:airline#extensions#branch#empty_message        = ''
+let g:airline#extensions#branch#displayed_head_limit = 10
+let g:airline#extensions#branch#format               = 2
+" - tagbar integration
+let g:airline#extensions#tagbar#enabled = 1
+" - use powerline fonts
+let g:airline_powerline_fonts = 1
+" - set symbols
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+" - set unicode symbols
+let g:airline_left_sep           = '»'
+let g:airline_left_sep           = '▶'
+let g:airline_right_sep          = '«'
+let g:airline_right_sep          = '◀'
+let g:airline_symbols.linenr     = '␊'
+let g:airline_symbols.linenr     = '␤'
+let g:airline_symbols.linenr     = '¶'
+let g:airline_symbols.branch     = '⎇'
+let g:airline_symbols.paste      = 'ρ'
+let g:airline_symbols.paste      = 'Þ'
+let g:airline_symbols.paste      = '∥'
+let g:airline_symbols.whitespace = 'Ξ'
+" - set airline symbols
+let g:airline_left_sep         = ''
+let g:airline_left_alt_sep     = ''
+let g:airline_right_sep        = ''
+let g:airline_right_alt_sep    = ''
+let g:airline_symbols.branch   = ''
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr   = ''
 " - display all buffers when only one is open
 let g:airline#extensions#tabline#enabled = 1    " }}}1
 

@@ -689,16 +689,8 @@ if dein#load_state(VrcPluginsDir())
     call dein#add('farmergreg/vim-lastplace')
     " bundles: ui    {{{2
     " - airline : status line    {{{3
-    function VrcConfigureAirline()    " {{{4
-        let g:airline#extensions#branch#enabled              = 1
-        let g:airline#extensions#branch#empty_message        = ''
-        let g:airline#extensions#branch#displayed_head_limit = 10
-        let g:airline#extensions#branch#format               = 2
-        let g:airline#extensions#tagbar#enabled              = 1
-    endfunction    " }}}4
     call dein#add('vim-airline/vim-airline', {
-                \ 'if'          : 'v:version >= 702',
-                \ 'hook_source' : function('VrcConfigureAirline'),
+                \ 'if' : 'v:version >= 702',
                 \ })
     " - airline-themes : airline helper    {{{3
     call dein#add('vim-airline/vim-airline-themes', {
