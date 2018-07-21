@@ -382,6 +382,12 @@ if dein#load_state(VrcPluginsDir())
     call dein#add('shougo/neoinclude.vim')
     " - dn-utils : general utilities    {{{3
     call dein#add('dnebauer/vim-dn-utils')
+    " - dn-log-autocmds : log autocmd events    {{{3
+    call dein#add('dnebauer/vim-dn-log-autocmds', {
+                \ 'on_cmd': ['LogAutocmds',     'AutocmdsLoggingStatus',
+                \            'AutocmdsLogFile', 'AnnotateAutocmdsLog',
+                \            'DeleteAutocmdsLog']
+                \ })
     " - repeat : plugin helper for repeating commands    {{{3
     call dein#add('tpope/vim-repeat', {
                 \ 'on_source': ['vim-surround'],
