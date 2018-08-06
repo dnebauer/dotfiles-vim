@@ -583,6 +583,7 @@ if dein#load_state(VrcPluginsDir())
     " - dn-print-dialog : pure vim print dialog    {{{3
     call dein#add('dnebauer/vim-dn-print-dialog', {
                 \ 'on_cmd' :  ['PrintDialog'],
+                \ 'depends' : ['vim-dn-utils'],
                 \ })
     " bundles: calendar    {{{2
     " - calendar : display calendar    {{{3
@@ -863,7 +864,8 @@ if dein#load_state(VrcPluginsDir())
                 \ })
     " - dn-docbk : docbook5 support    {{{3
     call dein#add('dnebauer/vim-dn-docbk', {
-                \ 'on_ft' : ['docbk'],
+                \ 'on_ft'   : ['docbk'],
+                \ 'depends' : ['vim-dn-utils'],
                 \ })
     " bundles: go support    {{{2
     " - vim-go : language support    {{{3
@@ -969,7 +971,8 @@ if dein#load_state(VrcPluginsDir())
                 \ })
     " - dn-latex : latex support    {{{3
     call dein#add('dnebauer/vim-dn-latex', {
-                \ 'on_ft' : ['tex','latex'],
+                \ 'on_ft'   : ['tex', 'latex'],
+                \ 'depends' : ['vim-dn-utils'],
                 \ })
     " bundles: lua support    {{{2
     " - ftplugin : lua support    {{{3
@@ -1013,7 +1016,8 @@ if dein#load_state(VrcPluginsDir())
                 \ })
     " - dn-md-utils : markdown utilities    {{{3
     call dein#add('dnebauer/vim-dn-md-utils', {
-                \ 'on_ft' : ['markdown', 'markdown.pandoc'],
+                \ 'on_ft'   : ['markdown', 'markdown.pandoc'],
+                \ 'depends' : ['vim-dn-utils'],
                 \ })
     " - previm : realtime preview    {{{3
     call dein#add('kannokanno/previm', {
@@ -1034,7 +1038,8 @@ if dein#load_state(VrcPluginsDir())
                 \ })
     " - dn-perl : perl support    {{{3
     call dein#add('dnebauer/vim-dn-perl', {
-                \ 'on_ft' : ['perl'],
+                \ 'on_ft'   : ['perl'],
+                \ 'depends' : ['vim-dn-utils'],
                 \ })
     " - perlhelp : provide help with perldoc    {{{3
     call dein#add('vim-scripts/perlhelp.vim', {
