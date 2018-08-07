@@ -14,6 +14,16 @@
 " - are used in multiple subsidiary configuration files
 " - pass a script variable to a subsidiary configuration file or files
 " - used in multiple locations in this file
+" function VrcError(msgs)    {{{2
+" intent: display error message
+" params: msgs - error messages [List]
+" prints: error messages
+" return: nil
+function! VrcError(msgs)
+    echohl ErrorMsg
+    for l:msg in a:msgs | echomsg l:msg | endfor
+    echohl None
+endfunction
 " function VrcOS()    {{{2
 " intent: determine operating system
 " params: nil
@@ -64,7 +74,7 @@ function! VrcVimPath(type)
         endif
     " error
     else
-        echoerr "Invalid path type '" . a:type . "'"
+        call VrcError(["Invalid path type '" . a:type . "'"])
     endif
 endfunction
 " function VrcTemp()    {{{2
@@ -78,7 +88,7 @@ function! VrcTemp(part)
     elseif a:part ==# 'dir'  | return fnamemodify(s:temp_path, ':p:h')
     elseif a:part ==# 'file' | return fnamemodify(s:temp_path, ':p:t')
     else
-        echoerr "Invalid VrcTemp param '" . a:part . "'"
+        call VrcError(["Invalid VrcTemp param '" . a:part . "'"])
     endif
 endfunction
 " function VrcSource(dir, self)    {{{2
@@ -92,7 +102,7 @@ function! VrcSource(dir, self)
     " dir must exist
     let l:dir = resolve(expand(a:dir))
     if !isdirectory(l:dir)
-        echoerr "Invalid source directory '" . l:dir . "'"
+        call VrcError(["Invalid source directory '" . l:dir . "'"])
         return
     endif
     " recursively process directory contents
@@ -119,6 +129,30 @@ endfunction
 " return: plugins directory
 function! VrcPluginsDir()
     return VrcVimPath('plug')
+endfunction
+" function VrcInstallDein()    {{{2
+" intent: install dein plugin manager
+" params: nil
+" prints: feedback
+" return: boolean (whether successful)
+function! VrcInstallDein()
+    let l:cmd = 'git clone https://github.com/shougo/dein.vim ' . s:dein_dir
+    let l:feedback = systemlist(l:cmd)
+    if !v:shell_error  " succeeded
+        echohl WarningMsg
+        echomsg 'Execute ''call dein#install()'' once vim loads'
+        echohl None
+        let l:installed = v:true
+    else  " failed
+        let l:errs = 'Unable to install dein plugin manager using git:'
+        call extend(l:errs, l:feedback)
+        call VrcError(l:errs)
+        let l:installed = v:false
+    endif
+    echohl MoreMsg
+    call input('Press any key to proceed...')
+    echohl None
+    return l:installed
 endfunction
 " function VrcPanzerPath()    {{{2
 " intent: provide path to panzer support directory
@@ -186,9 +220,9 @@ function! VrcPipInstall(pkg, ...)
         if executable(l:installer) | let l:installer_available = 1 | endif
     endfor
     if !l:installer_available
-        echoerr 'no python installers (' . join(l:installers, ', ')
-                    \ . ') available'
-        echoerr 'cannot install python package ' . l:name
+        call VrcError(['no python installers (' . join(l:installers, ', ')
+                    \  . ') available',
+                    \  'cannot install python package ' . l:name])
         return l:retval
     endif
     for l:installer in l:installers
@@ -196,9 +230,10 @@ function! VrcPipInstall(pkg, ...)
         let l:install_cmd = l:installer . ' install --upgrade ' . a:pkg
         let l:feedback = system(l:install_cmd)
         if v:shell_error
-            echoerr 'Unable to install ' . l:name . ' with ' . l:installer
+            call VrcError(['Unable to install ' . l:name
+                        \  . ' with ' . l:installer])
             if strlen(l:feedback) > 0
-                echoerr 'Error message: ' . l:feedback
+                call VrcError(['Error message: ' . l:feedback])
             endif
         else
             let l:retval = 1
@@ -217,7 +252,8 @@ function! VrcNpmInstall(pkg, ...)
     let l:name = a:pkg
     if a:0 && strlen(a:1) > 0 | let l:name = a:1 | endif
     if !executable('npm')
-        echoerr 'npm not available: cannot install node package ' . l:name
+        call VrcError(['npm not available: cannot install node package '
+                    \  . l:name])
         return
     endif
     let l:install_pkg = 1
@@ -228,18 +264,18 @@ function! VrcNpmInstall(pkg, ...)
     if l:install_pkg
         let l:feedback = system('npm --global install ' . a:pkg)
         if v:shell_error
-            echoerr 'Unable to install ' . l:name . ' with npm'
+            call VrcError(['Unable to install ' . l:name . ' with npm'])
             if strlen(l:feedback) > 0
-                echoerr 'Error message: ' . l:feedback
+                call VrcError(['Error message: ' . l:feedback])
             endif
             return l:retval
         endif
     endif
     let l:feedback = system('npm --global update ' . a:pkg)
     if v:shell_error
-        echoerr 'Unable to update ' . l:name . ' with npm'
+        call VrcError(['Unable to update ' . l:name . ' with npm'])
         if strlen(l:feedback) > 0
-            echoerr 'Error message: ' . l:feedback
+            call VrcError(['Error message: ' . l:feedback])
         endif
     else
         let l:retval = 1
@@ -257,14 +293,15 @@ function! VrcGemInstall(pkg, ...)
     let l:name = a:pkg
     if a:0 && strlen(a:1) > 0 | let l:name = a:1 | endif
     if !executable('gem')
-        echoerr 'gem not available: cannot install ruby package ' . l:name
+        call VrcError(['gem not available: cannot install ruby package '
+                    \  . l:name])
         return l:retval
     endif
     let l:feedback = system('sudo gem install ' . a:pkg)
     if v:shell_error
-        echoerr 'Unable to install ' . l:name . ' with gem'
+        call VrcError(['Unable to install ' . l:name . ' with gem'])
         if strlen(l:feedback) > 0
-            echoerr 'Error message: ' . l:feedback
+            call VrcError(['Error message: ' . l:feedback])
         endif
     else
         let l:retval = 1
@@ -297,8 +334,8 @@ endif
 " - required tools: rsync, git    {{{3
 for s:app in ['rsync', 'git']
     if ! executable(s:app)
-        echoerr "plugin handler 'dein' can't find '" . s:app . "'"
-        echoerr 'aborting vim configuration file execution'
+        call VrcError(["plugin handler 'dein' can't find '" . s:app . "'",
+         \             'aborting vim configuration file execution'])
         finish
     endif
 endfor
@@ -309,9 +346,9 @@ set nocompatible
 filetype off
 " - required vim version    {{{3
 if v:version < 704
-    echoerr 'this instance of vim is version' . v:version
-    echoerr "plugin handler 'dein' needs vim 7.4+"
-    echoerr 'aborting vim configuration file execution'
+    call VrcError(['this instance of vim is version' . v:version,
+                \  "plugin handler 'dein' needs vim 7.4+",
+                \  'aborting vim configuration file execution'])
     finish
 endif
 " how to install/update plugins with dein    {{{2
@@ -345,10 +382,7 @@ endif
 let s:dein_dir = VrcPluginsDir() . '/repos/github.com/shougo/dein.vim'
 " ensure dein is installed    {{{2
 if !isdirectory(s:dein_dir)
-    execute '!git clone https://github.com/shougo/dein.vim' s:dein_dir
-    echohl WarningMsg
-    echomsg 'Execute ''call dein#install()'' once vim loads'
-    echohl None
+    if !VrcInstallDein() | finish | endif
 endif
 " load dein    {{{2
 if &runtimepath !~# '/dein.vim'
@@ -358,6 +392,10 @@ if dein#load_state(VrcPluginsDir())
     call dein#begin(VrcPluginsDir())
     call dein#add(s:dein_dir)
     call dein#add('shougo/dein.vim')
+    if !has('nvim')
+        call dein#add('roxma/nvim-yarp')
+        call dein#add('roxma/vim-hug-neovim-rpc')
+    endif
     " dein commands    {{{2
     call dein#add('haya14busa/dein-command.vim', {
                 \ 'on_cmd' : ['Dein'],
@@ -738,7 +776,7 @@ if dein#load_state(VrcPluginsDir())
     " - utility functions    {{{3
     function! VrcUpdateLinters(engines)    " {{{4
         if type(a:engines) != type([])  " script error
-            echoerr 'Engines variable is not a list'
+            call VrcError(['Engines variable is not a list'])
             return
         endif
         for l:engine in a:engines
@@ -759,7 +797,7 @@ if dein#load_state(VrcPluginsDir())
             elseif l:engine ==# 'write-good'            " write-good
                 call VrcNpmInstall('write-good')
             else
-                echoerr "Unknown linter keyword '" . l:engine . "'"
+                call VrcError(["Unknown linter keyword '" . l:engine . "'"])
             endif
         endfor
     endfunction    " }}}4
@@ -922,15 +960,16 @@ if dein#load_state(VrcPluginsDir())
     function! VrcBuildTernAndJsctags()    " {{{4
         " called by post-install hook below
         if !executable('npm')
-            echoerr 'npm not available: cannot build tern-for-vim and jsctags'
+            call VrcError(['npm not available: cannot build '
+                        \  . 'tern-for-vim and jsctags'])
             return
         endif
         " build tern
         let l:feedback = system('npm install')
         if v:shell_error
-            echoerr 'Unable to build tern-for-vim plugin'
+            call VrcError(['Unable to build tern-for-vim plugin'])
             if strlen(l:feedback) > 0
-                echoerr 'Error message: ' . l:feedback
+                call VrcError(['Error message: ' . l:feedback])
             endif
         endif
         " build jsctags
