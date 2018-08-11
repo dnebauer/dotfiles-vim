@@ -475,19 +475,6 @@ function! dn#rc#panzerPath() abort
     endif
 endfunction
 
-" dn#rc#pause()    {{{1
-
-""
-" @public
-" Pause script execution until user presses Enter key. User is presented with
-" message 'Press any key to continue...' in |hl-MoreMsg| highlighting.
-function! dn#rc#pause() abort
-    echohl MoreMsg
-    call input('Press any key to proceed...')
-    echohl None
-    return
-endfunction
-
 " dn#rc#pipInstall(package, [short])    {{{1
 
 ""
