@@ -43,7 +43,7 @@ nnoremap <silent> [denite]c :<C-u>Denite
 " - ,d : source = [blank]    {{{1
 nnoremap [denite]d :<C-u>Denite
 " - ,f : source = file search    {{{1
-if VrcOS() ==# 'windows'
+if dn#rc#os() ==# 'windows'
     nnoremap <silent> [denite]f :call <SID>Denite_Find_on_Windows()<CR>
     function! s:Denite_Find_on_Windows()
         " possible utilities to use:

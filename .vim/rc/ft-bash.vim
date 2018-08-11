@@ -3,11 +3,11 @@
 function! s:BashSupport()
     " syntax checker shellcheck follows files ('-x')    {{{1
     " ale    {{{2
-    if VrcLinterEngine() ==# 'ale'
+    if dn#rc#lintEngine() ==# 'ale'
         let g:ale_sh_shellcheck_options = '-x'
     endif
     " neomake    {{{2
-    if VrcLinterEngine() ==# 'neomake'
+    if dn#rc#lintEngine() ==# 'neomake'
         " - ensure relevant variable exists and is a list
         if exists('g:neomake_bash_shellcheck_args')
             if type(g:neomake_bash_shellcheck_args) != type([])
@@ -25,7 +25,7 @@ function! s:BashSupport()
         endif
     endif
     " syntastic    {{{2
-    if VrcLinterEngine() ==# 'syntastic'
+    if dn#rc#lintEngine() ==# 'syntastic'
         " - ensure relevant variable exists and is a list
         if exists('g:syntastic_bash_shellcheck_args')
             if type(g:syntastic_bash_shellcheck_args) != type([])

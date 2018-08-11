@@ -5,7 +5,7 @@ scriptencoding utf8  " required for C-Space mapping
 function! s:MarkdownSupport()
     " tagbar support    {{{1
     " - from https://github.com/majutsushi/tagbar/wiki
-    let l:bin = VrcPluginsDir()
+    let l:bin = dn#rc#pluginsDir()
                 \ . '/repos/github.com'
                 \ . '/jszakmeister/markdown2ctags/markdown2ctags.py'
     if filereadable(l:bin)
@@ -30,16 +30,13 @@ function! s:MarkdownSupport()
     let g:pandoc#formatting#mode                            = 'h'
     let g:pandoc#formatting#smart_autoformat_on_cursormoved = 1
     let g:pandoc#command#latex_engine                       = 'xelatex'
-    function! VrcPandocOpen(file)
-        return 'xdg-open ' . shellescape(expand(a:file,':p'))
-    endfunction
-    let g:pandoc#command#custom_open    = 'VrcPandocOpen'
+    let g:pandoc#command#custom_open    = 'dn#rc#pandocOpen'
     let g:pandoc#command#prefer_pdf     = 1
-    let g:pandoc#command#templates_file = VrcVimPath('home')
+    let g:pandoc#command#templates_file = dn#rc#vimPath('home')
                 \ . '/vim-pandoc-templates'
     let g:pandoc#compiler#command   = 'panzer'
     let g:pandoc#compiler#arguments = '---quiet ---strict'
-                \ . ' ---panzer-support ' . VrcPanzerPath()
+                \ . ' ---panzer-support ' . dn#rc#panzerPath()
     " insert hard space    {{{1
     " - map unicode non-breaking space to C-Space
     " - would prefer C-S-Space but terminal vim has a problem with mapping it

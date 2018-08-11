@@ -33,10 +33,10 @@ let g:neocomplete#keyword_patterns['default'] = '\h\w*'
 
 " Key mappings    {{{1
 " - <CR>: close popup and save indent
-function! s:VrcCrFunction()
+function! s:closePopupWithCR()
     return pumvisible() ? neocomplete#close_popup() : "\<CR>"
 endfunction
-inoremap <silent> <CR> <C-r>=<SID>VrcCrFunction()<CR>
+inoremap <silent> <CR> <C-r>=<SID>closePopupWithCR()<CR>
 " - <C-l>: complete common mapping
 inoremap <expr><C-l> neocomplete#complete_common_string()
 " - <Tab>: see tab.vim

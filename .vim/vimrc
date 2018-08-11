@@ -1,5 +1,10 @@
 " Configuration file for (n)vim
-" - uses subsidiary configuration files in 'rc' subdirectory
+" Last change: 2018 Aug 11
+" Maintainer: David Nebauer
+" License: GPL3
+
+" Uses subsidiary configuration files in 'rc' subdirectory, and
+" uses function file $VIMHOME/autoload/dn/rc.vim
 
 " NOTES:    {{{1
 " detect whether running vim or nvim    {{{2
@@ -9,348 +14,23 @@
 "   . vim:  if !has('nvim')
 "   . nvim: if has('nvim')    }}}2
 
-" UTILITY FUNCTIONS:    {{{1
-" include here only functions that:
-" - are used in multiple subsidiary configuration files
-" - pass a script variable to a subsidiary configuration file or files
-" - used in multiple locations in this file
-" function VrcError(msgs)    {{{2
-" intent: display error message
-" params: msgs - error messages [List]
-" prints: error messages
-" return: nil
-function! VrcError(msgs)
-    echohl ErrorMsg
-    for l:msg in a:msgs | echomsg l:msg | endfor
-    echohl None
-endfunction
-" function VrcOS()    {{{2
-" intent: determine operating system
-" params: nil
-" prints: nil
-" return: string ('windows'|'unix'|'other')
-function! VrcOS()
-    if has('win32') || has ('win64') || has('win95') || has('win32unix')
-        return 'windows'
-    elseif has('unix')
-        return 'unix'
-    else
-        return 'other'
-    endif
-endfunction
-" function VrcVimPath(type)    {{{2
-" intent: provide vim-related paths
-" params: type - path type to return ('home'|'plug'|'panzer')
-" prints: nil
-" return: string (directory path)
-function! VrcVimPath(type)
-    " vim home directory
-    let l:os = VrcOS()
-    if     a:type ==# 'home'
-        let l:home = escape($HOME, ' ')
-        if     l:os ==# 'windows'
-            if has('nvim')  " nvim
-                return resolve(expand('~/AppData/Local/nvim'))
-            else  " vim
-                return l:home . '/vimfiles'
-            endif
-        elseif l:os ==# 'unix'
-            return l:home . '/.vim'
-        else
-            return l:home . '/.vim'
-        endif
-    " dein plugin directory root
-    elseif a:type ==# 'plug'
-        return resolve(expand('~/.cache/dein'))
-    " panzer support directory
-    elseif a:type ==# 'panzer'
-        let l:home = escape($HOME, ' ')
-        if     l:os ==# 'windows'
-            return resolve(expand('~/AppData/Local/panzer'))
-        elseif l:os ==# 'unix'
-            return l:home . '/.config/panzer'
-        else
-            return l:home . '/.config/panzer'
-        endif
-    " error
-    else
-        call VrcError(["Invalid path type '" . a:type . "'"])
-    endif
-endfunction
-" function VrcTemp()    {{{2
-" intent: return path, name or directory of a temporary file
-" params: nil
-" prints: nil
-" return: string (path element)
-function! VrcTemp(part)
-    if !exists('s:temp_path') | let s:temp_path = tempname() | endif
-    if     a:part ==# 'path' | return s:temp_path
-    elseif a:part ==# 'dir'  | return fnamemodify(s:temp_path, ':p:h')
-    elseif a:part ==# 'file' | return fnamemodify(s:temp_path, ':p:t')
-    else
-        call VrcError(["Invalid VrcTemp param '" . a:part . "'"])
-    endif
-endfunction
-" function VrcSource(dir, self)    {{{2
-" intent: recursively source vim files in directory
-" params: dir  - directory to recursively source
-"         self - calling script (resolved filepath)
-" prints: files that are not sourced
-"         error if passed invalid file name
-" return: nil
-function! VrcSource(dir, self)
-    " dir must exist
-    let l:dir = resolve(expand(a:dir))
-    if !isdirectory(l:dir)
-        call VrcError(["Invalid source directory '" . l:dir . "'"])
-        return
-    endif
-    " recursively process directory contents
-    for l:path in glob(l:dir . '/**', 1, 1)
-        " ignore if not file
-        let l:type = getftype(l:path)
-        if l:type !~# 'file\|link' | continue | endif
-        " resolve links
-        let l:path = (l:type ==# 'link') ? resolve(l:path) : l:path
-        " avoid infinite recursion - do not source self!
-        if l:path ==# a:self | continue | endif
-        " must be vim file
-        " - for vim source *.vim; for nvim source *.vim and *.nvim
-        let l:match = !has('nvim') ? '^\p\+\.vim$' : '^\p\+\.n\?vim$'
-        if fnamemodify(l:path, ':t') =~? l:match
-            execute 'source' l:path
-        endif
-    endfor
-endfunction
-" function VrcPluginsDir()    {{{2
-" intent: provide plugins directory
-" params: nil
-" prints: nil
-" return: plugins directory
-function! VrcPluginsDir()
-    return VrcVimPath('plug')
-endfunction
-" function VrcInstallDein()    {{{2
-" intent: install dein plugin manager
-" params: nil
-" prints: feedback
-" return: boolean (whether successful)
-function! VrcInstallDein()
-    let l:cmd = 'git clone https://github.com/shougo/dein.vim ' . s:dein_dir
-    let l:feedback = systemlist(l:cmd)
-    if !v:shell_error  " succeeded
-        echohl WarningMsg
-        echomsg 'Execute ''call dein#install()'' once vim loads'
-        echohl None
-        let l:installed = v:true
-    else  " failed
-        let l:errs = 'Unable to install dein plugin manager using git:'
-        call extend(l:errs, l:feedback)
-        call VrcError(l:errs)
-        let l:installed = v:false
-    endif
-    echohl MoreMsg
-    call input('Press any key to proceed...')
-    echohl None
-    return l:installed
-endfunction
-" function VrcPanzerPath()    {{{2
-" intent: provide path to panzer support directory
-" params: nil
-" prints: nil
-" return: string (directory path)
-function! VrcPanzerPath()
-    let l:os   = VrcOS()
-    let l:home = escape($HOME, ' ')
-    if     l:os ==# 'windows'
-        return resolve(expand('~/AppData/Local/panzer'))
-    elseif l:os ==# 'unix'
-        return l:home . '/.config/panzer'
-    else
-        return l:home . '/.config/panzer'
-    endif
-endfunction
-" function VrcLinterEngine()    {{{2
-" intent: provide linter engine
-" params: nil
-" prints: nil
-" return: linter engine ('ale'|'neomake'|'syntastic')
-" note:   previous approach relying on detection of commands specific to
-"         loaded linting engine, e.g., ':SyntasticCheck' for syntastic,
-"         ':Neomake' for neomake and ':ALELint' for ale, did not work because
-"         commands are not instantiated when subsidiary configuration are
-"         processed
-if !exists('*VrcLinterEngine')
-    function VrcLinterEngine()
-        return 'ale'
-    endfunction
-endif
-" override linter choice in special cases
-" syntastic works in vim, but not nvim    {{{3
-" - default to neomake if running nvim
-if VrcLinterEngine() ==# 'syntastic' && has('nvim')
-    echomsg 'Cannot use syntastic as linting engine -- it requires vim'
-    echomsg 'Instead using neomake as linting engine'
-    function! VrcLinterEngine()
-        return 'neomake'
-    endfunction
-endif
-" use syntastic for docbk files    {{{3
-" - plugin vim-dn-docbk defines custom linters for syntastic
-if &filetype ==# 'docbk' && VrcLinterEngine() !=# 'syntastic'
-    echomsg 'The vim-dn-docbk plugin uses the syntastic linting engine'
-    echomsg 'Switching from ' . VrcLinterEngine() . ' to syntastic'
-    function! VrcLinterEngine()
-        return 'syntastic'
-    endfunction
-endif
-" function VrcPipInstall(pkg, [name])    {{{2
-" intent: install python package
-" params: pkg  - package name
-"         name - short version of package name (optional)
-" prints: nil
-" return: boolean - whether package successfully installed
-function! VrcPipInstall(pkg, ...)
-    let l:retval = 0
-    let l:name = a:pkg
-    if a:0 && strlen(a:1) > 0 | let l:name = a:1 | endif
-    let l:installers = ['pip', 'pip3']
-    let l:installer_available = 0
-    for l:installer in l:installers
-        if executable(l:installer) | let l:installer_available = 1 | endif
-    endfor
-    if !l:installer_available
-        call VrcError(['no python installers (' . join(l:installers, ', ')
-                    \  . ') available',
-                    \  'cannot install python package ' . l:name])
-        return l:retval
-    endif
-    for l:installer in l:installers
-        if !executable(l:installer) | continue | endif
-        let l:install_cmd = l:installer . ' install --upgrade ' . a:pkg
-        let l:feedback = system(l:install_cmd)
-        if v:shell_error
-            call VrcError(['Unable to install ' . l:name
-                        \  . ' with ' . l:installer])
-            if strlen(l:feedback) > 0
-                call VrcError(['Error message: ' . l:feedback])
-            endif
-        else
-            let l:retval = 1
-        endif
-    endfor
-    return l:retval
-endfunction
-" function VrcNpmInstall(pkg, [name])    {{{2
-" intent: install node package
-" params: pkg  - package name
-"         name - short version of package name (optional)
-" prints: nil
-" return: boolean - whether package successfully installed
-function! VrcNpmInstall(pkg, ...)
-    let l:retval = 0
-    let l:name = a:pkg
-    if a:0 && strlen(a:1) > 0 | let l:name = a:1 | endif
-    if !executable('npm')
-        call VrcError(['npm not available: cannot install node package '
-                    \  . l:name])
-        return
-    endif
-    let l:install_pkg = 1
-    if executable('npm-name')
-        call system('npm-name ' . a:pkg)
-        let l:install_pkg = v:shell_error
-    endif
-    if l:install_pkg
-        let l:feedback = system('npm --global install ' . a:pkg)
-        if v:shell_error
-            call VrcError(['Unable to install ' . l:name . ' with npm'])
-            if strlen(l:feedback) > 0
-                call VrcError(['Error message: ' . l:feedback])
-            endif
-            return l:retval
-        endif
-    endif
-    let l:feedback = system('npm --global update ' . a:pkg)
-    if v:shell_error
-        call VrcError(['Unable to update ' . l:name . ' with npm'])
-        if strlen(l:feedback) > 0
-            call VrcError(['Error message: ' . l:feedback])
-        endif
-    else
-        let l:retval = 1
-    endif
-    return l:retval
-endfunction
-" function VrcGemInstall(pkg, [name])    {{{2
-" intent: install ruby package
-" params: pkg  - package name
-"         name - short version of package name (optional)
-" prints: nil
-" return: boolean - whether package successfully installed
-function! VrcGemInstall(pkg, ...)
-    let l:retval = 0
-    let l:name = a:pkg
-    if a:0 && strlen(a:1) > 0 | let l:name = a:1 | endif
-    if !executable('gem')
-        call VrcError(['gem not available: cannot install ruby package '
-                    \  . l:name])
-        return l:retval
-    endif
-    let l:feedback = system('sudo gem install ' . a:pkg)
-    if v:shell_error
-        call VrcError(['Unable to install ' . l:name . ' with gem'])
-        if strlen(l:feedback) > 0
-            call VrcError(['Error message: ' . l:feedback])
-        endif
-    else
-        let l:retval = 1
-    endif
-    return l:retval
-endfunction
-
 " PLUGINS:    {{{1
 " using github.com/shougo/dein.vim
 " python required by several plugins    {{{2
 " - in python 3.5 there is no python3 exe installed
-if VrcOS() ==# 'windows'
-    let s:path = expand('$APPDATA') . '\Local\Programs\Python'
-    " python2
-    let s:exe = s:path . '\Python27\python.exe'
-    if filereadable(s:exe) | let g:python_host_prog = s:exe | endif
-    unlet s:exe
-    " python3
-    let s:exes = [s:path . '\Python35-32\python.exe',
-                \ s:path . '\Python35-64\python.exe']
-    for s:exe in s:exes
-        if filereadable(s:exe)
-            let g:python3_host_prog = s:exe
-            break
-        endif
-    endfor
-    unlet s:path s:exe s:exes
+if has('nvim') && dn#rc#os() ==# 'windows'
+    call dn#rc#configureWinPython()
 endif
 " dein requirements    {{{2
-" - required tools: rsync, git    {{{3
-for s:app in ['rsync', 'git']
-    if ! executable(s:app)
-        call VrcError(["plugin handler 'dein' can't find '" . s:app . "'",
-         \             'aborting vim configuration file execution'])
-        finish
-    endif
-endfor
-unlet s:app
+" - required tools and vim version    {{{3
+if !dn#rc#hasDeinRequirements()
+    " function displays error message if fails
+    finish
+endif
 " - required settings    {{{3
 "   vint: -ProhibitSetNoCompatible
 set nocompatible
 filetype off
-" - required vim version    {{{3
-if v:version < 704
-    call VrcError(['this instance of vim is version' . v:version,
-                \  "plugin handler 'dein' needs vim 7.4+",
-                \  'aborting vim configuration file execution'])
-    finish
-endif
 " how to install/update plugins with dein    {{{2
 " - install new plugins
 "   . in vim : call dein#install()
@@ -375,22 +55,20 @@ endif
 "   . this brute force solution turns off asynchronous updating, so
 "     each plugin updates in sequence (but the whole run takes *much*
 "     longer)
-if has('nvim') && VrcOS() ==# 'windows'
+if has('nvim') && dn#rc#os() ==# 'windows'
     let g:dein#install_max_processes = 1
 endif
-" set plugin directories    {{{2
-let s:dein_dir = VrcPluginsDir() . '/repos/github.com/shougo/dein.vim'
 " ensure dein is installed    {{{2
-if !isdirectory(s:dein_dir)
-    if !VrcInstallDein() | finish | endif
+if !isdirectory(dn#rc#pluginRoot('dein'))
+    if !dn#rc#installDein() | finish | endif
 endif
 " load dein    {{{2
 if &runtimepath !~# '/dein.vim'
-    execute 'set runtimepath+=' . s:dein_dir
+    execute 'set runtimepath+=' . dn#rc#pluginRoot('dein')
 endif
-if dein#load_state(VrcPluginsDir())
-    call dein#begin(VrcPluginsDir())
-    call dein#add(s:dein_dir)
+if dein#load_state(dn#rc#pluginsDir())
+    call dein#begin(dn#rc#pluginsDir())
+    call dein#add(dn#rc#pluginRoot('dein'))
     call dein#add('shougo/dein.vim')
     if !has('nvim')
         call dein#add('roxma/nvim-yarp')
@@ -403,19 +81,9 @@ if dein#load_state(VrcPluginsDir())
     " bundles: utilities    {{{2
     " - vimproc : asynchronous execution    {{{3
     "   . build default is 'make' except for MinGW on windows
-    let s:vimproc_build_cmd = 'make'
-    if executable('mingw32-make')
-                \ && ( has('win64') || has('win32') || has('win32unix') )
-        let s:vimproc_build_cmd = 'mingw32-make -f ' . (
-                    \ has('win64')     ? 'make_mingw64.mak'                :
-                    \ has('win32')     ? 'make_mingw32.mak'                :
-                    \ has('win32unix') ? 'make_mingw32.mak CC=mingw32-gcc' :
-                    \ '' )
-    endif
     call dein#add('shougo/vimproc.vim', {
-                \ 'build' : s:vimproc_build_cmd,
+                \ 'build' : dn#rc#vimprocBuild(),
                 \ })
-    unlet s:vimproc_build_cmd
     " - neoinclude : completion framework helper    {{{3
     call dein#add('shougo/neoinclude.vim')
     " - dn-utils : general utilities    {{{3
@@ -530,7 +198,7 @@ if dein#load_state(VrcPluginsDir())
     call dein#add('jamessan/vim-gnupg')
     " bundles: searching and finding    {{{2
     " - ranger : curses-based file explorer    {{{3
-    if VrcOS() !=# 'windows'
+    if dn#rc#os() !=# 'windows'
         call dein#add('francoiscabrol/ranger.vim', {
                     \ 'if' : 'executable("ranger")',
                     \ })
@@ -544,14 +212,9 @@ if dein#load_state(VrcPluginsDir())
     " - denite : integrated information display    {{{3
     "   . gave up loading denite on demand as the dependencies are
     "     too fragile; only works dependably if force load at start
-    function! VrcConfigureDenite()    " {{{4
-        call denite#custom#source('grep', 'matchers', ['matcher_fuzzy'])
-        call denite#custom#source('buffer,file,file_rec', 'sorters',
-                    \ ['sorter_rank'])
-    endfunction    " }}}4
     call dein#add('shougo/denite.nvim', {
                 \ 'depends'          : ['neoinclude.vim', 'neomru.vim'],
-                \ 'hook_post_source' : function('VrcConfigureDenite'),
+                \ 'hook_post_source' : function('dn#rc#configureDenite'),
                 \ })
     " - neomru : denite helper - recently used files    {{{3
     call dein#add('shougo/neomru.vim')
@@ -562,7 +225,7 @@ if dein#load_state(VrcPluginsDir())
                 \ 'if' : 'executable("global") && executable("gtags")',
                 \ })
     " - ale : denite helper - ale errors/warnings    {{{3
-    if VrcLinterEngine() ==# 'ale'
+    if dn#rc#lintEngine() ==# 'ale'
         call dein#add('iyuuya/denite-ale')
     endif
     " bundles: cut and paste    {{{2
@@ -649,13 +312,9 @@ if dein#load_state(VrcPluginsDir())
                 \ 'on_ft' : ['vim'],
                 \ })
     " - echodoc : plugin helper that prints to echo area    {{{3
-    function VrcConfigureEchodoc()    " {{{4
-        let g:echodoc_enable_at_startup = 1
-        set cmdheight=2
-    endfunction    " }}}4
     call dein#add('shougo/echodoc.vim', {
                 \ 'on_event'    : ['CompleteDone'],
-                \ 'hook_source' : function('VrcConfigureEchodoc'),
+                \ 'hook_source' : function('dn#rc#configureEchodoc'),
                 \ })
     " - neopairs : completion helper closes paired structures    {{{3
     call dein#add('shougo/neopairs.vim', {
@@ -773,58 +432,20 @@ if dein#load_state(VrcPluginsDir())
     " - numbers : number <->relativenumber switching    {{{3
     call dein#add('myusuf3/numbers.vim')
     " bundles: linting    {{{2
-    " - utility functions    {{{3
-    function! VrcUpdateLinters(engines)    " {{{4
-        if type(a:engines) != type([])  " script error
-            call VrcError(['Engines variable is not a list'])
-            return
-        endif
-        for l:engine in a:engines
-            if     l:engine ==# 'autopep8'              " autopep8
-                call VrcPipInstall('autopep8')
-            elseif l:engine ==# 'flake8'                " flake8
-                call VrcPipInstall('flake8')
-            elseif l:engine ==# 'mdl'                   " mdl
-                call VrcGemInstall('mdl')
-            elseif l:engine ==# 'proselint'             " proselint
-                call VrcPipInstall('proselint')
-            elseif l:engine ==# 'remark-lint'           " remark-lint
-                call VrcNpmInstall('remark-lint')
-            elseif l:engine ==# 'rubocop'               " rubocop
-                call VrcGemInstall('rubocop')
-            elseif     l:engine ==# 'vim-vint'          " vim-vint
-                call VrcPipInstall('vim-vint')
-            elseif l:engine ==# 'write-good'            " write-good
-                call VrcNpmInstall('write-good')
-            else
-                call VrcError(["Unknown linter keyword '" . l:engine . "'"])
-            endif
-        endfor
-    endfunction    " }}}4
-    function! VrcAleLinters()    " {{{4
-        call VrcUpdateLinters([
-                    \ 'write-good',  'proselint', 'mdl',
-                    \ 'remark-lint', 'vim-vint',  'flake8',
-                    \ 'autopep8', 'rubocop',
-                    \ ])
-    endfunction    " }}}4
-    function! VrcNeomakeLinters()    " {{{4
-        call VrcUpdateLinters(['vim-vint'])
-    endfunction    " }}}4
     " - ale : linter for vim/nvim    {{{3
-    if VrcLinterEngine() ==# 'ale'
+    if dn#rc#lintEngine() ==# 'ale'
         call dein#add('w0rp/ale', {
-                    \ 'hook_post_update' : function('VrcAleLinters'),
+                    \ 'hook_post_update' : function('dn#rc#aleLinters'),
                     \ })
     endif
     " - neomake : linter for vim/nvim    {{{3
-    if VrcLinterEngine() ==# 'neomake'
+    if dn#rc#lintEngine() ==# 'neomake'
         call dein#add('neomake/neomake', {
-                    \ 'hook_post_update' : function('VrcNeomakeLinters'),
+                    \ 'hook_post_update' : function('dn#rc#neomakeLinters'),
                     \ })
     endif
     " - syntastic : linter for vim    {{{3
-    if VrcLinterEngine() ==# 'syntastic'
+    if dn#rc#lintEngine() ==# 'syntastic'
         call dein#add('scrooloose/syntastic', {
                     \ 'if' : '!has("nvim")',
                     \ })
@@ -845,28 +466,13 @@ if dein#load_state(VrcPluginsDir())
     "     file 'vimrc_prefer_easytags' is present
     "   . to use gen_tags, need executables 'global' and 'gtags'
     "   . to use easytags, need executable 'ctags'
-    let s:prefer_easytags = resolve(expand('<sfile>:p:h'))
-                \ . '/.vimrc_prefer_easytags'
-    let s:added_plugin = 0
-    " - gen_tags : automated tag generation    {{{3
-    if !s:added_plugin && !filereadable(s:prefer_easytags) 
-                \ && executable('global') && executable('gtags')
-        if !executable('ctags') | let g:loaded_gentags#ctags = 1 | endif
-        call dein#add('jsfaint/gen_tags.vim')
-        let s:added_plugin = 1
-    endif
-    " - easytags : automated tag generation    {{{3
-    if !s:added_plugin && executable('ctags')
+    if     dn#rc#tagPlugin('<sfile>:p:h') ==# 'easytags'
         call dein#add('xolox/vim-easytags')
-        let s:added_plugin = 1
+    elseif dn#rc#tagPlugin('<sfile>:p:h') ==# 'gen_tags'
+        call dein#add('jsfaint/gen_tags.vim')
+    elseif dn#rc#tagPlugin('<sfile>:p:h') is v:null
+        call dn#rc#warn(['Did not load a tag generator plugin'])
     endif
-    " - [tag generators] : warn user if none loaded    {{{3
-    if !s:added_plugin
-        echomsg 'Did not load any of these tag generation plugins:'
-        echomsg '- xolox/vim-easytags'
-        echomsg '- jsfaint/gen_tags.vim'
-    endif
-    unlet s:prefer_easytags s:added_plugin
     " bundles: version control    {{{2
     " - gitgutter : git giff symbols in gutter    {{{3
     call dein#add('airblade/vim-gitgutter', {
@@ -957,50 +563,22 @@ if dein#load_state(VrcPluginsDir())
     "   . npm install command used below assumes npm is configured to
     "     install in global mode without needing superuser privileges
     "   . update of tern is used as trigger to reinstall jsctags
-    function! VrcBuildTernAndJsctags()    " {{{4
-        " called by post-install hook below
-        if !executable('npm')
-            call VrcError(['npm not available: cannot build '
-                        \  . 'tern-for-vim and jsctags'])
-            return
-        endif
-        " build tern
-        let l:feedback = system('npm install')
-        if v:shell_error
-            call VrcError(['Unable to build tern-for-vim plugin'])
-            if strlen(l:feedback) > 0
-                call VrcError(['Error message: ' . l:feedback])
-            endif
-        endif
-        " build jsctags
-        call VrcNpmInstall('git+https://github.com/ramitos/jsctags.git',
-                    \ 'jsctags')
-    endfunction
-    function! VrcCygwin()    " {{{4
-        return system('uname -o') =~# '^Cygwin'
-    endfunction
     " - install    {{{4
     "   . cannot test for cygwin in dein#add 'if' statement
     "   . doing so results in 'E48: Not allowed in sandbox
-    if !VrcCygwin()
+    if !dn#rc#cygwin()
         call dein#add('ternjs/tern_for_vim', {
                     \ 'if'               : '!has("nvim")',
                     \ 'on_ft'            : ['javascript', 'javascript.jsx'],
-                    \ 'hook_post_update' : function('VrcBuildTernAndJsctags'),
+                    \ 'hook_post_update' :
+                    \                 function('dn#rc#buildTernAndJsctags'),
                     \ })
-        function! VrcConfigureTernjs()
-            let g:tern_request_timeout       = 1
-            let g:tern_show_signature_in_pum = 0
-        endfunction
-        function! VrcBuildTernjs()
-            call VrcNpmInstall('tern')
-        endfunction
         call dein#add('carlitux/deoplete-ternjs', {
                     \ 'if'               : 'has("nvim")',
                     \ 'on_ft'            : ['javascript', 'javascript.jsx'],
                     \ 'depends'          : ['deoplete.nvim'],
-                    \ 'hook_source'      : function('VrcConfigureTernjs'),
-                    \ 'hook_post_update' : function('VrcBuildTernjs'),
+                    \ 'hook_source'      : function('dn#rc#configureTernjs'),
+                    \ 'hook_post_update' : function('dn#rc#buildTernjs'),
                     \ })
     endif
     " bundles: latex support    {{{2
@@ -1029,15 +607,10 @@ if dein#load_state(VrcPluginsDir())
     " bundles: markdown support    {{{2
     " - vim-pandoc : pandoc integration    {{{3
     "   . uses panzer
-    function! VrcBuildPandoc()    " {{{4
-        call VrcPipInstall('git+https://github.com/msprev/panzer', 'panzer')
-        call VrcPipInstall('git+https://github.com/msprev/pandocinject',
-                    \ 'pandocinject')
-    endfunction    " }}}4
     call dein#add('vim-pandoc/vim-pandoc', {
                 \ 'if'               : 'v:version >= 704 && has("python3")',
                 \ 'on_ft'            : ['markdown', 'markdown.pandoc'],
-                \ 'hook_post_update' : function('VrcBuildPandoc'),
+                \ 'hook_post_update' : function('dn#rc#buildPandoc'),
                 \ })
     " - vim-pandoc-syntax : pandoc md syntax    {{{3
     call dein#add('vim-pandoc/vim-pandoc-syntax', {
@@ -1086,7 +659,7 @@ if dein#load_state(VrcPluginsDir())
                 \ 'on_ft' : ['perl'],
                 \ })
     " - syntastic-perl6 : syntax hecking for perl6    {{{3
-    if VrcLinterEngine() ==# 'syntastic'
+    if dn#rc#lintEngine() ==# 'syntastic'
         call dein#add('nxadm/syntastic-perl6', {
                     \ 'if'    : '!has("nvim")',
                     \ 'on_ft' : ['perl6'],
@@ -1096,7 +669,7 @@ if dein#load_state(VrcPluginsDir())
     " - phpctags : tag generation    {{{3
     "   . cannot test for cygwin in dein#add 'if' statement
     "   . doing so results in 'E48: Not allowed in sandbox
-    if !VrcCygwin()
+    if !dn#rc#cygwin()
         call dein#add('vim-php/tagbar-phpctags.vim', {
                     \ 'if'    : 'executable("curl")',
                     \ 'on_ft' : ['php'],
@@ -1107,13 +680,10 @@ if dein#load_state(VrcPluginsDir())
     endif
     " bundles: python support    {{{2
     "  - jedi : autocompletion    {{{3
-    function! VrcBuildJedi()    " {{{4
-        call VrcPipInstall('jedi')
-    endfunction    " }}}4
     call dein#add('davidhalter/jedi-vim', {
                 \ 'if'               : '!has("nvim")',
                 \ 'on_ft'            : ['python'],
-                \ 'hook_post_update' : function('VrcBuildJedi'),
+                \ 'hook_post_update' : function('dn#rc#buildJedi'),
                 \ })
     " - deoplete-jedi : deoplete helper    {{{3
     "   . do not check for python3 in nvim (see note above at 'nvim issues')
@@ -1122,7 +692,7 @@ if dein#load_state(VrcPluginsDir())
                 \                    . ' && executable("python3")',
                 \ 'on_ft'            : ['python'],
                 \ 'depends'          : ['deoplete.nvim'],
-                \ 'hook_post_update' : function('VrcBuildJedi'),
+                \ 'hook_post_update' : function('dn#rc#buildJedi'),
                 \ })
     " - pep8 : indentation support    {{{3
     call dein#add('hynek/vim-python-pep8-indent', {
@@ -1162,7 +732,6 @@ if dein#load_state(VrcPluginsDir())
   call dein#end()
   call dein#save_state()
 endif
-unlet s:dein_dir
 " required settings    {{{2
 filetype on
 filetype plugin on
@@ -1178,8 +747,8 @@ if dein#check_install()
     call dein#install()
 endif
 
-" SUBSIDIARY CONFIGURATION FILES:                                    "    {{{1
-call VrcSource(VrcVimPath('home').'/rc', resolve(expand('<sfile>:p')))
+" SUBSIDIARY CONFIGURATION FILES:    " {{{1
+call dn#rc#source(dn#rc#vimPath('home').'/rc', resolve(expand('<sfile>:p')))
 
 " FINAL CONFIGURATION:    {{{1
 " set filetype to 'text' if not known    {{{2

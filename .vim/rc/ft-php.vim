@@ -3,7 +3,7 @@
 function! s:PhpSupport()
     " tagbar support    {{{1
     " - from https://github.com/vim-php/tagbar-phpctags.vim
-    let l:bin = VrcPluginsDir()
+    let l:bin = dn#rc#pluginsDir()
                 \ . '/repos/github.com'
                 \ . '/vim-php/tagbar-phpctags.vim/bin/phpctags'
     if filereadable(l:bin)

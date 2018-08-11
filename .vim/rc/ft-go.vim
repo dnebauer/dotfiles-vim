@@ -69,7 +69,7 @@ function! s:GoSupport()
     let g:go_list_type = 'quickfix'
     " linting    {{{1
     " syntastic    {{{2
-    if VrcLinterEngine() ==# 'syntastic'
+    if dn#rc#lintEngine() ==# 'syntastic'
         if !exists('g:syntastic_go_checkers')
             let g:syntastic_go_checkers = []
         endif

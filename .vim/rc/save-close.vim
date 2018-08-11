@@ -14,12 +14,12 @@ set history=10000
 " - save undo history in a file
 set undofile
 " - avoid clutter of backup|swap|undo files in local dir
-if VrcOS() ==# 'unix'
+if dn#rc#os() ==# 'unix'
     set directory=./backup,~/var/vim/swap,.,/tmp
     set backupdir=./backup,~/var/vim/backup,.,/tmp
     set undodir=./backup,~/var/vim/undo,.,/tmp
 endif
-if VrcOS() ==# 'windows'
+if dn#rc#os() ==# 'windows'
     set directory=C:/Windows/Temp
     set backupdir=C:/Windows/Temp
     set undodir=C:/Windows/Temp
@@ -27,20 +27,9 @@ endif
 
 " Autosave if buffer loses focus    {{{1
 set autowrite
-" - function VrcSaveOnFocusLost()    {{{2
-"   intent: save buffer if focus is lost
-"   params: nil
-"   return: nil
-function! VrcSaveOnFocusLost()
-    " E141 = no file name for buffer
-    try
-        :wall
-    catch /^Vim\((\a\+)\)\=:E141:/ |
-    endtry
-endfunction    " }}}2
 augroup vrc_save_on_focus_lost
     autocmd!
-    autocmd FocusLost * call VrcSaveOnFocusLost()
+    autocmd FocusLost * call dn#rc#saveOnFocusLost()
 augroup END
 
 " Save and exit mappings    {{{1

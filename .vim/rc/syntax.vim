@@ -15,7 +15,7 @@ endfunction
 " setting autocommands.
 
 " Ale    {{{1
-if VrcLinterEngine() ==# 'ale'
+if dn#rc#lintEngine() ==# 'ale'
     " integrate with airline    {{{2
     let g:airline#extensions#ale#enabled = 1
     " save file after alteration    {{{2
@@ -34,7 +34,7 @@ if VrcLinterEngine() ==# 'ale'
 endif
 
 " Neomake    {{{1
-if VrcLinterEngine() ==# 'neomake'
+if dn#rc#lintEngine() ==# 'neomake'
     " check on buffer entry and text change (lint-as-you-type)    {{{2
     " - handle E676 error as described above
     function! s:LintAsYouType()
@@ -57,7 +57,7 @@ if VrcLinterEngine() ==# 'neomake'
 endif
 
 " Syntastic    {{{1
-if VrcLinterEngine() ==# 'syntastic'
+if dn#rc#lintEngine() ==# 'syntastic'
     " - status line    {{{2
     if !exists('s:edited_statusline')
         set statusline+=%#warningmsg#

@@ -1,7 +1,7 @@
 " Vim configuration: MS Windows-specific
 
 " Windows only    {{{1
-if VrcOS() !=# 'windows'
+if dn#rc#os() !=# 'windows'
     finish
 endif
 

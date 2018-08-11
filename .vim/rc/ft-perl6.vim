@@ -4,7 +4,7 @@ function! s:Perl6Support()
     " linting    {{{1
     " syntastic    {{{2
     " - plugin: syntastic-perl6
-    if VrcLinterEngine() ==# 'syntastic'
+    if dn#rc#lintEngine() ==# 'syntastic'
         let g:syntastic_perl6_checkers             = ['perl6latest']
         let g:syntastic_enable_perl6latest_checker = 1
     endif    " }}}2

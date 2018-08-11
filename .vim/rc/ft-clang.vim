@@ -5,19 +5,19 @@ if has('nvim')
     function! s:VimCCppObjcSupport()
         " set clang dynamic library path    {{{2
         " - unix
-        if VrcOS() ==# 'unix'
+        if dn#rc#os() ==# 'unix'
             let s:clang_path = '/usr/lib/llvm-3.6/lib/libclang.so'
             if filereadable(s:clang_path)
                 let g:deoplete#sources#clang#libclang_path
                             \ = s:clang_path
             else
-                echoerr 'ft-clang.vim: unable to locate ' 
+                echoerr 'ft-clang.vim: unable to locate '
                             \ . s:clang_path
             endif
         endif
         " set clang header directory path    {{{2
         " - unix
-        if VrcOS() ==# 'unix'
+        if dn#rc#os() ==# 'unix'
             let s:clang_header = '/usr/lib/llvm-3.6/lib/clang'
             if isdirectory(s:clang_header)
                 let g:deoplete#sources#clang#clang_header

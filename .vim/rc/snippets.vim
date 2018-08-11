@@ -7,7 +7,7 @@ let g:neosnippet#disable_runtime_snippets = { '_' : 1 }
 if !exists('g:neosnippet#snippets_directory')
     let g:neosnippet#snippets_directory = []
 endif
-let s:honza = VrcVimPath('plug')
+let s:honza = dn#rc#vimPath('plug')
             \ . '/repos/github.com/honza/vim-snippets'
 if !count(g:neosnippet#snippets_directory, s:honza)
     call add(g:neosnippet#snippets_directory, s:honza)
