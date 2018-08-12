@@ -1,5 +1,5 @@
 " Vimrc library
-" Last change: 2018 Aug 11
+" Last change: 2018 Aug 12
 " Maintainer: David Nebauer
 " License: GPL3
 
@@ -90,7 +90,7 @@ function! dn#rc#aleLinters() abort
     call dn#rc#updateLinters([
                 \ 'write-good',  'proselint', 'mdl',
                 \ 'remark-lint', 'vim-vint',  'flake8',
-                \ 'autopep8', 'rubocop',
+                \ 'autopep8',    'rubocop',
                 \ ])
 endfunction
 
@@ -110,9 +110,10 @@ endfunction
 " @public
 " Install panzer and pandocinject python packages to support pandoc.
 function! dn#rc#buildPandoc() abort
-    call dn#rc#pipInstall('git+https://github.com/msprev/panzer', 'panzer')
+    call dn#rc#pipInstall('git+https://github.com/msprev/panzer',
+                \         'panzer')
     call dn#rc#pipInstall('git+https://github.com/msprev/pandocinject',
-                \ 'pandocinject')
+                \         'pandocinject')
 endfunction
 
 " dn#rc#buildTernAndJsctags()    {{{1
@@ -153,7 +154,7 @@ function! dn#rc#buildTernAndJsctags() abort
     endif
     " build jsctags
     call dn#rc#npmInstall('git+https://github.com/ramitos/jsctags.git',
-                \ 'jsctags')
+                \         'jsctags')
 endfunction
 
 " dn#rc#buildTernjs()    {{{1
@@ -186,9 +187,10 @@ endfunction
 " * grep sources to use a fuzzy matcher
 " * buffer and (recursive) files sources to sort by rank
 function! dn#rc#configureDenite() abort
-    call denite#custom#source('grep', 'matchers', ['matcher_fuzzy'])
+    call denite#custom#source('grep', 'matchers',
+                \             ['matcher_fuzzy'])
     call denite#custom#source('buffer,file,file_rec', 'sorters',
-                \ ['sorter_rank'])
+                \             ['sorter_rank'])
 endfunction
 
 " dn#rc#configureEchodoc()    {{{1
@@ -225,7 +227,7 @@ endfunction
 " * |g:tern_request_timeout|
 " * |g:tern_show_signature_in_pum|
 function! dn#rc#configureTernjs() abort
-    let g:tern_request_timeout       = 1
+    let g:tern_request_timeout = 1
     let g:tern_show_signature_in_pum = 0
 endfunction
 
@@ -308,7 +310,7 @@ function dn#rc#createDir(path) abort
         return v:false
     endif
     " create directory path    {{{2
-    let l:cmd = 'perl -MFile::Path -e ''use File::Path qw(make_path); '
+    let l:cmd =   'perl -MFile::Path -e ''use File::Path qw(make_path); '
                 \ . 'make_path("' . a:path . '")'''
     let l:feedback = systemlist(l:cmd)
     if !isdirectory(a:path)
@@ -361,7 +363,7 @@ endfunction
 " |exception-variable|.
 function! dn#rc#exceptionError(exception) abort
     let l:matches = matchlist(a:exception,
-                \ '^Vim\%((\a\+)\)\=:\(E\d\+\p\+$\)')
+                \             '^Vim\%((\a\+)\)\=:\(E\d\+\p\+$\)')
     return (!empty(l:matches) && !empty(l:matches[1])) ? l:matches[1]
                 \                                      : a:exception
 endfunction
@@ -571,14 +573,12 @@ endfunction
 " @public
 " Provide path to panzer support directory.
 function! dn#rc#panzerPath() abort
-    let l:os   = dn#rc#os()
+    let l:os = dn#rc#os()
     let l:home = escape($HOME, ' ')
-    if     l:os ==# 'windows'
-        return resolve(expand('~/AppData/Local/panzer'))
-    elseif l:os ==# 'unix'
-        return l:home . '/.config/panzer'
-    else
-        return l:home . '/.config/panzer'
+    if     l:os ==# 'windows' | return resolve(
+                \                      expand('~/AppData/Local/panzer'))
+    elseif l:os ==# 'unix'    | return l:home . '/.config/panzer'
+    else                      | return l:home . '/.config/panzer'
     endif
 endfunction
 
@@ -613,9 +613,8 @@ function dn#rc#perlContrib() abort
         call dn#rc#warn(l:err)
         return v:false
     endif
-    let l:files = ['carp.vim',                  'function-parameters.vim',
-                \  'highlight-all-pragmas.vim', 'moose.vim',
-                \  'try-tiny.vim']
+    let l:files = ['highlight-all-pragmas.vim', 'function-parameters.vim',
+                \  'carp.vim', 'moose.vim', 'try-tiny.vim']
     let l:custom = l:after . '/dn-custom.vim'
     let l:errors = v:false  " flag indicting whether errors occur    }}}2
     " copy contrib syntax files    {{{2
@@ -720,8 +719,8 @@ function! dn#rc#pipInstall(package, ...) abort
         let l:install_cmd = l:installer . ' install --upgrade ' . a:package
         let l:feedback = systemlist(l:install_cmd)
         if v:shell_error
-            let l:err = [  "Unable to install package '" . l:name
-                        \  . "' with " . l:installer]
+            let l:err = [ "Unable to install package '" . l:name
+                        \ . "' with " . l:installer]
             if !empty(l:feedback)
                 call map(l:feedback, '"  " . v:val')
                 call extend(l:err, ['Error message:'] + l:feedback)
@@ -802,83 +801,66 @@ endfunction
 " is set to "dark" in both gui and terminal versions of vim.
 " values for these arguments includes in brackets the associddated colorscheme
 "
-" * solarized (solarized) - gui (dark), terminal
-" * neosolarized (neosolarized) - gui (dark), terminal
-" * peaksea (peaksea) - gui (dark), terminal
-" * desert (desert) - gui, terminal
-" * hybrid (hybrid) - gui, terminal
-" * railscasts (railscasts) - gui, terminal
-" * zenburn (zenburn) - gui, terminal
-" * lucius (lucius) - gui, terminal
-" * atelierheath (base16-atelierheath) - gui
-" * atelierforest (base16-atelierforest) - gui
-" * papercolor (PaperColor) - gui (dark), terminal (dark)
+" * atelierforest (base16-atelierforest) . gui
+" * atelierheath (base16-atelierheath) ... gui
+" * desert (desert) ...................... gui ...... | terminal
+" * hybrid (hybrid) ...................... gui ...... | terminal
+" * lucius (lucius) ...................... gui ...... | terminal
+" * neosolarized (neosolarized) .......... gui (dark) | terminal
+" * papercolor (PaperColor) .............. gui (dark) | terminal (dark)
+" * peaksea (peaksea) .................... gui (dark) | terminal
+" * railscasts (railscasts) .............. gui ...... | terminal
+" * solarized (solarized) ................ gui (dark) | terminal
+" * zenburn (zenburn) .................... gui ...... | terminal
 function! dn#rc#setColorScheme(gui, terminal) abort
     if has('gui_running')    " gui
-        if     a:gui ==# 'solarized'
-            set background=dark
-            colorscheme solarized
-        elseif a:gui ==# 'neosolarized'
-            set background=dark
-            colorscheme neosolarized
-        elseif a:gui ==# 'peaksea'
-            set background=dark
-            colorscheme peaksea
-        elseif a:gui ==# 'desert'
-            colorscheme desert
+        if     a:gui ==# 'atelierforest' | colorscheme base16-atelierforest
+        elseif a:gui ==# 'atelierheath'  | colorscheme base16-atelierheath
+        elseif a:gui ==# 'desert'        | colorscheme desert
         elseif a:gui ==# 'hybrid'
             let g:hybrid_use_Xresources = 1
             colorscheme hybrid
-        elseif a:gui ==# 'railscasts'
-            colorscheme railscasts
-        elseif a:gui ==# 'zenburn'
-            colorscheme zenburn
-        elseif a:gui ==# 'lucius'
-            colorscheme lucius
+        elseif a:gui ==# 'lucius'        | colorscheme lucius
             "LuciusDark|LuciusDarkHighContrast|LuciusDarkLowContrast|
             "LuciusBlack|LuciusBlackHighContrast|LuciusBlackLowContrast|
             "LuciusLight|LuciusLightLowContrast|
             "LuciusWhite|LuciusWhiteLowContrast|
             "LuciusDarkLowContrast
-        elseif a:gui ==# 'atelierheath'
-            colorscheme base16-atelierheath
-        elseif a:gui ==# 'atelierforest'
-            colorscheme base16-atelierforest
+        elseif a:gui ==# 'neosolarized'  | colorscheme neosolarized
+            set background=dark
         elseif a:gui ==# 'papercolor'
             set background=dark
             set t_Co=256
             colorscheme PaperColor
+        elseif a:gui ==# 'peaksea'       | colorscheme peaksea
+            set background=dark
+        elseif a:gui ==# 'railscasts'    | colorscheme railscasts
+        elseif a:gui ==# 'solarized'     | colorscheme solarized
+            set background=dark
+        elseif a:gui ==# 'zenburn'       | colorscheme zenburn
         else
             echoerr "Invalid gui colorscheme '" . a:gui . "'"
         endif
     else    " no gui, presumably terminal/console
         set t_Co=256    " improves all themes in terminals
-        if     a:terminal ==# 'solarized'
-            colorscheme solarized
-        elseif a:terminal ==# 'neosolarized'
-            colorscheme neosolarized
-        elseif a:terminal ==# 'peaksea'
-            colorscheme peaksea
-        elseif a:terminal ==# 'desert'
-            colorscheme desert
+        if     a:terminal ==# 'desert'       | colorscheme desert
         elseif a:terminal ==# 'hybrid'
             let g:hybrid_use_Xresources = 1
             colorscheme hybrid
             let g:colors_name = 'hybrid'
-        elseif a:terminal ==# 'railscasts'
-            colorscheme railscasts
-        elseif a:terminal ==# 'zenburn'
-            colorscheme zenburn
-        elseif a:terminal ==# 'lucius'
-            colorscheme lucius
+        elseif a:terminal ==# 'lucius'       | colorscheme lucius
             "LuciusDark|LuciusDarkHighContrast|LuciusDarkLowContrast
             "LuciusBlack|LuciusBlackHighContrast|LuciusBlackLowContrast
             "LuciusLight|LuciusLightLowContrast
             "LuciusWhite|LuciusWhiteLowContrast
-            LuciusLightLowContrast
-        elseif a:terminal ==# 'papercolor'
+            "LuciusLightLowContrast
+        elseif a:terminal ==# 'neosolarized' | colorscheme neosolarized
+        elseif a:terminal ==# 'papercolor'   | colorscheme PaperColor
             set background=dark
-            colorscheme PaperColor
+        elseif a:terminal ==# 'peaksea'      | colorscheme peaksea
+        elseif a:terminal ==# 'railscasts'   | colorscheme railscasts
+        elseif a:terminal ==# 'solarized'    | colorscheme solarized
+        elseif a:terminal ==# 'zenburn'      | colorscheme zenburn
         else
             echoerr "Invalid terminal colorscheme '" . a:terminal . "'"
         endif
@@ -971,7 +953,6 @@ function! dn#rc#source(dir, self) abort
     let l:dir = resolve(expand(a:dir))
     if !isdirectory(l:dir)
         echoerr "Invalid source directory '" . l:dir . "'"
-        return
     endif
     " recursively process directory contents
     for l:path in glob(l:dir . '/**', 1, 1)
@@ -999,10 +980,8 @@ endfunction
 " Display spell check status.
 function! dn#rc#spellStatus() abort
     let l:msg = 'spell checking is '
-    if &spell
-        let l:msg .= 'ON (lang=' . &spelllang . ')'
-    else
-        let l:msg .= 'OFF'
+    if &spell | let l:msg .= 'ON (lang=' . &spelllang . ')'
+    else      | let l:msg .= 'OFF'
     endif
     call dn#rc#message(l:msg, 1)
 endfunction
