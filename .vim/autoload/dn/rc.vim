@@ -13,7 +13,7 @@ set cpoptions&vim
 
 " Script variables
 
-" s:temp_path - temporary file path    {{{1
+" s:temp_path   - temporary file path    {{{1
 
 ""
 " The file path of a temporary file. The function @function(dn#rc#temp)
@@ -22,11 +22,32 @@ if !(exists('s:temp_path') && s:temp_path !=? '')
     let s:temp_path = tempname()
 endif
 
-" s:engine - linter engine    {{{1
+" s:engine      - linter engine    {{{1
 
 ""
 " Name of linter engine to use.
 if !exists('s:lint_engine') | let s:lint_engine = v:null | endif
+
+" s:perl_syntax - content of vim syntax file    {{{1
+
+""
+" Content of vim syntax file providing support for modern perl features:
+" * Readonly module and keyword.
+if !exists('s:perl_syntax')
+    let s:perl_syntax = [
+                \ '" Vim syntax file',
+                \ '" Language: perl',
+                \ '" Last change: 2018 Aug 12',
+                \ '" Maintainer: David Nebauer',
+                \ '" License: GPL3',
+                \ '',
+                \ '" syntax from Readonly module and keyword',
+                \ 'syn match perlStatementReadonly '
+                \ . "'\\<\\%(Readonly\\s\\+my\\)\\>'",
+                \ 'command! -nargs=+ HiLinkRO hi def link <args>',
+                \ 'HiLinkRO perlStatementReadonly perlStatement',
+                \ ]
+endif
 
 " }}}1
 
@@ -124,9 +145,11 @@ function! dn#rc#buildTernAndJsctags() abort
     if v:shell_error
         let l:err = ['Unable to build tern-for-vim plugin']
         if !empty(l:feedback)
+            call map(l:feedback, '"  " . v:val')
             call extend(l:err, ['Error message:'] + l:feedback)
         endif
         call dn#rc#warn(l:err)
+        return
     endif
     " build jsctags
     call dn#rc#npmInstall('git+https://github.com/ramitos/jsctags.git',
@@ -235,6 +258,73 @@ function! dn#rc#configureWinPython()
     endfor
 endfunction
 
+" dn#rc#createDir(path)    {{{1
+
+""
+" @public
+" Attempt to create a directory {path} using perl. Return bool indicating
+" whether the operation is successful.
+" Will accept a relative or absolute directory {path} but relative paths are
+" inherently more risky.
+" If an invalid {path} is provided, i.e., non |String| variable or an
+" empty string, will generate the error message:
+" 'Invalid directory path provided'.
+" If perl is not available will write the following |hl-WarningMsg| and exit
+" as unsuccessful:
+" 'Perl not available - unable to create directory path: DIR_PATH'.
+" If the perl module File:Path is not available will write the following
+" |hl-WarningMsg| and exit as unsuccessful:
+" 'Perl module File::Path not available - unable to create directory path:
+" DIR_PATH'.
+" If the directory {path} already exists, exit indicating success.
+" In the event of creation failure will write the following |hl-WarningMsg| to
+" |message-history| and exit as unsuccessful:
+" 'Unable to create directory path: DIR_PATH'.
+" Any shell feedback is also written.
+function dn#rc#createDir(path) abort
+    " check the path argument    {{{2
+    if type(a:path) != type('') || a:path ==? ''
+        echoerr 'Invalid directory path provided'
+    endif
+    " if dir path already exists then done    {{{2
+    if isdirectory(a:path) | return v:true | endif
+    " need perl    {{{2
+    let l:cmd = 'perl -v'
+    let l:feedback = systemlist(l:cmd)
+    if v:shell_error
+        let l:err = [ 'Perl not available - unable to create directory path:',
+                    \ '  ' . a:path]
+        call dn#rc#warn(l:err)
+        return v:false
+    endif
+    " need perl module File::Path    {{{2
+    let l:cmd = 'perl -MFile::Path -e 1'
+    let l:feedback = systemlist(l:cmd)
+    if v:shell_error
+        let l:err = [ 'Perl module File::Path not available',
+                    \ 'Unable to create directory path:',
+                    \ '  ' . a:path]
+        call dn#rc#warn(l:err)
+        return v:false
+    endif
+    " create directory path    {{{2
+    let l:cmd = 'perl -MFile::Path -e ''use File::Path qw(make_path); '
+                \ . 'make_path("' . a:path . '")'''
+    let l:feedback = systemlist(l:cmd)
+    if !isdirectory(a:path)
+        let l:err = [ 'Unable to create directory path:',
+                    \ '  ' . a:path]
+        if !empty(l:feedback)
+            call map(l:feedback, '"  " . v:val')
+            call extend(l:err, ['Error message:'] + l:feedback)
+        endif
+        call dn#rc#warn(l:err)
+        return v:false
+    else
+        return v:true  " success
+    endif    " }}}2
+endfunction
+
 " dn#rc#cygwin()    {{{1
 
 ""
@@ -263,6 +353,19 @@ function! dn#rc#error(messages) abort
     return
 endfunction
 
+" dn#rc#exceptionError(exception)    {{{1
+
+""
+" @public
+" Extracts the error message from a vim {exception}, i.e., a vim
+" |exception-variable|.
+function! dn#rc#exceptionError(exception) abort
+    let l:matches = matchlist(a:exception,
+                \ '^Vim\%((\a\+)\)\=:\(E\d\+\p\+$\)')
+    return (!empty(l:matches) && !empty(l:matches[1])) ? l:matches[1]
+                \                                      : a:exception
+endfunction
+
 " dn#rc#gemInstall(package, [name])    {{{1
 
 ""
@@ -284,6 +387,7 @@ function! dn#rc#gemInstall(package, ...) abort
     if v:shell_error
         let l:err = ['Unable to install ' . l:name . ' with gem']
         if !empty(l:feedback)
+            call map(l:feedback, '"  " . v:val')
             call extend(l:err, ['Error message:'] + l:feedback)
         endif
         call dn#rc#warn(l:err)
@@ -342,6 +446,7 @@ function! dn#rc#installDein() abort
     else  " failed
         let l:err = 'Unable to install dein plugin manager using git'
         if !empty(l:feedback)
+            call map(l:feedback, '"  " . v:val')
             call extend(l:err, ['Error message:'] + l:feedback)
         endif
         call dn#rc#error(l:err)
@@ -417,6 +522,7 @@ function! dn#rc#npmInstall(package, ...) abort
     if v:shell_error
         let l:err = ['Unable to install ' . l:name . ' with npm']
         if !empty(l:feedback)
+            call map(l:feedback, '"  " . v:val')
             call extend(l:err, ['Error message:'] + l:feedback)
         endif
         call dn#rc#warn(l:err)
@@ -426,6 +532,7 @@ function! dn#rc#npmInstall(package, ...) abort
     if v:shell_error
         let l:err = ['Unable to update ' . l:name . ' with npm']
         if !empty(l:feedback)
+            call map(l:feedback, '"  " . v:val')
             call extend(l:err, ['Error message:'] + l:feedback)
         endif
         call dn#rc#warn(l:err)
@@ -475,6 +582,116 @@ function! dn#rc#panzerPath() abort
     endif
 endfunction
 
+" dn#rc#perlContrib()    {{{1
+
+""
+" @public
+" Copy the following files from the vim-perl plugin's contrib directory into
+" the directory $VIMHOME/after/syntax/perl/:
+" * carp.vim
+" * function-parameters.vim
+" * highlight-all-pragmas.vim
+" * moose.vim
+" * try-tiny.vim
+"
+" Also writes the following file to the same directory to provide syntax
+" support for the Readonly keyword:
+" * readonly.vim
+function dn#rc#perlContrib() abort
+    " variables    {{{2
+    let l:contrib = dn#rc#pluginRoot('vim-perl') . '/contrib'
+    let l:after = dn#rc#vimPath('home') . '/after/syntax/perl'
+    if !isdirectory(l:contrib)
+        let l:err = [ "Cannot find perl-vim plugin's 'contrib' directory at:",
+                    \ '  ' . l:contrib]
+        call dn#rc#warn(l:err)
+        return v:false
+    endif
+    if !isdirectory(l:after) && !dn#rc#createDir(l:after)
+        let l:err = [ 'Unable to move perl contrib syntax files to '
+                    \ . l:after]
+        call dn#rc#warn(l:err)
+        return v:false
+    endif
+    let l:files = ['carp.vim',                  'function-parameters.vim',
+                \  'highlight-all-pragmas.vim', 'moose.vim',
+                \  'try-tiny.vim']
+    let l:custom = l:after . '/dn-custom.vim'
+    let l:errors = v:false  " flag indicting whether errors occur    }}}2
+    " copy contrib syntax files    {{{2
+    let l:copy_err = []
+    for l:file in l:files
+        " set source and target filepaths    {{{3
+        let l:source = l:contrib . '/' . l:file
+        let l:target = l:after . '/' . l:file
+        if empty(glob(l:source))
+            call extend(l:copy_err, ['Cannot find contrib file:',
+                        \            '  ' . l:source])
+            continue
+        endif
+        " read source file    {{{3
+        try   | let l:content = readfile(l:source, 'b')
+        catch | call extend(l:copy_err,
+                    \       ['Error reading ' . l:source,
+                    \        '  ' . dn#rc#exceptionError(v:exception)])
+        endtry
+        if empty(l:content)
+            call extend(l:copy_err, ['Unable to read contrib file:',
+                        \            '  ' . l:source])
+            continue
+        endif
+        " write target file    {{{3
+        if exists('l:retval') | unlet l:retval | endif
+        try   | let l:retval = writefile(l:content, l:target, 'bs')
+        catch | call extend(l:copy_err,
+                    \       ['Error writing ' . l:target,
+                    \        '  ' . dn#rc#exceptionError(v:exception)])
+        endtry
+        if !exists('l:retval') || l:retval == -1  " success: 0, failure: -1
+            call extend(l:copy_err, ['Unable to write syntax file:',
+                        \            '  ' . l:target])
+            continue
+        endif    " }}}3
+    endfor
+    let l:errors = !empty(l:copy_err)
+    " write custom syntax file    {{{2
+    let l:custom_err = []
+    if exists('l:retval') | unlet l:retval | endif
+    try   | let l:retval = writefile(s:perl_syntax, l:custom, 's')
+    catch | call extend(l:custom_err,
+                \       ['Error writing ' . l:custom,
+                \        '  ' . dn#rc#exceptionError(v:exception)])
+    endtry
+    if !exists('l:retval') || l:retval == -1  " success: 0, failure: -1
+        call extend(l:custom_err, ['Unable to write custom syntax file:',
+                    \              '  ' . l:custom])
+    endif
+    if !l:errors && !empty(l:custom_err) | let l:errors = v:true | endif
+    " display error messages if any    {{{2
+    if l:errors  " failures occurred
+        if !empty(l:copy_err)
+            let l:copy_err = [
+                        \ 'Failures occurred copying syntax files '
+                        \ . 'from perl-vim contrib directory',
+                        \ '  ' . l:contrib,
+                        \ '  to local after directory ' . l:after
+                        \ ]
+                        \ + l:copy_err
+        endif
+        if !empty(l:custom_err)
+            let l:custom_err = [
+                        \ 'Failure writing custom syntax file to',
+                        \ '  ' . l:custom
+                        \ ]
+                        \ + l:custom_err
+        endif
+        call dn#rc#warn(l:copy_err + l:custom_err)
+        return v:false
+    else  " success
+        return v:true
+    endif    " }}}2
+endfunction
+
 " dn#rc#pipInstall(package, [short])    {{{1
 
 ""
@@ -506,6 +723,7 @@ function! dn#rc#pipInstall(package, ...) abort
             let l:err = [  "Unable to install package '" . l:name
                         \  . "' with " . l:installer]
             if !empty(l:feedback)
+                call map(l:feedback, '"  " . v:val')
                 call extend(l:err, ['Error message:'] + l:feedback)
             endif
             call dn#rc#warn(l:err)
@@ -534,7 +752,7 @@ function! dn#rc#pluginRoot(plugin) abort
     elseif count(['dn-perl', 'vim-dn-perl'], a:plugin)
         return  '/repos/github.com/dnebauer/vim-dn-perl'
     elseif count(['vim-perl'], a:plugin)
-        return dn#ec#pluginsDir() . '/repos/github.com/vim-perl/vim-perl'
+        return dn#rc#pluginsDir() . '/repos/github.com/vim-perl/vim-perl'
     else
         echoerr "Invalid plugin name '" . a:plugin . "'"
     endif

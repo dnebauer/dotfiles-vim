@@ -647,6 +647,7 @@ if dein#load_state(dn#rc#pluginsDir())
     " - perl : perl support    {{{3
     call dein#add('vim-perl/vim-perl', {
                 \ 'on_ft' : ['perl'],
+                \ 'hook_post_update' : function('dn#rc#perlContrib'),
                 \ })
     " - dn-perl : perl support    {{{3
     call dein#add('dnebauer/vim-dn-perl', {
