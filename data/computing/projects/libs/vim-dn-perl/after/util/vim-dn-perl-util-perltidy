@@ -1,0 +1,372 @@
+#!/usr/bin/perl
+
+use Moo;    #                                                          {{{1
+use strictures 2;
+use 5.014_002;
+use namespace::clean;
+use version; our $VERSION = qv('0.1');    #                            }}}1
+
+{
+
+    package Dn::PerlTidy;
+
+    use Moo;    #                                                      {{{1
+    use strictures 2;
+    use namespace::clean -except => [ '_options_data', '_options_config' ];
+    use Cwd qw(abs_path);
+    use File::MimeInfo::Magic;
+    use Function::Parameters;
+    use Getopt::Long::Descriptive;
+    use List::Util qw(uniq);
+    use Perl::Tidy;
+    use Readonly;
+    use Test::File qw(file_readable_ok);
+    use Types::Standard qw(CodeRef Str);
+
+    Readonly my $TRUE  => 1;
+    Readonly my $FALSE => 0;    #                                      }}}1
+
+    # attributes
+
+    # _file                                                            {{{1
+    has '_file' => (
+        is  => 'lazy',
+        isa => Types::Standard::Str,
+        doc => 'Perl script to analyse',
+    );
+
+    method _build__file () {
+
+        # get unique file names
+        my @matches;
+        for my $arg (@ARGV) { push @matches, glob "$arg"; }
+        my @unique_matches = List::Util::uniq @matches;
+        my @files = grep {-r} @unique_matches;
+
+        # check file count
+        my $count = scalar @files;
+        die "No valid file specified\n" if $count == 0;
+        die "Multiple files specified (need one file only)\n" if $count > 1;
+
+        # get absolute path now that it is known to be real
+        my $filepath = Cwd::abs_path( $files[0] );
+
+        # must be perl mimetype
+        my $mimetype = $self->_mimetype;
+        die "File does not have perl mimetype '$mimetype'\n"
+            if File::MimeInfo::Magic->new->mimetype($filepath) ne $mimetype;
+
+        return $filepath;
+    }
+
+    # _options                                                         {{{1
+    has '_options' => (
+        is      => 'ro',
+        isa     => Types::Standard::Str,
+        default => '-b -pbp -nst -se',
+
+        # Perl::Tidy options
+    );
+
+    # _prefilter                                                       {{{1
+    has '_prefilter' => (
+        is      => 'ro',
+        isa     => Types::Standard::CodeRef,
+        builder => '_build_prefilter',
+
+    );
+
+    method _build_prefilter () {
+        sub {
+            $_ = $_[0];
+            s/^(\s*)method (.*)/$1sub $2 \#__METHOD/gm;    # "method" -> "sub"
+            return $_;
+        };
+    }
+
+    # _postfilter                                                      {{{1
+    has '_postfilter' => (
+        is      => 'ro',
+        isa     => Types::Standard::CodeRef,
+        builder => '_build_postfilter',
+    );
+
+    method _build_postfilter () {
+            #   changes made to file after tidying
+            #   coderef
+            #   performs transformations:
+            #     1 - changes keyword "sub" back to "method"
+            #     2 - adds empty parentheses where they are missing
+         #     3 - removes spaces inside argument parens when only one argument
+         #     4 - removes spaces inside argument parens when no arguments
+         #     5 - ensures a space between method name and argument parentheses
+         #   cannot follow Perl Best Practice recommendations for s/// modifier:
+         #     's' results in failure
+         #     'x' results in two spaces between keyword 'method' and method
+         #         names in tidied file
+        sub {
+            $_ = $_[0];
+            s/^(\s*)sub (.*?)\s* \#__METHOD/$1method $2/gm;       # 1
+            s/^(\s*)method(\s*\w+)\s*\{/$1method$2 \(\) \{/gm;    # 2
+            s/^(\s*)method (\w+) \(\s*([\$\@\%]\w+)\s*\)/$1method $2 \($3\)/gm
+                ;                                                 # 3
+            s/^(\s*)method (\w+) \(\s*\)/$1method $2 \(\)/gm;     # 4
+            s/^(\s*)method (\w+)\(/$1method $2 \(/gm;             # 5
+            return $_;
+        };
+    }
+
+    # _mimetype                                                        {{{1
+    has '_mimetype' => (
+        is      => 'ro',
+        isa     => Types::Standard::Str,
+        default => 'application/x-perl',
+    );    #                                                            }}}1
+
+    # methods
+
+    # main()                                                           {{{1
+    #
+    # does:   main function
+    # params: nil
+    # prints: nil
+    # return: n/a, dies on failure
+    method main () {
+        $self->_usage;    # if help requested print usage message and exit
+        $self->_tidy_script;
+    }
+
+    # _usage()                                                         {{{1
+    #
+    # does:   print usage message if requested
+    # params: nil
+    # prints: feedback
+    # return: n/a, dies on failure
+    method _usage () {
+
+        # handle args
+        my ( $opt, $usage ) = Getopt::Long::Descriptive::describe_options(
+            '%c %o <perlfile>',
+            [],
+            [   'help|h',
+                'print usage message and exit',
+                { shortcircuit => 1 }
+            ],
+        );
+        if ( $opt->help ) {
+            print $usage->text;
+            exit;
+        }
+
+        return;
+    }
+
+    # _tidy_script()                                                   {{{1
+    #
+    # does:   run Perl::Tidy on file
+    # params: nil
+    # prints: command feedback
+    # return: n/a, dies on failure
+    method _tidy_script () {
+        my $file = $self->_file;    # does file checking
+        my ( $stderr_string, $errorfile_string );
+        my $error = Perl::Tidy::perltidy(
+            argv       => $self->_options,
+            source     => $file,
+            stderr     => \$stderr_string,
+            errorfile  => \$errorfile_string,
+            prefilter  => $self->_prefilter,
+            postfilter => $self->_postfilter,
+        );
+        if ($error) {               # serious error in params aborted tidying
+            print "<<STDERR>>\n$stderr_string\n";
+            die "Exiting because of serious errors\n";
+        }
+        if ($stderr_string) {
+            print "<<STDERR>>\n$stderr_string\n";
+        }
+        if ($errorfile_string) {
+            print "<<.ERR file>>\n$errorfile_string\n";
+        }
+    }    #                                                             }}}1
+
+}
+
+Dn::PerlTidy->new->main;
+
+1;
+
+# POD                                                                  {{{1
+
+__END__
+
+=head1 NAME
+
+Dn::PerlTidy - perltidy with support for C<method> keyword
+
+=head1 USAGE
+
+    dn-perltidy perlfile
+
+=head1 REQUIRED ARGUMENTS
+
+=over
+
+=item I<perlfile>
+
+Path (relative or absolute) to the file to analyse. Required.
+
+=back
+
+=head1 OPTIONS
+
+=over
+
+=item B<-h>  B<--help>
+
+Display help and exit.
+
+=head1 DESCRIPTION
+
+Runs Perl::Tidy with additional support for the C<method> keyword provided by
+packages like Function::Parameters and Method::Signatures. Alters file in place
+but first backs up the file ('bak' extension).
+
+=head2 File checks
+
+The module checks that the supplied file, to be tidied, is readable and has
+perl mimetype S<< C<application/x-perl>. >>
+
+=head2 Perl::Tidy Options
+
+Perl::Tidy is called with the following options:
+
+=over 4
+
+=over
+
+=item --backup-and-modify-in-place (-b)
+
+Current file moved to *.bak.
+
+=item --perl-best-practices (-pbp)
+
+Will use conventions from Damian Conway's B<Perl Best Practices> book.
+
+=item --nostandard-output (-nst)
+
+Is default, but required because -pbp turns on -st option. If -st is set the
+entire file is output to screen, whch is very ugly.
+
+=item --standard-error-output (-se)
+
+Causes output that would normally be sent to a .ERR file to instead be included
+in stderr output.
+
+=back
+
+=back
+
+Additional options can be set in a F<.perltidyrc> configuration file.
+
+=head2 Filters
+
+Pre and post filters are applied to prevent problems with the S<< keyword
+C<method> >> provided by modules like Function::Parameters and
+Method::Signatures.
+
+The pre filter changes C<method> to C<sub>.
+
+The post filter:
+
+=over 4
+
+=over
+
+=item
+
+Turns C<sub> keywords back to C<method>
+
+=item
+
+Adds empty parentheses where they are missing
+
+=item
+
+Removes spaces inside the argument parentheses when there is only one argument
+
+=item
+
+Ensures a space between the method name and argument parentheses.
+
+=back
+
+=back
+
+=head1 DEPENDENCIES
+
+Cwd, File::MimeInfo::Magic, Function::Parameters, Getopt::Long::Descriptive,
+List::Util, Moo, namespace::clean, Perl::Tidy, Readonly, strictures,
+Test::File, Types::Standard, version.
+
+=head1 BUGS AND LIMITATIONS
+
+=head2 Suppress unnecessary output
+
+Test::File::file_readable_ok output test results to stdout. Neither IO::Null
+nor Capture::Tiny were able to suppress this.
+
+=head2 File mimetype
+
+Part of the file check is confirming its mimetype is S<'application/x-perl'>.
+The file could be a perl module S<('MODULE.pm')> or script S<('SCRIPT.pl' or
+'SCRIPT').> Perl modules designed to detect mimetype are notoriously
+inconsistent in detecting mimetype. Here are the test results obtained for
+modules File::MimeInfo S<(v. 0.27),> File::MimeInfo::Magic S<(v. 0.27),>
+File::MMagic S<(v. 1.30)> and File::Type S<(v. 0.22)> in determining the
+mimetype of perl files:
+
+            |   SCRIPT.pl   |    SCRIPT     |  MODULE.pm
+ ---------------------------------------------------------
+ File::     | application/  | text/plain    | application/
+ MimeInfo   | x-perl        |               | x-perl
+ ---------------------------------------------------------
+ File::     | application/  | application/  | application/
+ MimeInfo:: | x-perl        | x-perl        | x-perl
+ Magic      |               |               |
+ ---------------------------------------------------------
+ File::     | x-system/     | x-system/     | text/plain
+ MMagic     | x-unix        | x-unix        |
+ ---------------------------------------------------------
+ File::Type | application/  | application/  | application/
+            | x-perl        | x-perl        | octet-stream
+
+The only module that detects mimetype reliably in all three scenarios is
+S<File::MimeInfo::Magic> and that is what is currently used. Future versions of
+these modules, however, may change their mimetype interpretation in these
+scenarios.
+
+=head2 No plan declared
+
+Perl::Tidy is declaring this error at the end of each run:
+
+    # Tests were run but no plan was declared and done_testing() was not seen.
+
+I have not been able to determine the cause of this error, but as the same
+problem occurs with Perl::Critic it is presumably due to some component common
+to both modules.
+
+=head1 AUTHOR
+
+David Nebauer (david at nebauer dot org)
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright (c) 2017 David Nebauer (david at nebauer dot org)
+
+This script is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
+
+# vim:fdm=marker:

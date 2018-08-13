@@ -1,0 +1,145 @@
+*dn-perl-ftplugin.txt*    For Vim version 7.4     Last changed: 2015 May 20
+
+Filetype plugin supplies auxiliary perl support          *dn-perl-ftplugin*
+                                                             *DNP_ftplugin*
+Dn Perl Plugin                                                    *dn-perl*
+-------------------------------------------------------------------------
+                                                         *dn-perl-contents*
+1. Contents
+
+     1. Contents .......................... |dn-perl-contents|
+     2. Overview .......................... |dn-perl-overview|
+     3. Dependencies ...................... |dn-perl-dependencies|
+     4. Settings .......................... |dn-perl-settings|
+     5. Perltidy .......................... |dn-perl-tidy|
+     6. Perlcritic ........................ |dn-perl-critic|
+     7. Syntax ............................ |dn-perl-syntax|
+-------------------------------------------------------------------------
+                                                         *dn-perl-overview*
+2. Overview
+
+A filetype plugin providing auxiliary perl support. It assumes a recent
+perl ftplugin is in use.
+
+All functions in this library are global. They all have the prefix "DNP_"
+to try and avoid namespace collisions.
+
+As the syntax file provided by this ftplugin relies on the main perl
+ftplugin, all files in this ftplugin are installed to "after" 
+directories.
+
+Some mappings and autocommands are also provided.
+-------------------------------------------------------------------------
+                                                     *dn-perl-dependencies*
+3. Dependencies
+
+This ftplugin relies on functions and variables provided by the dn-utils
+plugin. In fact, the functions provided by this ftplugin will fail if
+they cannot detect dn-utils.
+-------------------------------------------------------------------------
+                                                         *dn-perl-settings*
+4. Settings
+
+These settings improve the perl coding experience.
+
+                                              *dn-perl-setting-include-pod*
+perl_include_pod
+    set to true
+    causes the pod.vim syntax file to be included with perl.vim
+
+                                            *dn-perl-setting-extended-vars*
+perl_extended_vars
+    set to true
+    highlights complex expressions such as @{[$x, $y]}
+
+                                                *dn-perl-setting-sync-dist*
+perl_sync_dist
+    set to 250
+    increase the context used for highlighting
+
+                                           *dn-perl-setting-sub-signatures*
+perl_sub_signatures
+    set to true
+    prevents error highlighting of method arguments
+
+                                                   *dn-perl-setting-k-help*
+keywordprg
+    default is to search functions ("perldoc -f X")
+    set to search functions, variables, general and faq help
+        (perldoc -f -X || perldoc -v -X || perldoc -X || perldoc -q-X )
+-------------------------------------------------------------------------
+                                                         *dn-perl-perltidy*
+5. Perltidy
+
+Perl::Tidy is a perl module that parses and beautifies perl source code.
+The Perl::Tidy module provides a convenience script called "perltidy",
+but it does not provide support for the "method" keyword. This plugin
+includes a custom version of "perltidy" which does. This version of
+"perltidy" is configured to save a backup of the current file with a
+".bak" extension before beautifying it. It has the following
+dependencies: Cwd, File::MimeInfo::Magic, Function::Parameters,
+Getopt::Long::Descriptive, List::Util, Moo, namespace::clean, Perl::Tidy,
+Readonly, strictures, Test::File, Types::Standard, version.
+
+This plugin has a function called DNP_PerlTidy that locates and runs the
+custom "perltidy" utility. If it cannot locate the utility script the
+function will display an error message.
+
+                                                             *DNP-PerlTidy*
+DNP_PerlTidy(params)
+    purpose: run custom "perltidy" utility on current file
+    params:  1 - all parameters [Hash]
+             mode: calling mode ('insert'|'normal')
+    return:  nil
+                                            *dn-mapping-t*  *dn-command-tidy*
+This feature is mapped by default to "<LocalLeader>t", usually "\t", in
+both Insert and Normal modes. This feature is also invoked by the command
+":Tidy".
+-------------------------------------------------------------------------
+                                                       *dn-perl-perlcritic*
+6. Perlcritic
+
+Perl::Critic is a perl module that critiques perl source code for best
+practices. The Perl::Critic module provides a convenience script called
+perlcritic, but it does not provide Moo(se) support. This plugin includes
+a custom version of "perlcritic" which does. The script has the following
+dependences: Carp, Cwd, English, File::MimeInfo::Magic,
+Function::Parameters, List::Util, Moo, MooX::Options, namespace::clean,
+Perl::Critic, Perl::Critic::Moose, Readonly, strictures, Test::File,
+Type::Library, Type::Utils, Types::Standard, version.
+
+This plugin has a function called DNP_PerlCritic that locates and runs
+the custom "perlcritic" utility. If it cannot locate the utility script
+the function will display an error message.
+
+                                                           *DNP-PerlCritic*
+DNP_PerlCritic(params)
+    purpose: run custom "perlcritic" utility on current file
+    params:  1 - all parameters [Hash]
+             mode: calling mode ('insert'|'normal')
+             severity: severity of analysis (1..5)
+    return:  nil
+                              *dn-mapping-c1*  *dn-mapping-c2*  *dn-mapping-c3*
+                          *dn-mapping-c4*  *dn-mapping-c5*  *dn-command-critic*
+This feature is mapped in both Insert and Normal modes by default to
+"<LocalLeader>cX" where X is the desired severity of analysis (1, 2, 3,
+4 or 5), and is usually "\cX". This feature is also invoked by the
+command ":Critic X" where X is the desired severity (1, 2, 3, 4 or 5).
+-------------------------------------------------------------------------
+                                                           *dn-perl-syntax*
+7. Syntax
+
+This ftplugin assumes the following syntax files from the vim-perl plugin
+are in use: moose.vim and function-parameters.vim. At the time of writing
+these are all contributed files (in the "contrib" directory) and must be
+manually installed in a directory visible to vim.
+
+These useful files are also contributed to the vim-perl ftplugin and are
+worth using: try-tiny.vim, carp.vim, and highlight-all-pragmas.vim.
+
+The syntax file provided by this ftplugin relies on the main perl
+ftplugin syntax file, and so is installed to an "after" directory. This
+auxiliary synta file provides support for keywords provided by the
+MooseX::App(::Simple) and Readonly modules.
+-------------------------------------------------------------------------
+ vim:tw=78:fo=tcq2:ts=4:ft=help:

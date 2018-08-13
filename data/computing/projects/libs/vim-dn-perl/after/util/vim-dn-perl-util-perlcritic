@@ -1,0 +1,294 @@
+#!/usr/bin/perl
+
+use Moo;    #                                                          {{{1
+use strictures 2;
+use 5.014_002;
+use namespace::clean;
+use version; our $VERSION = qv('0.1');    #                            }}}1
+
+{
+
+    package Dn::PerlCritic;
+
+    use Moo;    #                                                      {{{1
+    use strictures 2;
+    use namespace::clean -except => [ '_options_data', '_options_config' ];
+    use Carp qw(confess);
+    use Cwd qw(abs_path);
+    use English qw(-no_match_vars);
+    use File::MimeInfo::Magic;
+    use Function::Parameters;
+    use List::Util qw(uniq);
+    use MooX::Options protect_argv => 0;
+    use Perl::Critic;
+    use Perl::Critic::Moose;
+    use Readonly;
+    use Test::File qw(file_readable_ok);
+    use Types::Standard qw(Int Str);
+
+    Readonly my $TRUE  => 1;
+    Readonly my $FALSE => 0;    #                                      }}}1
+
+    # Options
+
+    # severity                                                         {{{1
+    option 'severity' => (
+        is            => 'rw',
+        format        => 'i',
+        default       => '5',
+        documentation => 'Degree of severity in checking',
+    );
+
+    # policies                                                         {{{1
+    option 'policies' => (
+        is            => 'rw',
+        documentation => 'List loaded policies and exit',
+
+        # list loaded policies instead of analysing file
+    );    #                                                            }}}1
+
+    # Attributes
+
+    # _file                                                            {{{1
+    has '_file' => (
+        is  => 'lazy',
+        isa => Types::Standard::Str,
+        doc => 'Perl script to analyse',
+    );
+
+    method _build__file () {
+
+        # get unique file names
+        my @matches;
+        for my $arg (@ARGV) { push @matches, glob "$arg"; }
+        my @unique_matches = List::Util::uniq @matches;
+        my @files = grep {-r} @unique_matches;
+
+        # check file count
+        my $count = scalar @files;
+        die "No valid file specified\n" if $count == 0;
+        die "Multiple files specified (need one file only)\n" if $count > 1;
+
+        # get absolute path now that it is known to be real
+        my $filepath = Cwd::abs_path( $files[0] );
+
+        # must be perl mimetype
+        my $mimetype = $self->_mimetype;
+        die "File does not have perl mimetype '$mimetype'\n"
+            if File::MimeInfo::Magic->new->mimetype($filepath) ne $mimetype;
+
+        return $filepath;
+    }
+
+    # _mimetype                                                        {{{1
+    has '_mimetype' => (
+        is      => 'ro',
+        isa     => Types::Standard::Str,
+        default => 'application/x-perl',
+        doc     => 'Perl mimetype',
+    );
+
+    # _severity                                                        {{{1
+    has '_severity' => (
+        is  => 'lazy',
+        isa => Types::Standard::Int,
+        doc => 'Degree of severity in checking',
+    );
+
+    method _build__severity () {
+
+        # severity has valid default so should never be missing
+        my $severity = $self->severity;
+        die "No severity available\n" if not $severity;
+
+        # ensure is valid value
+        my %valid_severity = map { ( $_ => $TRUE ) } qw(1 2 3 4 5);
+        die "Invalid severity '$severity' (must be integer 1..5)\n"
+            if not $valid_severity{$severity};
+
+        return $severity;
+    }    #                                                             }}}1
+
+    # METHODS
+
+    # run()                                                            {{{1
+    #
+    # does:   main public method
+    # params: nil
+    # prints: nil
+    # return: n/a, dies on failure
+    method run () {
+
+        # if requested, display policies and exit
+        if ( $self->policies ) { $self->_display_policies; }
+
+        # otherwise, analyse script
+        $self->_analyse_script;
+    }
+
+    # _display_policies()                                              {{{1
+    #
+    # does:   lists loaded policies
+    # params: nil
+    # prints: command feedback
+    # return: exits on completion, dies on failure
+    method _display_policies () {
+        my $critic = Perl::Critic->new( -severity => $self->_severity );
+        say join "\n", $critic->policies() or die "Unable to print\n";
+        exit $TRUE;
+    }
+
+    # _analyse_script()                                                {{{1
+    #
+    # does:   calls Perl::Critic to analyse file
+    # params: nil
+    # prints: command feedback
+    # return: n/a, dies on failure
+    method _analyse_script () {
+
+        # set necessary variables for running module
+        my $severity = $self->_severity;
+        my $file     = $self->_file;
+        my $divider  = q{'} x 60;
+
+        # run Perl::Critic module
+        my $critic = Perl::Critic->new( -severity => $severity );
+        my @violations = $critic->critique($file);
+
+        # display results
+        if (@violations) {
+            say $divider      or confess "Unable to print";
+            print @violations or confess "Unable to print";
+            say $divider      or confess "Unable to print";
+        }
+
+        return;
+    }
+
+    1;    #                                                            }}}1
+
+}
+
+Dn::PerlCritic->new_with_options->run;
+
+# POD                                                                  {{{1
+
+__END__
+
+=head1 NAME
+
+dn-perlcritic - run Perl::Critic with Moo(se) additions
+
+=head1 USAGE
+
+    dn-perlcritic perlfile
+    dn-perlcritic --severity 3 perlfile
+
+    dn-perlcritic --policies
+    dn-perlcritic --severity 2 --policies
+
+=head1 ARGUMENTS
+
+=over
+
+=item I<perlfile>
+
+Path (relative or absolute) to the file to be analysed. The file may be a perl
+sript or module. Optional (because the script may be called with the
+'--policies' option).
+
+=back
+
+=head1 OPTIONS
+
+=over
+
+=item B<--severity> I<level>
+
+Severity level of analysis. Integer from 1 to 5. Optional. S<Default: 5.>
+
+Corresponds to Perl::Critic severity levels S<5 (gentle),> S<4 (stern),>
+S<3 (harsh),> S<2 (cruel)> and S<1 (brutal).>
+
+=item B<--policies>
+
+Display loaded policies and exit.
+
+=item B<-h> | B<--help>
+
+Display help and exit.
+
+=back
+
+=head1 DESCRIPTION
+
+Runs Perl::Critic on designated file at specified severity level. Alternately,
+display the policies loaded for the specified severity level.
+
+=head1 DEPENDENCIES
+
+Carp, Cwd, English, File::MimeInfo::Magic, Function::Parameters, List::Util,
+Moo, MooX::Options, namespace::clean, Perl::Critic, Perl::Critic::Moose,
+Readonly, strictures, Test::File, Type::Library, Type::Utils, Types::Standard,
+version.
+
+=head1 BUGS AND LIMITATIONS
+
+=head2 Suppress unnecessary output
+
+Test::File::file_readable_ok output test results to stdout. Neither IO::Null
+nor Capture::Tiny were able to suppress this.
+
+=head2 File mimetype
+
+Part of the file check is confirming its mimetype is S<'application/x-perl'>.
+The file could be a perl module S<('MODULE.pm')> or script S<('SCRIPT.pl' or
+'SCRIPT').> Perl modules designed to detect mimetype are notoriously
+inconsistent in detecting mimetype. Here are the test results obtained for
+modules File::MimeInfo (v. 0.27), File::MimeInfo::Magic (v. 0.27), File::MMagic
+(v. 1.30) and File::Type (v. 0.22) in determining the mimetype of perl files:
+
+            |   SCRIPT.pl   |    SCRIPT     |  MODULE.pm
+ ---------------------------------------------------------
+ File::     | application/  | text/plain    | application/
+ MimeInfo   | x-perl        |               | x-perl
+ ---------------------------------------------------------
+ File::     | application/  | application/  | application/
+ MimeInfo:: | x-perl        | x-perl        | x-perl
+ Magic      |               |               |
+ ---------------------------------------------------------
+ File::     | x-system/     | x-system/     | text/plain
+ MMagic     | x-unix        | x-unix        |
+ ---------------------------------------------------------
+ File::Type | application/  | application/  | application/
+            | x-perl        | x-perl        | octet-stream
+
+The only module that detects mimetype reliably in all three scenarios is
+S<File::MimeInfo::Magic> and that is what is currently used. Future versions of
+these modules, however, may change their mimetype interpretation in these
+scenarios.
+
+=head2 No plan declared
+
+Perl::Critic is declaring this error at the end of each run:
+
+    # Tests were run but no plan was declared and done_testing() was not seen.
+
+I have not been able to determine the cause of this error, but as the same
+problem occurs with Perl::Tidy it is presumably due to some component common to
+both modules.
+
+=head1 AUTHOR
+
+David Nebauer (david at nebauer dot org)
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright (c) 2017 David Nebauer (david at nebauer dot org)
+
+This script is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
+
+# vim:fdm=marker:
