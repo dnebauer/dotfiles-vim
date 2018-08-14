@@ -29,6 +29,14 @@ function! s:PerlSupport()
     " - display Perl::Critic violations as warnings, not errors    {{{3
     if !exists('g:ale_type_map') | let g:ale_type_map = {} | endif
     let g:ale_type_map.perlcritic = {'ES': 'WS', 'E': 'W'}
+    " syntax highlighting    {{{1
+    " [vim-perl (perl.vim) settings - see |ft-perl-syntax|]
+    " - inline POD highlighting
+    let g:perl_include_pod = 1
+    " - highlight complex expressions
+    let g:perl_extended_vars = 1
+    " - use more context for highlighting
+    let g:perl_sync_dist = 250
     " }}}1
 endfunction
 
