@@ -45,4 +45,4 @@ augroup vrc_perl_files
     autocmd FileType perl call s:PerlSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

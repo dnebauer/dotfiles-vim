@@ -80,4 +80,4 @@ if dn#rc#lintEngine() ==# 'syntastic'
     let g:syntastic_check_on_wq = 0
 endif    " }}}1
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

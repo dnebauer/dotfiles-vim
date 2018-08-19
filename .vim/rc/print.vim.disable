@@ -99,7 +99,7 @@ function! VrcPostscriptMethod()
     endif
     " highlight is another possible choice
     let l:missing = []
-    for l:util in ['highlight', 'latex', 'dvips', 
+    for l:util in ['highlight', 'latex', 'dvips',
                 \ 'sed', 'grep', 'cut', 'mktemp']
         if !executable(l:util)
             call add(l:missing, l:util)
@@ -161,7 +161,7 @@ function! VrcEnscriptSupportsFiletype()
     return count(l:langs, &filetype)
 endfunction                                                          " }}}2
 " - function VrcHighlightSupportsFiletype()                            {{{2
-"   intent: determine whether highlight supports 
+"   intent: determine whether highlight supports
 "           colour syntax for this filetype
 "   params: nil
 "   prints: nil
@@ -515,8 +515,8 @@ function! VrcPrintWithGtklp(fname)
 endfunction                                                          " }}}2
                                                                      " }}}1
 " custom output available on unix-based systems
-if VrcOS() == 'unix'
+if dn#rc#os() == 'unix'
     set printexpr=VrcPrint(v:fname_in)
 endif
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

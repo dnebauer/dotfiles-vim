@@ -12,4 +12,4 @@ augroup vrc_text_files
     autocmd FileType text call s:TextSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

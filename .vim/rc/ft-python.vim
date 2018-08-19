@@ -19,4 +19,4 @@ augroup vrc_python_files
     autocmd FileType python call s:PythonSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

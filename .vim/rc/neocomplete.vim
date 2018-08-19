@@ -69,4 +69,4 @@ endif
 " - filetype-specific omni completion
 "   . see ft-filetype.vim configuration files    }}}1
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

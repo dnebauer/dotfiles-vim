@@ -103,4 +103,4 @@ let g:deoplete#ignore_sources = {'_': ['tag']}
 " Filetype-specific completion    {{{1
 " - see ft-filetype.vim configuration files    }}}1
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

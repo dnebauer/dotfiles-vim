@@ -50,4 +50,4 @@ augroup vrc_bash_files
     autocmd FileType bash call s:BashSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

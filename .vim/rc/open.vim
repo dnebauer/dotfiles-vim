@@ -6,4 +6,4 @@ augroup vrc_local_dir
     autocmd BufEnter * call dn#rc#cdToLocalDir()
 augroup END    " }}}1
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

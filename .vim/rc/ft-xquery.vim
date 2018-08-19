@@ -13,4 +13,4 @@ augroup vrc_xquery_files
     autocmd FileType xquery call s:XquerySupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

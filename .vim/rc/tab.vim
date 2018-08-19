@@ -52,4 +52,4 @@ endfunction    " }}}2
 nnoremap <silent><S-Tab> :call <SID>ShiftTabNormalMode()<CR>
 " }}}1
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

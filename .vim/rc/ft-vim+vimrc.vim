@@ -22,4 +22,4 @@ augroup vrc_vim_files
     autocmd BufWritePost .vimrc call s:VimrcSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

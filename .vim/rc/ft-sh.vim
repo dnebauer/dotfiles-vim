@@ -50,4 +50,4 @@ augroup vrc_sh_files
     autocmd FileType sh call s:ShSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

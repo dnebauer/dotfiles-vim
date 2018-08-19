@@ -14,4 +14,4 @@ augroup vrc_xml_files
     autocmd FileType xml call s:XmlSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

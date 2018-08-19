@@ -236,4 +236,4 @@ it under the same terms as Perl itself.
 
 =cut
 
-# vim:fdm=marker
+# vim:foldmethod=marker:

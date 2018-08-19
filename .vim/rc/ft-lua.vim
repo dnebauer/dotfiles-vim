@@ -27,4 +27,4 @@ augroup vrc_lua_files
     autocmd FileType lua call s:LuaSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

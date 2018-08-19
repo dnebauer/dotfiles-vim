@@ -9,4 +9,4 @@ map :E :e
 nnoremap Q <Nop>
 " }}}1
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

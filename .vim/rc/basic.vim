@@ -32,4 +32,4 @@ nmap <expr> ; sneak#is_sneaking() ? '<Plug>SneakNext' : ':'
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,
             \.ind,.idx,.ilg,.inx,.out,.toc    " }}}1
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

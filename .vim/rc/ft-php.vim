@@ -16,4 +16,4 @@ augroup vrc_php_files
     autocmd FileType php call s:PhpSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

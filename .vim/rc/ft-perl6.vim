@@ -16,4 +16,4 @@ augroup vrc_perl6_files
     autocmd FileType perl6 call s:Perl6Support()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

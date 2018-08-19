@@ -212,4 +212,4 @@ nnoremap <silent> [denite]t :<C-u>Denite
             \ tag<CR>
 " }}}1
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

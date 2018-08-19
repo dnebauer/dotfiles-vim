@@ -25,4 +25,4 @@ augroup vrc_java_files
     autocmd FileType java call s:JavaSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

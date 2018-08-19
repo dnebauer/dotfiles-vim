@@ -59,4 +59,4 @@ augroup vrc_markdown_files
     autocmd FileType markdown call s:MarkdownSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

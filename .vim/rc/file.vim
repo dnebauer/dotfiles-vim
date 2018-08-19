@@ -4,4 +4,4 @@
 cnoremap <expr> %%  getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 " }}}1
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

@@ -47,4 +47,4 @@ if dn#rc#os() ==# 'windows' && has('nvim')
     call s:DebugPython()
 endif
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

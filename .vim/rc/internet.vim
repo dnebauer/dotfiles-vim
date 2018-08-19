@@ -6,4 +6,4 @@ nmap gx <Plug>(openbrowser-smart-search)
 vmap gx <Plug>(openbrowser-smart-search)
 " }}}1
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

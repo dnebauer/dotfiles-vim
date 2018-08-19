@@ -45,4 +45,4 @@ set nrformats=
 " :nnoremap P ixx<Esc>i<CR><Esc>k:put<CR>kJhxxJxx
 " see undojoin    }}}1
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

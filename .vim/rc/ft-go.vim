@@ -94,4 +94,4 @@ augroup vrc_go_files
     autocmd FileType go call s:GoSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

@@ -10,4 +10,4 @@ augroup vrc_conf_files
     autocmd BufRead,BufNewFile *.conf call s:ConffileSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

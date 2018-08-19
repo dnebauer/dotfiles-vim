@@ -32,4 +32,4 @@ augroup vrc_docbook_files
     autocmd FileType docbk call s:DocbookSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

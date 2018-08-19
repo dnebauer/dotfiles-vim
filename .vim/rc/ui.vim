@@ -140,4 +140,4 @@ let g:airline_symbols.linenr   = ''
 " - display all buffers when only one is open
 let g:airline#extensions#tabline#enabled = 1    " }}}1
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

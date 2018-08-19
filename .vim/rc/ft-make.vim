@@ -15,4 +15,4 @@ augroup vrc_make_files
     autocmd FileType make call s:MakefileSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

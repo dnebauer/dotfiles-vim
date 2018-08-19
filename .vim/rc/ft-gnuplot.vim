@@ -10,4 +10,4 @@ augroup vrc_gnuplot_files
     autocmd BufRead,BufNewFile *.plt call s:GnuplotSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

@@ -12,4 +12,4 @@ augroup vrc_nsis_files
     autocmd BufRead,BufNewFile *.nsh call s:NsisSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

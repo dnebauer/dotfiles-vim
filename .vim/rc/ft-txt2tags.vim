@@ -10,4 +10,4 @@ augroup vrc_txt2tags_files
     autocmd BufRead,BufNewFile *.t2t call s:Txt2tagsSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

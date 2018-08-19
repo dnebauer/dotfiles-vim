@@ -4,4 +4,4 @@
 let g:template_dir    = dn#rc#vimPath('home') . '/templates'
 let g:template_author = 'David Nebauer (david at nebauer dot org)'
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

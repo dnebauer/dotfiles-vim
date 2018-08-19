@@ -32,4 +32,4 @@ augroup vrc_javascript_files
     autocmd FileType javascript call s:JavascriptSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

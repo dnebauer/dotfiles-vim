@@ -44,4 +44,4 @@ function MyDiff()
     endif
 endfunction    " }}}1
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

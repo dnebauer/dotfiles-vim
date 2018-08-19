@@ -12,4 +12,4 @@ augroup vrc_html_files
     autocmd FileType html call s:HtmlSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

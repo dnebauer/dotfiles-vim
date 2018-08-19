@@ -82,7 +82,7 @@ nnoremap [unite]c :<C-u>Unite
             \ -buffer-name=commands
             \ history/command<CR>
 " - ,f : source = file search                                          {{{1
-if VrcOS() ==# 'windows'
+if dn#rc#os() ==# 'windows'
     nnoremap <silent> [unite]f :call <SID>Unite_Find_on_Windows()<CR>
     function! s:Unite_Find_on_Windows()
         " possible utilities to use:
@@ -263,4 +263,4 @@ nnoremap <silent> [unite]y :<C-u>Unite
             \ history/yank<CR>
                                                                      " }}}1
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

@@ -81,4 +81,4 @@ if exists(':Terminal')
 endif
 " }}}1
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

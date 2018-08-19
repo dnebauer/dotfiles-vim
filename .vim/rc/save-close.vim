@@ -48,4 +48,4 @@ inoremap <C-w><C-w> <Esc>:update<CR><C-w><C-w>
 nnoremap <C-w><C-w> :update<CR><C-w><C-w>
 " }}}1
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

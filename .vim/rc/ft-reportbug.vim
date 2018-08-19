@@ -13,4 +13,4 @@ augroup vrc_reportbug_files
     autocmd BufRead reportbug.*,reportbug-* call s:ReportbugSupport()
 augroup END
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:

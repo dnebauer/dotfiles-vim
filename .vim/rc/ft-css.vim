@@ -20,4 +20,4 @@ if has('nvim')  " nvim
                 \ = '^\s\+\w\+\|\w\+[):;]\?\s\+\w*\|[@!]'    " }}}1
 endif
 
-" vim: set foldmethod=marker :
+" vim:foldmethod=marker:
