@@ -49,9 +49,9 @@ function! s:MarkdownSupport()
     " vim omnicompletion    {{{1
     if !has('nvim')
         setlocal omnifunc=htmlcomplete#CompleteTags
-    endif    " }}}1
-    " change filetype to trigger vim-pandoc plugin
-    set filetype=markdown.pandoc
+    endif
+    " change filetype to trigger vim-pandoc plugin    {{{1
+    set filetype=markdown.pandoc    " }}}1
 endfunction
 
 augroup vrc_markdown_files
