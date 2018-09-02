@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-use Moo;    {{{1
+use Moo;    # {{{1
 use strictures 2;
 use 5.006;
 use 5.22.1;
