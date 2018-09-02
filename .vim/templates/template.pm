@@ -1,6 +1,6 @@
 package Dn::Package;
 
-use Moo;    #                                                          {{{1
+use Moo;    # {{{1
 use strictures 2;
 use 5.006;
 use 5.22.1;
@@ -26,7 +26,7 @@ Readonly my $TRUE  => 1;
 Readonly my $FALSE => 0;
 my $cp = Dn::Common->new();
 my $io = Dn::InteractiveIO->new;
-Sys::Syslog::openlog( 'ident', 'user' );    #                        }}}1
+Sys::Syslog::openlog( 'ident', 'user' );    # }}}1
         # ident is prepended to every message - adapt to module
         # user is the most commonly used facility - leave as is
 
@@ -35,7 +35,7 @@ use Data::Dumper::Simple;
 
 # attributes
 
-# log                                                                  {{{1
+# log    {{{1
 has 'log' => (
     is            => 'ro',
     isa           => Types::Standard::Bool,
@@ -44,7 +44,7 @@ has 'log' => (
     documentation => 'Whether to write status messages to system log',
 );
 
-# _attr_1                                                              {{{1
+# _attr_1    {{{1
 has '_attr_1' => (
     is            => 'lazy',
     isa           => Types::Standard::Str,
@@ -55,7 +55,7 @@ method _build__attr_1 () {
     return My::App->new->get_value;
 }
 
-# _attr_list                                                       ____{{{1
+# _attr_list    {{{1
 has '_attr_list' => (
     is  => 'rw',
     isa => Types::Standard::ArrayRef [
@@ -70,11 +70,11 @@ has '_attr_list' => (
         _has_attr => 'count',
     },
     documentation => 'Array of values',
-);    #                                                                }}}1
+);    # }}}1
 
 # methods
 
-# my_method($thing)                                                    {{{1
+# my_method($thing)    {{{1
 #
 # does:   it does stuff
 # params: $thing - for this [optional, default=grimm]
@@ -84,7 +84,7 @@ method my_method ($thing) {
     $io->say('This is feedback');
 }
 
-# _log($msg, [$type])                                              {{{1
+# _log($msg, [$type])    {{{1
 #
 # does:   log message if logging
 # params: $msg  - message [scalar string, optional, no default]
@@ -116,7 +116,7 @@ method _log ($msg, $type) {
     return;
 }
 
-# _fail($err)                                                          {{{1
+# _fail($err)    {{{1
 #
 # does:   print stack trace if interactive, log message if logging,
 #         and exit with error status
@@ -134,7 +134,7 @@ method _fail ($err) {
     else                      { exit 1; }
 }
 
-# _other($err)                                                         {{{1
+# _other($err)    {{{1
 #
 # does:   do the other thing
 #
@@ -142,12 +142,12 @@ method _fail ($err) {
 # prints: error message
 # return: n/a, dies on completion
 method _other () {
-}    #                                                                 }}}1
+}    # }}}1
 
 
 1;
 
-# POD                                                                  {{{1
+# POD    {{{1
 
 __END__
 
@@ -198,10 +198,9 @@ Nil.
 
 =head1 DIAGNOSTICS
 
-Supposedly a listing of every error and warning message
-that the module can generate (even the ones that will
-"never happen"), with a full explanation of each problem,
-one or more likely causes, and any suggested remedies.
+Supposedly a listing of every error and warning message that the module can
+generate (even the ones that will "never happen"), with a full explanation of
+each problem, one or more likely causes, and any suggested remedies.
 
 Really?
 
@@ -213,7 +212,10 @@ There are no configuration files used. There are no module/role settings.
 
 =head2 Perl modules
 
-autodie, Carp, Dn::InteractiveIO, Dn::Common, Dn::Menu, English, experimental, Function::Parameters, Moo, MooX::HandlesVia, namespace::clean, Path::Tiny, Readonly, Sys::Syslog, strictures, Try::Tiny, Types::Common::Numeric, Types::Common::String, Types::Path::Tiny, Types::Standard, version.
+autodie, Carp, Dn::InteractiveIO, Dn::Common, Dn::Menu, English, experimental,
+Function::Parameters, Moo, MooX::HandlesVia, namespace::clean, Path::Tiny,
+Readonly, Sys::Syslog, strictures, Try::Tiny, Types::Common::Numeric,
+Types::Common::String, Types::Path::Tiny, Types::Standard, version.
 
 =head2 INCOMPATIBILITIES
 
@@ -231,8 +233,8 @@ David Nebauer E<lt>davidnebauer@hotkey.net.auE<gt>
 
 Copyright (c) 2017 ${author}
 
-This script is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+This script is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
 
 =cut
 

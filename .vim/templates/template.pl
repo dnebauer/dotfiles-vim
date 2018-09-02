@@ -1,17 +1,17 @@
 #!/usr/bin/perl
 
-use Moo;    #                                                          {{{1
+use Moo;    {{{1
 use strictures 2;
 use 5.006;
 use 5.22.1;
 use version; our $VERSION = qv('0.1');
-use namespace::clean;    #                                             }}}1
+use namespace::clean;    # }}}1
 
 {
 
     package Dn::Internal;
 
-    use Moo;             # {{{1
+    use Moo;    # {{{1
     use strictures 2;
     use namespace::clean -except => [ '_options_data', '_options_config' ];
     use autodie qw(open close);
@@ -36,11 +36,11 @@ use namespace::clean;    #                                             }}}1
     Readonly my $FALSE => 0;
 
     # debug
-    use Data::Dumper::Simple;    #                                     }}}1
+    use Data::Dumper::Simple;    # }}}1
 
     # options
 
-    # opt  (-o)                                                        {{{1
+    # opt  (-o)    {{{1
     option 'opt' => (
         is       => 'ro',
         format   => 's',
@@ -49,16 +49,16 @@ use namespace::clean;    #                                             }}}1
         doc      => 'An option',
     );
 
-    # flag (-f)                                                        {{{1
+    # flag (-f)    {{{1
     option 'flag' => (
         is    => 'ro',
         short => 'f',
         doc   => 'A flag',
-    );    #                                                            }}}1
+    );    # }}}1
 
     # attributes
 
-    # _attr                                                            {{{1
+    # _attr    {{{1
     has '_attr_1' => (
         is  => 'lazy',
         isa => Types::Standard::Str,
@@ -69,7 +69,7 @@ use namespace::clean;    #                                             }}}1
         return My::App->new->get_value;
     }
 
-    # _attr_list                                                       {{{1
+    # _attr_list    {{{1
     has '_attr_2_list' => (
         is  => 'rw',
         isa => Types::Standard::ArrayRef [
@@ -86,7 +86,7 @@ use namespace::clean;    #                                             }}}1
         doc => 'Array of values',
     );
 
-    # _files                                                           {{{1
+    # _files    {{{1
     has '_file_list' => (
 
         is          => 'lazy',
@@ -103,11 +103,11 @@ use namespace::clean;    #                                             }}}1
         my @files = grep { -r $_ } @unique_matches;    # ignore non-files
 
         return [@files];
-    }    #                                                             }}}1
+    }    # }}}1
 
     # methods
 
-    # main()                                                           {{{1
+    # main()    {{{1
     #
     # does:   main method
     # params: nil
@@ -119,7 +119,7 @@ use namespace::clean;    #                                             }}}1
         $self->_check_args;
     }
 
-    # _check_args()                                                    {{{1
+    # _check_args()    {{{1
     #
     # does:   check arguments
     # params: nil
@@ -127,7 +127,7 @@ use namespace::clean;    #                                             }}}1
     # return: n/a, dies on failure
     method _check_args () {
 
-        # need at least one file                                       {{{2
+        # need at least one file    {{{2
         my @files = $self->_files;
         my $count = scalar @files;
         if ( not $count ) {
@@ -135,7 +135,7 @@ use namespace::clean;    #                                             }}}1
             exit 1;
         }
 
-        # ensure files are valid images [***EXAMPLE CHECK***]          {{{2
+        # ensure files are valid images [***EXAMPLE CHECK***]    {{{2
         say "Verifying $count image files:";
         my $progress = Term::ProgressBar::Simple->new($count);
         for my $file (@files) {
@@ -148,7 +148,7 @@ use namespace::clean;    #                                             }}}1
         return;
     }
 
-    # _help()                                                          {{{1
+    # _help()    {{{1
     #
     # does:   if help is requested, display it and exit
     #
@@ -165,7 +165,7 @@ use namespace::clean;    #                                             }}}1
         return;
     }
 
-    # _other()                                                         {{{1
+    # _other()    {{{1
     #
     # does:   something
     # params: nil
@@ -173,7 +173,7 @@ use namespace::clean;    #                                             }}}1
     # return: scalar string
     #         dies on failure
     method _other () {
-    }    #                                                             }}}1
+    }    # }}}1
 
 }
 
@@ -181,7 +181,7 @@ my $p = Dn::Internal->new_with_options->main;
 
 1;
 
-# POD                                                                  {{{1
+# POD    {{{1
 __END__
 
 =encoding utf8
@@ -238,15 +238,14 @@ Display help and exit.
 
 =head1 DESCRIPTION
 
-A full description of the application and its features.
-May include numerous subsections (i.e., =head2, =head3, etc.).
+A full description of the application and its features. May include numerous
+subsections (i.e., =head2, =head3, etc.).
 
 =head1 DIAGNOSTICS
 
-Supposedly a listing of every error and warning message
-that the module can generate (even the ones that will
-"never happen"), with a full explanation of each problem,
-one or more likely causes, and any suggested remedies.
+Supposedly a listing of every error and warning message that the module can
+generate (even the ones that will "never happen"), with a full explanation of
+each problem, one or more likely causes, and any suggested remedies.
 
 Really?
 
@@ -254,7 +253,10 @@ Really?
 
 =head2 Perl modules
 
-autodie, Carp, Dn::Common, Dn::Menu, English, experimental, Function::Parameters, Moo, MooX::HandlesVia, MooX::Options, namespace::clean, Path::Tiny, Readonly, strictures, Try::Tiny, Types::Common::Numeric, Types::Common::String, Types::Path::Tiny, Types::Standard, version.
+autodie, Carp, Dn::Common, Dn::Menu, English, experimental,
+Function::Parameters, Moo, MooX::HandlesVia, MooX::Options, namespace::clean,
+Path::Tiny, Readonly, strictures, Try::Tiny, Types::Common::Numeric,
+Types::Common::String, Types::Path::Tiny, Types::Standard, version.
 
 =head2 Executables
 
@@ -264,7 +266,12 @@ wget.
 
 =head2 Autostart
 
-To run this automatically at KDE5 (and possible other desktop environments) startup, place a symlink to the F<dn-konsole-su.desktop> file in a user's F<~/.config/autostart> directory. While this appears to be the preferred method, it is also possible to place a symlink to the F<dn-konsole-su> script in a user's F<~/.config/autostart-scripts> directory. (See L<KDE bug 338242|https://bugs.kde.org/show_bug.cgi?id=338242> for further details.)
+To run this automatically at KDE5 (and possible other desktop environments)
+startup, place a symlink to the F<dn-konsole-su.desktop> file in a user's
+F<~/.config/autostart> directory. While this appears to be the preferred
+method, it is also possible to place a symlink to the F<dn-konsole-su> script
+in a user's F<~/.config/autostart-scripts> directory. (See L<KDE bug
+338242|https://bugs.kde.org/show_bug.cgi?id=338242> for further details.)
 
 =head2 Configuration files
 
@@ -290,8 +297,8 @@ ${author}
 
 Copyright (c) 2017 ${author}
 
-This script is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+This script is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
 
 =cut
 # vim:foldmethod=marker:
