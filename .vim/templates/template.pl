@@ -25,15 +25,15 @@ use namespace::clean;    # }}}1
     use MooX::HandlesVia;
     use MooX::Options protect_argv => 0;
     use Path::Tiny;
-    use Readonly;
+    use Const::Fast;
     use Try::Tiny;
     use Types::Standard;
     use experimental 'switch';
 
     my $cp = Dn::Common->new();
 
-    Readonly my $TRUE  => 1;
-    Readonly my $FALSE => 0;
+    const my $TRUE  => 1;
+    const my $FALSE => 0;
 
     # debug
     use Data::Dumper::Simple;    # }}}1
@@ -253,9 +253,9 @@ Really?
 
 =head2 Perl modules
 
-autodie, Carp, Dn::Common, Dn::Menu, English, experimental,
+autodie, Carp, Const::Fast, Dn::Common, Dn::Menu, English, experimental,
 Function::Parameters, Moo, MooX::HandlesVia, MooX::Options, namespace::clean,
-Path::Tiny, Readonly, strictures, Try::Tiny, Types::Common::Numeric,
+Path::Tiny, strictures, Try::Tiny, Types::Common::Numeric,
 Types::Common::String, Types::Path::Tiny, Types::Standard, version.
 
 =head2 Executables

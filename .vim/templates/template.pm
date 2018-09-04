@@ -16,14 +16,14 @@ use English qw(-no_match_vars);
 use Function::Parameters;
 use MooX::HandlesVia;
 use Path::Tiny;
-use Readonly;
+use Const::Fast;
 use Sys::Syslog qw(:DEFAULT setlogsock);
 use Try::Tiny;
 use Types::Standard;
 use experimental 'switch';
 
-Readonly my $TRUE  => 1;
-Readonly my $FALSE => 0;
+const my $TRUE  => 1;
+const my $FALSE => 0;
 my $cp = Dn::Common->new();
 my $io = Dn::InteractiveIO->new;
 Sys::Syslog::openlog( 'ident', 'user' );    # }}}1
@@ -212,9 +212,9 @@ There are no configuration files used. There are no module/role settings.
 
 =head2 Perl modules
 
-autodie, Carp, Dn::InteractiveIO, Dn::Common, Dn::Menu, English, experimental,
-Function::Parameters, Moo, MooX::HandlesVia, namespace::clean, Path::Tiny,
-Readonly, Sys::Syslog, strictures, Try::Tiny, Types::Common::Numeric,
+autodie, Carp, Const::Fast, Dn::InteractiveIO, Dn::Common, Dn::Menu, English,
+experimental, Function::Parameters, Moo, MooX::HandlesVia, namespace::clean,
+Path::Tiny, Sys::Syslog, strictures, Try::Tiny, Types::Common::Numeric,
 Types::Common::String, Types::Path::Tiny, Types::Standard, version.
 
 =head2 INCOMPATIBILITIES
