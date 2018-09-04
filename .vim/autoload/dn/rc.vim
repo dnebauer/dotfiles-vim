@@ -32,7 +32,8 @@ if !exists('s:lint_engine') | let s:lint_engine = v:null | endif
 
 ""
 " Content of vim syntax file providing support for modern perl features:
-" * Readonly module and keyword.
+" * 'Readonly' and 'const' keywords, from Readonly[X] and Const::Fast modules,
+"   respectively.
 if !exists('s:perl_syntax')
     let s:perl_syntax = [
                 \ '" Vim syntax file',
@@ -41,7 +42,13 @@ if !exists('s:perl_syntax')
                 \ '" Maintainer: David Nebauer',
                 \ '" License: GPL3',
                 \ '',
-                \ '" syntax from Readonly module and keyword',
+                \ '" const keyword (Const::Fast module)',
+                \ 'syn match perlStatementConstFast '
+                \ . "'\\<\\%(const\\s\\+my\\)\\>'",
+                \ 'command! -nargs=+ HiLinkCF hi def link <args>',
+                \ 'HiLinkCF perlStatementConstFast perlStatement',
+                \ '',
+                \ '" Readonly keyword (Readonly and ReadonlyX modules)',
                 \ 'syn match perlStatementReadonly '
                 \ . "'\\<\\%(Readonly\\s\\+my\\)\\>'",
                 \ 'command! -nargs=+ HiLinkRO hi def link <args>',
