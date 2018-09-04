@@ -16,6 +16,7 @@ use namespace::clean;    # }}}1
     use namespace::clean -except => [ '_options_data', '_options_config' ];
     use autodie qw(open close);
     use Carp qw(confess);
+    use Const::Fast;
     use Dn::Common;
     use Dn::Menu;
     use English qw(-no_match_vars);
@@ -25,7 +26,6 @@ use namespace::clean;    # }}}1
     use MooX::HandlesVia;
     use MooX::Options protect_argv => 0;
     use Path::Tiny;
-    use Const::Fast;
     use Try::Tiny;
     use Types::Standard;
     use experimental 'switch';

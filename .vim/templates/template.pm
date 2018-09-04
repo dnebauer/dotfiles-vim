@@ -9,6 +9,7 @@ use namespace::clean;
 
 use autodie qw(open close);
 use Carp qw(croak);
+use Const::Fast;
 use Dn::Common;
 use Dn::InteractiveIO;
 use Dn::Menu;
@@ -16,7 +17,6 @@ use English qw(-no_match_vars);
 use Function::Parameters;
 use MooX::HandlesVia;
 use Path::Tiny;
-use Const::Fast;
 use Sys::Syslog qw(:DEFAULT setlogsock);
 use Try::Tiny;
 use Types::Standard;
