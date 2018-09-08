@@ -386,15 +386,30 @@ endfunction
 " successfully installed.
 function! dn#rc#gemInstall(package, ...) abort
     let l:name = (a:0 && a:1 !=? '') ? a:1 : a:package
+    " check gem installer is available
     if !executable('gem')
         let l:err = [ "Installer 'gem' is not available",
                     \ "Cannot install ruby package '" . l:name . "'"]
         call dn#rc#warn(l:err)
         return v:false
     endif
-    let l:feedback = systemlist('sudo gem install ' . a:package)
+    " check gem installer can be run as sudo
     if v:shell_error
-        let l:err = ['Unable to install ' . l:name . ' with gem']
+        let l:err = ["Unable to run 'gem' using 'sudo'"]
+        if !empty(l:feedback)
+            call map(l:feedback, '"  " . v:val')
+            call extend(l:err, ['Error message:'] + l:feedback)
+        endif
+        call dn#rc#warn(l:err)
+        return v:false
+    endif
+    " if not installed, install; if installed, update
+    let l:installed = systemlist('sudo gem list --local --exact ' . a:package)
+    let l:operation = (empty(l:installed)) ? 'install' : 'update'
+    " install/update
+    let l:feedback = systemlist('sudo gem ' . l:operation . ' ' . a:package)
+    if v:shell_error
+        let l:err = ['Unable to ' . l:operation . ' ' . l:name . ' with gem']
         if !empty(l:feedback)
             call map(l:feedback, '"  " . v:val')
             call extend(l:err, ['Error message:'] + l:feedback)
