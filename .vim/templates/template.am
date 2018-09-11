@@ -57,8 +57,8 @@ pkgdocdir = ${prefix}/share/doc/${PACKAGE_TARNAME}
 pkgvardir = /var/lib/$(PACKAGE)
 #
 # Some other useful variables are:
-#   /usr       = /usr
-#   ${prefix}/share/doc/${PACKAGE_TARNAME}       = /usr/share/doc/$(PACKAGE)
+#   prefix         = /usr
+#   docdir         = /usr/share/doc/$(PACKAGE)
 
 
 # Now let us assign some install locations
