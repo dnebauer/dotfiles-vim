@@ -35,8 +35,10 @@ function! s:MarkdownSupport()
     let g:pandoc#command#templates_file = dn#rc#vimPath('home')
                 \ . '/vim-pandoc-templates'
     let g:pandoc#compiler#command   = 'panzer'
-    let g:pandoc#compiler#arguments = '---quiet ---strict'
-                \ . ' ---panzer-support ' . dn#rc#panzerPath()
+    let g:pandoc#compiler#arguments
+                \ = '---quiet'
+                \ . ' ---strict'
+                \ . ' ---panzer-support="' . dn#rc#panzerPath() . '"'
     " insert hard space    {{{1
     " - map unicode non-breaking space to C-Space
     " - would prefer C-S-Space but terminal vim has a problem with mapping it
