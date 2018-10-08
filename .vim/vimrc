@@ -90,20 +90,19 @@ if dein#load_state(dn#rc#pluginsDir())
     call dein#add('dnebauer/vim-dn-utils')
     " - dn-logevents : log autocmd events    {{{3
     call dein#add('dnebauer/vim-dn-logevents', {
-                \ 'on_cmd': ['LogEvents',    'EventLoggingStatus',
-                \            'EventLogFile', 'AnnotateEventLog',
-                \            'DeleteEventLog']
+                \ 'on_cmd' : ['LogEvents',    'EventLoggingStatus',
+                \             'EventLogFile', 'AnnotateEventLog',
+                \             'DeleteEventLog']
                 \ })
     " - repeat : plugin helper for repeating commands    {{{3
     call dein#add('tpope/vim-repeat', {
-                \ 'on_source': ['vim-surround'],
+                \ 'on_source' : ['vim-surround'],
                 \ })
     " - context_filetype : plugin helper    {{{3
-    call dein#add('shougo/context_filetype.vim', {
-                \ 'on_source' : ['deoplete.nvim', 'neocomplete.vim',
-                \                'echodoc.vim', 'neosnippet.vim'],
-                \ 'lazy': 1,
-                \ })
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_source': ['deoplete.nvim', 'neocomplete.vim',
+    "                      'echodoc.vim', 'neosnippet.vim'], 'lazy': 1}
+    call dein#add('shougo/context_filetype.vim')
     " - bclose : delete buffer without closing window    {{{3
     call dein#add('rbgrouleff/bclose.vim', {
                 \ 'on_source' : ['ranger.vim'],
@@ -244,12 +243,13 @@ if dein#load_state(dn#rc#pluginsDir())
                 \ 'on_cmd' : ['Google', 'Googlef'],
                 \ })
     " - webapi : web browser API    {{{3
-    call dein#add('mattn/webapi-vim', {
-                \ 'lazy' : 1,
-                \ })
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'lazy': 1}
+    call dein#add('mattn/webapi-vim')
     " - quicklink : md-specific web lookup and link inserter    {{{3
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['markdown', 'markdown.pandoc']}
     call dein#add('christoomey/vim-quicklink', {
-                \ 'on_ft'   : ['markdown', 'markdown.pandoc'],
                 \ 'depends' : ['webapi-vim'],
                 \ })
     " - open-browser : open uri in browser    {{{3
@@ -323,9 +323,10 @@ if dein#load_state(dn#rc#pluginsDir())
                 \             . ' &&  has("patch-7.4.774")',
                 \ })
     " - perlomni : perl completion    {{{3
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['perl']}
     call dein#add('c9s/perlomni.vim', {
-                \ 'if'    : 'v:version >= 702',
-                \ 'on_ft' : ['perl'],
+                \ 'if' : 'v:version >= 702',
                 \ })
     " - delimitMate : completion helper closes paired syntax    {{{3
     call dein#add('raimondi/delimitMate', {
@@ -337,9 +338,9 @@ if dein#load_state(dn#rc#pluginsDir())
                 \ 'on_event' : 'InsertCharPre',
                 \ })
     " - snippets : snippet library    {{{3
-    call dein#add('honza/vim-snippets', {
-                \ 'on_source' : ['neosnippet.vim'],
-                \ })
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_source': ['neosnippet.vim']}
+    call dein#add('honza/vim-snippets')
     " bundles: formatting    {{{2
     " - tabular : align text    {{{3
     call dein#add('godlygeek/tabular', {
@@ -492,23 +493,25 @@ if dein#load_state(dn#rc#pluginsDir())
                 \ 'if' : 'executable("git")',
                 \ })
     " bundles: clang support    {{{2
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['c', 'cpp', 'objc']}
     call dein#add('zchee/deoplete-clang', {
                 \ 'if'      : 'has("nvim")',
-                \ 'on_ft'   : ['c', 'cpp', 'objc'],
                 \ 'depends' : ['deoplete.nvim'],
                 \ })
     " bundles: docbook support    {{{2
     " - snippets : docbook5 snippets    {{{3
-    call dein#add('jhradilek/vim-snippets', {
-                \ 'on_ft' : ['docbk'],
-                \ })
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['docbk']}
+    call dein#add('jhradilek/vim-snippets')
     " - docbk : docbook5 support    {{{3
-    call dein#add('jhradilek/vim-docbk', {
-                \ 'on_ft' : ['docbk'],
-                \ })
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['docbk']}
+    call dein#add('jhradilek/vim-docbk')
     " - dn-docbk : docbook5 support    {{{3
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['docbk']}
     call dein#add('dnebauer/vim-dn-docbk', {
-                \ 'on_ft'   : ['docbk'],
                 \ 'depends' : ['vim-dn-utils'],
                 \ })
     " bundles: go support    {{{2
@@ -525,13 +528,13 @@ if dein#load_state(dn#rc#pluginsDir())
 
     " bundles: html support    {{{2
     " - html5 : html5 support    {{{3
-    call dein#add('othree/html5.vim', {
-                \ 'on_ft' : ['html'],
-                \ })
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['html']}
+    call dein#add('othree/html5.vim')
     " - sparkup : condensed html parser    {{{3
-    call dein#add('rstacruz/sparkup', {
-                \ 'on_ft' : ['html'],
-                \ })
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['html']}
+    call dein#add('rstacruz/sparkup')
     " - emmet : expand abbreviations    {{{3
     call dein#add('mattn/emmet-vim', {
                 \ 'on_ft' : ['html', 'css'],
@@ -567,9 +570,10 @@ if dein#load_state(dn#rc#pluginsDir())
     "   . cannot test for cygwin in dein#add 'if' statement
     "   . doing so results in 'E48: Not allowed in sandbox
     if !dn#rc#cygwin()
+		" - cannot lazy load as per |dein#check_lazy_plugins()|
+		"   else would load {'on_ft': ['javascript', 'javascript.jsx']}
         call dein#add('ternjs/tern_for_vim', {
                     \ 'if'               : '!has("nvim")',
-                    \ 'on_ft'            : ['javascript', 'javascript.jsx'],
                     \ 'hook_post_update' :
                     \                 function('dn#rc#buildTernAndJsctags'),
                     \ })
@@ -583,12 +587,13 @@ if dein#load_state(dn#rc#pluginsDir())
     endif
     " bundles: latex support    {{{2
     " - vimtex : latex support    {{{3
-    call dein#add('lervag/vimtex', {
-                \ 'on_ft' : ['tex','latex'],
-                \ })
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['tex','latex']}
+    call dein#add('lervag/vimtex')
     " - dn-latex : latex support    {{{3
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['tex', 'latex']}
     call dein#add('dnebauer/vim-dn-latex', {
-                \ 'on_ft'   : ['tex', 'latex'],
                 \ 'depends' : ['vim-dn-utils'],
                 \ })
     " bundles: lua support    {{{2
@@ -597,13 +602,13 @@ if dein#load_state(dn#rc#pluginsDir())
                 \ 'on_ft' : ['lua'],
                 \ })
     " - manual : language support    {{{3
-    call dein#add('indiefun/vim-lua-manual', {
-                \ 'on_ft' : ['lua'],
-                \ })
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['lua']}
+    call dein#add('indiefun/vim-lua-manual')
     " - lua : improved lua 5.3 syntax and indentation support    {{{3
-    call dein#add('tbastos/vim-lua', {
-                \ 'on_ft' : ['lua'],
-                \ })
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['lua']}
+    call dein#add('tbastos/vim-lua')
     " bundles: markdown support    {{{2
     " - vim-pandoc : pandoc integration    {{{3
     "   . uses panzer
@@ -623,12 +628,13 @@ if dein#load_state(dn#rc#pluginsDir())
                 \ 'on_ft' : ['markdown', 'markdown.pandoc'],
                 \ })
     " - markdown2ctags : tag generator    {{{3
-    call dein#add('jszakmeister/markdown2ctags', {
-                \ 'on_ft' : ['markdown', 'markdown.pandoc'],
-                \ })
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['markdown', 'markdown.pandoc']}
+    call dein#add('jszakmeister/markdown2ctags')
     " - dn-md-utils : markdown utilities    {{{3
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['markdown', 'markdown.pandoc']}
     call dein#add('dnebauer/vim-dn-md-utils', {
-                \ 'on_ft'   : ['markdown', 'markdown.pandoc'],
                 \ 'depends' : ['vim-dn-utils'],
                 \ })
     " - previm : realtime preview    {{{3
@@ -638,20 +644,22 @@ if dein#load_state(dn#rc#pluginsDir())
                 \ 'on_cmd'  : ['PrevimOpen'],
                 \ })
     " - toc : generate table of contents    {{{3
-    call dein#add('mzlogin/vim-markdown-toc', {
-                \ 'on_ft'   : ['markdown', 'markdown.pandoc'],
-                \ 'on_cmd'  : ['GenTocGFM', 'GenTocRedcarpet',
-                \              'UpdateToc', 'RemoveToc'],
-                \ })
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['markdown', 'markdown.pandoc'],
+    "                      'on_cmd': ['GenTocGFM', 'GenTocRedcarpet',
+    "                                 'UpdateToc', 'RemoveToc']}
+    call dein#add('mzlogin/vim-markdown-toc')
     " bundles: perl support    {{{2
     " - perl : perl support    {{{3
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['perl']}
     call dein#add('vim-perl/vim-perl', {
-                \ 'on_ft' : ['perl'],
                 \ 'hook_post_update' : function('dn#rc#perlContrib'),
                 \ })
     " - dn-perl : perl support    {{{3
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['perl']}
     call dein#add('dnebauer/vim-dn-perl', {
-                \ 'on_ft'   : ['perl'],
                 \ 'depends' : ['vim-dn-utils'],
                 \ })
     " - perlhelp : provide help with perldoc    {{{3
@@ -688,47 +696,47 @@ if dein#load_state(dn#rc#pluginsDir())
                 \ })
     " - deoplete-jedi : deoplete helper    {{{3
     "   . do not check for python3 in nvim (see note above at 'nvim issues')
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['python']}
     call dein#add('zchee/deoplete-jedi', {
                 \ 'if'               : '    has("nvim")'
                 \                    . ' && executable("python3")',
-                \ 'on_ft'            : ['python'],
                 \ 'depends'          : ['deoplete.nvim'],
                 \ 'hook_post_update' : function('dn#rc#buildJedi'),
                 \ })
     " - pep8 : indentation support    {{{3
-    call dein#add('hynek/vim-python-pep8-indent', {
-                \ 'on_ft' : 'python',
-                \ })
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': 'python'}
+    call dein#add('hynek/vim-python-pep8-indent')
     " bundles: tmux support    {{{2
     " navigator : split navigation    {{{3
     call dein#add('christoomey/vim-tmux-navigator')
     " tmux : tmux.conf support    {{{3
-    call dein#add('tmux-plugins/vim-tmux', {
-                \ 'on_ft' : ['tmux'],
-                \ })
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['tmux']}
+    call dein#add('tmux-plugins/vim-tmux')
     " bundles: vimhelp support    {{{2
     " - vimhelplint : lint for vim help    {{{3
-    call dein#add('machakann/vim-vimhelplint', {
-                \ 'on_ft'  : ['help'],
-                \ 'on_cmd' : ['VimhelpLint'],
-                \ })
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['help'], 'on_cmd': ['VimhelpLint']}
+    call dein#add('machakann/vim-vimhelplint')
     " bundles: xml support    {{{2
     " - xml : xml support    {{{3
-    call dein#add('vim-scripts/xml.vim', {
-                \ 'on_ft' : ['xml'],
-                \ })
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['xml']}
+    call dein#add('vim-scripts/xml.vim')
     " - matchtagalways : highlight tag pairs    {{{3
     "   . defined in html support section
     " bundles: xquery support    {{{2
     " - indentomnicomplete : autoindent and omnicomplete    {{{3
-    call dein#add('vim-scripts/XQuery-indentomnicompleteftplugin', {
-                \ 'on_ft' : ['xquery'],
-                \ })
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['xquery']}
+    call dein#add('vim-scripts/XQuery-indentomnicompleteftplugin')
     " bundles: zsh support    {{{2
     " - deoplete-zsh : deoplete helper    {{{3
-    call dein#add('zchee/deoplete-zsh', {
-                \ 'on_ft' : ['zsh'],
-                \ })
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['zsh']}
+    call dein#add('zchee/deoplete-zsh')
   " close dein    {{{2
   call dein#end()
   call dein#call_hook('source')  " as per |dein-options-hook_source|
