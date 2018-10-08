@@ -351,8 +351,9 @@ endfunction
 ""
 " @public
 " Display error {messages}, a |List| of |Strings| using |hl-ErrorMsg|
-" highlighting. Uses |:echomsg| to ensure messages are saved to the
-" |message-history|. There is no return value.
+" highlighting and then pause till user presses Enter. Uses |:echomsg| to
+" ensure messages are saved to the |message-history|. There is no return
+" value.
 function! dn#rc#error(messages) abort
     if type(a:messages) != type([]) | return | endif
     echohl ErrorMsg
@@ -1169,8 +1170,9 @@ endfunction
 ""
 " @public
 " Display warning {messages}, a |List| of |Strings| using |hl-WarningMsg|
-" highlighting. Uses |:echomsg| to ensure messages are saved to the
-" |message-history|. There is no return value.
+" highlighting and then pause until user presses Enter. Uses |:echomsg| to
+" ensure messages are saved to the |message-history|. There is no return
+" value.
 function! dn#rc#warn(messages) abort
     if type(a:messages) != type([]) | return | endif
     echohl WarningMsg
