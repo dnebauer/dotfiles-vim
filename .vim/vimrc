@@ -731,6 +731,7 @@ if dein#load_state(dn#rc#pluginsDir())
                 \ })
   " close dein    {{{2
   call dein#end()
+  call dein#call_hook('source')  " as per |dein-options-hook_source|
   call dein#save_state()
 endif
 " required settings    {{{2
