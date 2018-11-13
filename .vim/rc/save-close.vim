@@ -15,9 +15,9 @@ set history=10000
 set undofile
 " - avoid clutter of backup|swap|undo files in local dir
 if dn#rc#os() ==# 'unix'
-    set directory=./backup,~/var/vim/swap,.,/tmp
-    set backupdir=./backup,~/var/vim/backup,.,/tmp
-    set undodir=./backup,~/var/vim/undo,.,/tmp
+    set directory=$HOME/.cache/vim/swap,.,/tmp
+    set backupdir=$HOME/.cache/vim/backup,.,/tmp
+    set undodir=$HOME/.cache/vim/undo,.,/tmp
 endif
 if dn#rc#os() ==# 'windows'
     set directory=C:/Windows/Temp
