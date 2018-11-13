@@ -1,4 +1,4 @@
-vcsh-vim
-========
+dotfiles-vim
+============
 
-Personal vim configuration in a vcsh repository.
+Personal vim configuration.
