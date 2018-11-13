@@ -333,7 +333,7 @@ if dein#load_state(dn#rc#pluginsDir())
                 \ 'on_event' : 'InsertEnter',
                 \ })
     " bundles: snippets    {{{2
-    " - neonippet : snippet engine    {{{3
+    " - neosnippet : snippet engine    {{{3
     call dein#add('shougo/neosnippet.vim', {
                 \ 'on_event' : 'InsertCharPre',
                 \ })
