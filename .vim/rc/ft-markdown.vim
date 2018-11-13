@@ -34,9 +34,9 @@ function! s:MarkdownSupport()
     let g:pandoc#command#prefer_pdf     = 1
     let g:pandoc#command#templates_file = dn#rc#vimPath('home')
                 \ . '/vim-pandoc-templates'
-    let g:pandoc#compiler#command   = 'panzer'
+    let g:pandoc#compiler#command = 'panzer'
     let g:pandoc#compiler#arguments
-                \ = '---quiet'
+                \ = ' ---quiet'
                 \ . ' ---strict'
                 \ . ' ---panzer-support="' . dn#rc#panzerPath() . '"'
     " insert hard space    {{{1
