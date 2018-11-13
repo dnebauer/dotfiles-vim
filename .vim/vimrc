@@ -516,8 +516,12 @@ if dein#load_state(dn#rc#pluginsDir())
                 \ })
     " bundles: go support    {{{2
     " - vim-go : language support    {{{3
+    "   . on 23 October 2018 vim-go plugin began issuing a startup warning if
+    "     nvim version < 0.3.1 (when debian testing had version 0.2.2), so
+    "     suppress plugin version warning with global plugin variable
     call dein#add('fatih/vim-go', {
-                \ 'on_ft' : ['go'],
+                \ 'on_ft'    : ['go'],
+                \ 'hook_add' : 'let g:go_version_warning = 0',
                 \ })
     " - deoplete-go : deoplete helper    {{{3
     call dein#add('zchee/deoplete-go', {
