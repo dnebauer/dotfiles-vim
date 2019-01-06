@@ -712,6 +712,10 @@ if dein#load_state(dn#rc#pluginsDir())
 	"   . cannot lazy load as per |dein#check_lazy_plugins()|
 	"     else would load {'on_ft': 'python'}
     call dein#add('hynek/vim-python-pep8-indent')
+    " bundles: tiddlywiki support    {{{2
+    " tiddlywiki-ftplugin : wikitext support    {{{3
+    " - can't lazy load as no 'plugin' directory
+    call dein#add('dnebauer/vim-tiddlywiki-ftplugin')
     " bundles: tmux support    {{{2
     " navigator : split navigation    {{{3
     call dein#add('christoomey/vim-tmux-navigator')
