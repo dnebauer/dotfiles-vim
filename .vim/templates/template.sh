@@ -133,3 +133,4 @@ unset args
 # Informational message
 dnInfo "${dn_self} is running..."
 
+# vim:foldmethod=marker:
