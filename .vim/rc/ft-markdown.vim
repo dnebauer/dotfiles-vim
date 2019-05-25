@@ -26,7 +26,7 @@ function! s:MarkdownSupport()
     let g:pandoc#modules#enabled           = [
                 \ 'formatting', 'folding', 'command',
                 \ 'keyboard',   'yaml',    'completion',
-                \ 'toc',        'chdir',   'hypertext']
+                \ 'toc',        'hypertext']
     let g:pandoc#formatting#mode                            = 'h'
     let g:pandoc#formatting#smart_autoformat_on_cursormoved = 1
     let g:pandoc#command#latex_engine                       = 'xelatex'
