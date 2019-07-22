@@ -52,6 +52,11 @@ function! s:MarkdownSupport()
     if !has('nvim')
         setlocal omnifunc=htmlcomplete#CompleteTags
     endif
+    " customise surround.vim plugin    {{{1
+    " - strong emphasis (b)    {{{2
+    let b:surround_98 = "__\r__"
+    " - emphasis (i)    {{{2
+    let b:surround_105 = "__\r__"
     " change filetype to trigger vim-pandoc plugin    {{{1
     set filetype=markdown.pandoc    " }}}1
 endfunction
