@@ -7,8 +7,9 @@ function! s:MailSupport()
     setlocal textwidth=72 
     setlocal formatoptions+=q 
     setlocal comments+=nb:>
-    " - rewrap paragraph using <S-q>
-    map <silent> <S-q> {gq}<Bar>:echo "Rewrapped paragraph"<CR>
+    " - rewrap paragraph using <M-q>, i.e., Alt-q
+    nmap <silent> <M-q> {gq}<Bar>:echo "Rewrapped paragraph"<CR>
+    imap <silent> <M-q> <Esc>{gq}<CR>a
     " }}}1
 endfunction
 
