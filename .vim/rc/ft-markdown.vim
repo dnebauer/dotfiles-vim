@@ -56,7 +56,7 @@ function! s:MarkdownSupport()
     " - strong emphasis (b)    {{{2
     let b:surround_98 = "__\r__"
     " - emphasis (i)    {{{2
-    let b:surround_105 = "__\r__"
+    let b:surround_105 = "_\r_"
     " change filetype to trigger vim-pandoc plugin    {{{1
     set filetype=markdown.pandoc    " }}}1
 endfunction
