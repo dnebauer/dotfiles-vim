@@ -358,10 +358,7 @@ if dein#load_state(dn#rc#pluginsDir())
                 \ 'on_cmd' : ['Dict'],
                 \ })
     " - grammarous : grammar checker    {{{3
-    call dein#add('rhysd/vim-grammarous', {
-                \ 'on_cmd'  : ['GrammarousCheck', 'GrammarousReset',
-                \              'Denite grammarous'],
-                \ })
+    call dein#add('rhysd/vim-grammarous')
     " - wordy : find usage problems    {{{3
     call dein#add('reedes/vim-wordy', {
                 \ 'on_cmd'  : ['Wordy',     'NoWordy',

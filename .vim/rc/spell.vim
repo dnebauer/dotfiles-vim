@@ -25,6 +25,9 @@ noremap ]= ]sz=
 noremap [= [sz=
 
 " Add custom moby thesaurus (~/.vim/thes/moby.thes)    {{{1
-call dn#rc#addThesaurus(dn#rc#vimPath('home') . '/thes/moby.thes')    " }}}1
+call dn#rc#addThesaurus(dn#rc#vimPath('home') . '/thes/moby.thes')
+
+" Cooperate with rhysd/vim-grammarous plugin    {{{1
+let g:grammarous#use_vim_spelllang = 1    " }}}1
 
 " vim:foldmethod=marker:
