@@ -586,6 +586,11 @@ if dein#load_state(dn#rc#pluginsDir())
                     \ 'hook_post_update' : function('dn#rc#buildTernjs'),
                     \ })
     endif
+    " bundles: json support    {{{2
+    " - vim-json : json highlighting/indenting    {{{3
+        call dein#add('elzr/vim-json', {
+                    \ 'on_ft' : ['json', 'jsonl', 'jsonp'],
+                    \ })
     " bundles: latex support    {{{2
     " - vimtex : latex support    {{{3
 	"   . cannot lazy load as per |dein#check_lazy_plugins()|
