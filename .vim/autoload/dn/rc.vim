@@ -839,6 +839,8 @@ function! dn#rc#setColorScheme(gui, terminal) abort
         if     a:gui ==# 'atelierforest' | colorscheme base16-atelierforest
         elseif a:gui ==# 'atelierheath'  | colorscheme base16-atelierheath
         elseif a:gui ==# 'desert'        | colorscheme desert
+        elseif a:gui ==# 'gruvbox'       | colorscheme gruvbox
+            set background=dark
         elseif a:gui ==# 'hybrid'
             let g:hybrid_use_Xresources = 1
             colorscheme hybrid
@@ -866,6 +868,8 @@ function! dn#rc#setColorScheme(gui, terminal) abort
     else    " no gui, presumably terminal/console
         set t_Co=256    " improves all themes in terminals
         if     a:terminal ==# 'desert'       | colorscheme desert
+        elseif a:terminal ==# 'gruvbox'      | colorscheme gruvbox
+            set background=dark
         elseif a:terminal ==# 'hybrid'
             let g:hybrid_use_Xresources = 1
             colorscheme hybrid
