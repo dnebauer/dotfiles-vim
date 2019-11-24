@@ -180,6 +180,7 @@ endfunction
 " @public
 " Change to local (document) directory.
 function! dn#rc#cdToLocalDir() abort
+    let b:vrc_initial_cwd = getcwd()
     if expand('%:p') !~? '://'
         lcd %:p:h
     endif
@@ -1021,6 +1022,102 @@ function! dn#rc#spellToggle() abort
     setlocal spell!
     redraw
     call dn#rc#spellStatus()
+endfunction
+
+" dn#rc#symlinkWarning()    {{{1
+
+""
+" @setting b:vrc_initial_cfp
+" This variable is used by @function(dn#rc#symlinkWarning) if it is set by the
+" user in their startup configuration. The variable is intended to contain the
+" filepath provided by the user when opening a file. It is surprisingly
+" difficult to capture as |resolve()|, and |expand()| and |fnamemodify()| with
+" ':p', all resolve symlinks in filepaths. One way to do it is to expand '%'
+" (|:_%|) at buffer read time. For example:
+" >
+"   autocmd BufNewFile,BufReadPost *
+"                  \ let b:vrc_initial_cfp = simplify(expand('%'))
+" <
+" The 'cfp' in the variable name is derived from 'current file path'. This
+" mnemonic may or may not be helpful in remembering the variable name.
+
+""
+" @setting b:vrc_initial_cwd
+" This variable is used by @function(dn#rc#symlinkWarning), if present, when
+" the current directory has been changed by |:lcd| or |:tcd|. It is intended
+" to capture the original current directory before it was changed. For
+" example, execute the following command before either |:lcd| or |:tcd|:
+" >
+"   let b:vrc_initial_cwd = getcwd()
+" <
+" The 'cwd' in the variable name is derived from 'current working directory'.
+" This mnemonic may or may not be helpful in remembering the variable name.
+
+""
+" @public
+" Display warning if opening a file whose path contains a symlink.
+"
+" This function relies on one (or two) values being captured in buffer
+" variables by other parts of the startup configuration:
+"
+" First is the file path specified by the user on the command line, which is
+" captured in 'b:vrc_initial_cfp'. This path is surprisingly difficult to
+" capture as |resolve()|, and |expand()| and |fnamemodify()| with ':p', all
+" resolve symlinks in filepaths. One way to do it is to expand '%' (|:_%|) at
+" buffer read time. For example:
+" >
+"   autocmd BufNewFile,BufReadPost *
+"                  \ let b:vrc_initial_cfp = simplify(expand('%'))
+" <
+" Second, if the current directory has been changed by |:lcd| or |:tcd| then
+" the original current directory needs to be captured in 'b:vrc_initial_cwd'.
+" For example:
+" >
+"   let b:vrc_initial_cwd = getcwd()
+" <
+" If either variable is missing when it is required, the function exits and
+" the symlink check is aborted silently.
+function! dn#rc#symlinkWarning() abort
+    " only check certain buffers:
+    " - buffer must be associated with a file
+    if empty(bufname('%')) | return | endif
+    " - must be a normal buffer (buftype == "")
+    if !empty(getbufvar('%', '&buftype')) | return | endif
+    " first do simple check for whether file is a symlink
+    let l:file_path = fnameescape(expand('<afile>:p'))
+    if getftype(l:file_path) ==# 'link'
+        let l:real_path = resolve(l:file_path)
+        let l:msg = []
+        call add(l:msg, 'Buffer file is a symlink')
+        call add(l:msg, '- file path: ' . l:file_path)
+        call add(l:msg, '- real path: ' . l:real_path)
+        call add(l:msg, ' ')  " so file name does not obscure last line
+        call dn#rc#warn(l:msg)
+        return
+    endif
+    " if file is not symlink, check for symlink in full file path
+    " - requires b:vrc_initial_cfp
+    if !exists('b:vrc_initial_cfp') | return | endif
+    " - requires b:vrc_initial_cwd if current directory has been changed
+    let l:file_path = ''
+    if haslocaldir()
+        " then initial cwd was changed with :lcd or :tcd
+        " - need b:vrc_initial_cwd
+        if !exists('b:vrc_initial_cwd') | return | endif
+        let l:file_path = b:vrc_initial_cwd . '/' . b:vrc_initial_cfp
+    else
+        " initial cwd has not been altered
+        let l:file_path = getcwd() . '/' . b:vrc_initial_cfp
+    endif
+    let l:real_path = resolve(l:file_path)
+    if l:file_path !=# l:real_path
+        let l:msg = []
+        call add(l:msg, 'Buffer file path includes at least one symlink')
+        call add(l:msg, '- file path: ' . l:file_path)
+        call add(l:msg, '- real path: ' . l:real_path)
+        call add(l:msg, ' ')  " so file name does not obscure last line
+        call dn#rc#warn(l:msg)
+    endif
 endfunction
 
 " dn#rc#tagPlugin(directory)    {{{1
