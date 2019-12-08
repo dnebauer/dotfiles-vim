@@ -616,6 +616,12 @@ if dein#load_state(dn#rc#pluginsDir())
 	"   . cannot lazy load as per |dein#check_lazy_plugins()|
 	"     else would load {'on_ft': ['lua']}
     call dein#add('tbastos/vim-lua')
+    " - dn-lua : lua support    {{{3
+	"   . cannot lazy load as per |dein#check_lazy_plugins()|
+	"     else would load {'on_ft': ['lua']}
+    call dein#add('dnebauer/vim-dn-lua', {
+                \ 'depends' : ['vim-dn-utils'],
+                \ })
     " bundles: markdown support    {{{2
     " - vim-pandoc : pandoc integration    {{{3
     "   . uses panzer
