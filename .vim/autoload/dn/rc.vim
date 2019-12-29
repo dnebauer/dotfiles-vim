@@ -394,12 +394,6 @@ function! dn#rc#gemInstall(package, ...) abort
         call dn#rc#warn(l:err)
         return v:false
     endif
-    " do we install or update, i.e., is it already installed
-    let l:installed = systemlist(
-                \ 'gem list --local --installed --exact --quiet ' . a:package)
-    let l:operation = (len(l:installed) == 1 && l:installed[0] ==# 'true')
-                \ ? 'install'
-                \ : 'update'
     " check gem installer can be run as sudo
     let l:feedback = systemlist('sudo gem -v')
     if v:shell_error
@@ -411,6 +405,13 @@ function! dn#rc#gemInstall(package, ...) abort
         call dn#rc#warn(l:err)
         return v:false
     endif
+    " do we install or update, i.e., is it already installed
+    let l:installed = systemlist(
+                \ 'sudo gem list --local --installed --exact --quiet '
+                \ . a:package)
+    let l:operation = (len(l:installed) == 1 && l:installed[0] ==# 'true')
+                \ ? 'install'
+                \ : 'update'
     " install/update
     let l:feedback = systemlist('sudo gem ' . l:operation . ' ' . a:package)
     if v:shell_error
