@@ -37,7 +37,6 @@ function! s:MarkdownSupport()
     let g:pandoc#compiler#command = 'panzer'
     let g:pandoc#compiler#arguments
                 \ = ' ---quiet'
-                \ . ' ---strict'
                 \ . ' ---panzer-support="' . dn#rc#panzerPath() . '"'
     " insert hard space    {{{1
     " - map unicode non-breaking space to C-Space
