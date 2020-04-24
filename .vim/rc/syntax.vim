@@ -24,7 +24,7 @@ if dn#rc#lintEngine() ==# 'ale'
     function! s:SaveAfterAlteration()
         "if s:BufferIsFile()
         if strlen(bufname('%')) > 0
-            try | update | catch /^Vim\%((\a\+)\)\=:E676/ | endtry
+            try | update! | catch /^Vim\%((\a\+)\)\=:E676/ | endtry
         endif
     endfunction
     augroup vrc_ale
