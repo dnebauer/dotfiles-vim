@@ -15,6 +15,10 @@ set history=10000
 set undofile
 " - avoid clutter of backup|swap|undo files in local dir
 if dn#rc#os() ==# 'unix'
+    for s:subdir in ['swap', 'backup', 'undo']
+        let s:dir = escape($HOME, ' ') . '/.cache/vim/' . s:subdir
+        if !isdirectory(s:dir) | call mkdir(s:dir, 'p') | endif
+    endfor
     set directory=$HOME/.cache/vim/swap,.,/tmp
     set backupdir=$HOME/.cache/vim/backup,.,/tmp
     set undodir=$HOME/.cache/vim/undo,.,/tmp
