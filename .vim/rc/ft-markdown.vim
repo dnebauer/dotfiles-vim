@@ -19,6 +19,13 @@ function! s:MarkdownSupport()
                     \ 'sort'       : 0,
                     \ }
     endif
+    " require pandoc for output generation    {{{1
+    if !executable('pandoc')
+        let l:msg = [ 'Cannot locate pandoc',
+                    \ 'Pandoc is needed to generate output'
+                    \ ]
+        call dn#rc#err(l:msg)
+    endif
     " configure plugins vim-pandoc[-{syntax,after}]    {{{1
     let g:pandoc#filetypes#handled         = ['pandoc', 'markdown']
     let g:pandoc#filetypes#pandoc_markdown = 0
