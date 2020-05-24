@@ -1,38 +1,25 @@
 # Makefile.am for package:
 
 # Since the multi-architecture implementation in late 2013
-# the layout of /lib and /usr/lib has changed -- in each case
-# an architecture specific subdirectory is added
-# The name of this subdirectory is often referred to as the
-# 'triplet' or 'arch-triplet'
-# The triplet value can be obtained manually using:
-#       dpkg-architecture -qDEB_HOST_MULTIARCH
-# Note: It is not clear what directories and variables are
-#       to be used for architecture-independent data
-#       under multiarch
-
-# According to the automake manual (for version 1.14):
-# "Scripts can be installed in bindir, sbindir, libexecdir,
-#  pkglibexecdir, or pkgdatadir." (9.1: Executable scripts)
-# "Automake supports the installation of miscellaneous data
-#  files using the DATA family of variables. Such data can be
-#  installed in the directories datadir, sysconfdir,
-#  sharedstatedir, localstatedir, or pkgdatadir."
-#  (9.3: Architecture-independent data files)
+# the layout of /lib and /usr/lib has changed for some file types,
+# mostly shared libraries. After reviewing relevant sources,
+# particularly the debian wiki page on multiarch implementation
+# and the debian policy manual (section 9.1.1), I have decided
+# to *not* use multiarch paths for libexecdir and pkglibexecdir.
 
 # Here are some useful GNU directory variables,
 # their default values after deb packaging, and
 # the primaries they can be used with:
-#   bindir         = /usr/bin                       SCRIPTS
-#   sbindir        = /usr/sbin                      SCRIPTS
-#   pkgdatadir     = /usr/share/$(PACKAGE)          SCRIPTS DATA
-#   libexecdir     = /usr/lib/<triplet>             SCRIPTS
-#   pkglibexecdir  = /usr/lib/<triplet>/$(PACKAGE)  SCRIPTS
-#   datadir        = /usr/share                     DATA
-#   localstatedir  = /var                           DATA
-#   sharedstatedir = /usr/com                       DATA
-#   sysconfdir     = /etc                           DATA
-#   mandir         = /usr/share/man/manX            MANS
+#   bindir         = /usr/bin                 SCRIPTS
+#   sbindir        = /usr/sbin                SCRIPTS
+#   pkgdatadir     = /usr/share/$(PACKAGE)    SCRIPTS DATA
+#   libexecdir     = /usr/libexec/            SCRIPTS
+#   pkglibexecdir  = /usr/libexec/$(PACKAGE)  SCRIPTS
+#   datadir        = /usr/share               DATA
+#   localstatedir  = /var                     DATA
+#   sharedstatedir = /usr/com                 DATA
+#   sysconfdir     = /etc                     DATA
+#   mandir         = /usr/share/man/manX      MANS
 # 
 # 'libdir' is not included -- it cannot be used for
 # SCRIPTS or DATA
@@ -51,7 +38,7 @@
 #   pkgconfdir     = /etc/$(PACKAGE)            DATA
 #   pkgdocdir      = /usr/share/doc/$(PACKAGE)  DATA
 #   pkgvardoc      = /var/lib/$(PACKAGE)        DATA
-pkglibdir = ${prefix}/lib/x86_64-linux-gnu/$(PACKAGE)
+pkglibdir = ${prefix}/lib/$(PACKAGE)
 pkgconfdir = /etc/$(PACKAGE)
 pkgdocdir = ${prefix}/share/doc/${PACKAGE_TARNAME}
 pkgvardir = /var/lib/$(PACKAGE)
@@ -75,7 +62,7 @@ bin_SCRIPTS =
 sbin_SCRIPTS = 
 
 # Scripts run by other scripts, including libraries,
-# go in /usr/lib/<triplet>/$(PACKAGE)
+# go in /usr/lib/$(PACKAGE)
 pkglibexec_SCRIPTS = 
 
 # Packaging tools will let you put scripts in
@@ -98,8 +85,8 @@ pkglibexec_SCRIPTS =
 # for the package in /usr/share/$(PACKAGE)
 pkgdata_DATA = 
 
-# Architecture-dependent data exclusively used by an 
-# application can be placed in /usr/lib/<triplet>/$(PACKAGE)
+# Architecture-independent data exclusively used by an 
+# application can be placed in /usr/lib/$(PACKAGE)
 # (as can libraries and executables -- see
 # pkglibexec_SCRIPTS above)
 pkglibexec_DATA = 
