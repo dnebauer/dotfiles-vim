@@ -56,6 +56,16 @@ function! s:MarkdownSupport()
     let b:surround_98 = "__\r__"
     " - emphasis (i)    {{{2
     let b:surround_105 = "_\r_"
+    " - inline code (`)    {{{2
+    let b:surround_96 = "`\r`"
+    " rewrap paragraph using <M-q>, i.e., Alt-q    {{{1
+    " - linux terminal key codes for <M-q> not recognised by vim
+    " - get terminal key codes using 'cat' or 'sed -n l'
+    " - konsole key codes for <M-q> are 'q'
+    " - '' is an escape entered in vim with <C-v> then <Esc>
+    if has('unix') | set <M-q>=q | endif
+    nnoremap <silent> <M-q> {gq}<Bar>:echo "Rewrapped paragraph"<CR>
+    inoremap <silent> <M-q> <Esc>{gq}<CR>a
     " change filetype to trigger vim-pandoc plugin    {{{1
     set filetype=markdown.pandoc    " }}}1
 endfunction
