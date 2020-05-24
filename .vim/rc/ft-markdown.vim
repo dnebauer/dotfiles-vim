@@ -3,6 +3,14 @@
 scriptencoding utf8  " required for C-Space mapping
 
 function! s:MarkdownSupport()
+    " only give feedback on first run    {{{1
+    " - this function is run three times when opening vim with md file
+    if exists('s:ran_previously') && s:ran_previously
+        let s:first_run = 0
+    else
+        let s:first_run = 1
+        let s:ran_previously = 1
+    endif
     " tagbar support    {{{1
     " - from https://github.com/majutsushi/tagbar/wiki
     let l:bin = dn#rc#pluginsDir()
@@ -20,11 +28,29 @@ function! s:MarkdownSupport()
                     \ }
     endif
     " require pandoc for output generation    {{{1
-    if !executable('pandoc')
+    if s:first_run && !executable('pandoc')
         let l:msg = [ 'Cannot locate pandoc',
-                    \ 'Pandoc is needed to generate output'
-                    \ ]
-        call dn#rc#err(l:msg)
+                    \ '- pandoc is needed to generate output',
+                    \ '', ]
+        call dn#rc#error(l:msg)
+    endif
+    " require pandoc-xnos filter suite for output generation    {{{1
+    if s:first_run
+        let l:filters = ['pandoc-eqnos', 'pandoc-fignos', 'pandoc-secnos',
+                    \    'pandoc-tablenos', 'pandoc-xnos']
+        let l:missing = []
+        for l:filter in l:filters
+            if !executable(l:filter)
+                call add(l:missing, l:filter)
+            endif
+        endfor
+        if !empty(l:missing)
+            let l:msg = [ 'Cannot find entire pandoc-xnos filter suite',
+                        \ '- missing: ' . join(l:missing, ', '),
+                        \ '- this filter suite is used for cross-referencing',
+                        \ '', ]
+            call dn#rc#error(l:msg)
+        endif
     endif
     " configure plugins vim-pandoc[-{syntax,after}]    {{{1
     let g:pandoc#filetypes#handled         = ['pandoc', 'markdown']
