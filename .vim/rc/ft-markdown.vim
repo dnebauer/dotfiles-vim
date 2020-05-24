@@ -6,9 +6,9 @@ function! s:MarkdownSupport()
     " only give feedback on first run    {{{1
     " - this function is run three times when opening vim with md file
     if exists('s:ran_previously') && s:ran_previously
-        let s:first_run = 0
+        let l:first_run = 0
     else
-        let s:first_run = 1
+        let l:first_run = 1
         let s:ran_previously = 1
     endif
     " tagbar support    {{{1
@@ -28,14 +28,14 @@ function! s:MarkdownSupport()
                     \ }
     endif
     " require pandoc for output generation    {{{1
-    if s:first_run && !executable('pandoc')
+    if l:first_run && !executable('pandoc')
         let l:msg = [ 'Cannot locate pandoc',
                     \ '- pandoc is needed to generate output',
                     \ '', ]
         call dn#rc#error(l:msg)
     endif
     " require pandoc-xnos filter suite for output generation    {{{1
-    if s:first_run
+    if l:first_run
         let l:filters = ['pandoc-eqnos', 'pandoc-fignos', 'pandoc-secnos',
                     \    'pandoc-tablenos', 'pandoc-xnos']
         let l:missing = []
