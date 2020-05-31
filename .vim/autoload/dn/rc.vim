@@ -1090,6 +1090,7 @@ function! dn#rc#symlinkWarning() abort
     if !empty(getbufvar('%', '&buftype')) | return | endif
     " first do simple check for whether file is a symlink
     let l:file_path = fnameescape(expand('<afile>:p'))
+    let l:file_name = fnamemodify(l:file_path, ':t')
     if getftype(l:file_path) ==# 'link'
         let l:real_path = resolve(l:file_path)
         let l:msg = []
@@ -1109,10 +1110,10 @@ function! dn#rc#symlinkWarning() abort
         " then initial cwd was changed with :lcd or :tcd
         " - need b:vrc_initial_cwd
         if !exists('b:vrc_initial_cwd') | return | endif
-        let l:file_path = b:vrc_initial_cwd . '/' . b:vrc_initial_cfp
+        let l:file_path = b:vrc_initial_cwd . '/' . l:file_name
     else
         " initial cwd has not been altered
-        let l:file_path = getcwd() . '/' . b:vrc_initial_cfp
+        let l:file_path = getcwd() . '/' . l:file_name
     endif
     let l:real_path = resolve(l:file_path)
     if l:file_path !=# l:real_path
