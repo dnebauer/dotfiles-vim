@@ -21,6 +21,14 @@
 if has('nvim') && dn#rc#os() ==# 'windows'
     call dn#rc#configureWinPython()
 endif
+" - in *nix can get non-deb python exes in /bin/ as well as /usr/bin/
+"   and neovim's checkhealth command recommends using g:python[3]_host_prog
+if !empty(glob('/usr/bin/python2', 1, 1)) && !empty(glob('/bin/python2', 1, 1))
+    let g:python_host_prog = '/usr/bin/python2'
+endif
+if !empty(glob('/usr/bin/python3', 1, 1)) && !empty(glob('/bin/python3', 1, 1))
+    let g:python3_host_prog = '/usr/bin/python3'
+endif
 " dein requirements    {{{2
 " - required tools and vim version    {{{3
 if !dn#rc#hasDeinRequirements()
