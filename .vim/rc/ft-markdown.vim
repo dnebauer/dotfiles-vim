@@ -97,7 +97,12 @@ function! s:MarkdownSupport()
     " - konsole key codes for <M-q> are 'q'
     " - '' is an escape entered in vim with <C-v> then <Esc>
     " - '' is represented in 'set' command with '\<Esc>'
-    if has('unix') | execute "set <M-q>=\<Esc>q" | endif
+    if has('unix')
+        try
+            execute "set <M-q>=\<Esc>q"
+		catch /^Vim\%((\a\+)\)\=:E518:/  " Unknown option: <M-q>=q
+        endtry
+    endif
     nnoremap <silent> <M-q> {gq}<Bar>:echo "Rewrapped paragraph"<CR>
     inoremap <silent> <M-q> <Esc>{gq}<CR>a
     " change filetype to trigger vim-pandoc plugin    {{{1
