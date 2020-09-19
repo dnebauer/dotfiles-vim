@@ -166,8 +166,7 @@ function! s:Unite_Grep()
                 \   'utility': 'ugrep',
                 \   'exename': 'ugrep',
                 \   'default': '-i --no-heading --no-color -H --hidden '
-                \              . "--exclude-dir='.hg' --exclude-dir='.svn' "
-                \              . "--exclude-dir='.git' --exclude-dir='.bzr'",
+                \              . '--exclude-dir={.hg,.svn,.git,.bzr}',
                 \   'recurse': '--dereference-recursive',
                 \  },
                 \  {
