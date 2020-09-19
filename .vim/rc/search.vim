@@ -37,6 +37,12 @@ nnoremap <silent> <C-l> :<C-u>nohlsearch<CR><C-l>
 " - create visual mode equivelent
 nnoremap & :&&<CR>
 xnoremap & :&&<CR>
+
+" Set grep command to use ugrep    {{{1
+if executable('ugrep')
+    set grepprg=ugrep\ -RInk\ -j\ -u\ --tabs=1\ --ignore-files
+    set grepformat=%f:%l:%c:%m,%f+%l+%c+%m,%-G%f\\\|%l\\\|%c\\\|%m
+endif
 " }}}1
 
 " vim:foldmethod=marker:
