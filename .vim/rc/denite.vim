@@ -120,15 +120,31 @@ nnoremap <silent> [denite]F :<C-u>Denite
 nnoremap [denite]g :call <SID>Denite_Grep()<CR>
 function! s:Denite_Grep()
     " possible utilities to use, in preference order
+    " - ugrep (ugrep)
+    "   https://github.com/Genivia/ugrep
     " - Silver Searcher (ag)
     "   https://github.com/ggreer/the_silver_searcher
     " - Platinum Searcher (pt)
     "   https://github.com/monochromegane/the_platinum_searcher
-    " - ack-grep (ack-grep)
+    " - ack (ack)
     "   http://beyondgrep.com/
     " - Highway (hw) is not supported
     " they are listed in order of preference
     let l:utils = [
+                \  {
+                \   'utility' : 'ugrep',
+                \   'command' : ['ugrep'],
+                \   'default' : ['-i', '--no-heading', '--no-color',
+                \                '-H', '--hidden',
+                \                '--exclude-dir=''.hg''',
+                \                '--exclude-dir=''.svn''',
+                \                '--exclude-dir=''.git''',
+                \                '--exclude-dir=''.bzr'''],
+                \   'recurse' : ['--dereference-recursive'],
+                \   'pattern' : [],
+                \   'delimit' : ['--'],
+                \   'final'   : [],
+                \  },
                 \  {
                 \   'utility' : 'Silver Searcher',
                 \   'command' : ['ag'],
@@ -151,8 +167,8 @@ function! s:Denite_Grep()
                 \   'final'   : [],
                 \  },
                 \  {
-                \   'utility' : 'ack-grep',
-                \   'command' : ['ack-grep'],
+                \   'utility' : 'ack',
+                \   'command' : ['ack'],
                 \   'default' : ['-i', '--no-heading', '--no-color',
                 \                '-k', '-H'],
                 \   'recurse' : [],
