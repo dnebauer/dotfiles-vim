@@ -221,7 +221,7 @@ if dein#load_state(dn#rc#pluginsDir())
     "     too fragile; only works dependably if force load at start
     call dein#add('shougo/denite.nvim', {
                 \ 'depends'          : ['neoinclude.vim', 'neomru.vim'],
-                \ 'hook_post_source' : function('dn#rc#configureDenite'),
+                \ 'hook_post_source' : 'call dn#rc#configureDenite()',
                 \ })
     " - neomru : denite helper - recently used files    {{{3
     call dein#add('shougo/neomru.vim')
@@ -322,7 +322,7 @@ if dein#load_state(dn#rc#pluginsDir())
     " - echodoc : plugin helper that prints to echo area    {{{3
     call dein#add('shougo/echodoc.vim', {
                 \ 'on_event'    : ['CompleteDone'],
-                \ 'hook_source' : function('dn#rc#configureEchodoc'),
+                \ 'hook_source' : 'call dn#rc#configureEchodoc()',
                 \ })
     " - neopairs : completion helper closes paired structures    {{{3
     call dein#add('shougo/neopairs.vim', {
@@ -442,13 +442,13 @@ if dein#load_state(dn#rc#pluginsDir())
     " - ale : linter for vim/nvim    {{{3
     if dn#rc#lintEngine() ==# 'ale'
         call dein#add('w0rp/ale', {
-                    \ 'hook_post_update' : function('dn#rc#aleLinters'),
+                    \ 'hook_post_update' : 'call dn#rc#aleLinters()',
                     \ })
     endif
     " - neomake : linter for vim/nvim    {{{3
     if dn#rc#lintEngine() ==# 'neomake'
         call dein#add('neomake/neomake', {
-                    \ 'hook_post_update' : function('dn#rc#neomakeLinters'),
+                    \ 'hook_post_update' : 'call dn#rc#neomakeLinters()',
                     \ })
     endif
     " - syntastic : linter for vim    {{{3
@@ -584,15 +584,14 @@ if dein#load_state(dn#rc#pluginsDir())
 		"   else would load {'on_ft': ['javascript', 'javascript.jsx']}
         call dein#add('ternjs/tern_for_vim', {
                     \ 'if'               : '!has("nvim")',
-                    \ 'hook_post_update' :
-                    \                 function('dn#rc#buildTernAndJsctags'),
+                    \ 'hook_post_update' : 'call dn#rc#buildTernAndJsctags()',
                     \ })
         call dein#add('carlitux/deoplete-ternjs', {
                     \ 'if'               : 'has("nvim")',
                     \ 'on_ft'            : ['javascript', 'javascript.jsx'],
                     \ 'depends'          : ['deoplete.nvim'],
-                    \ 'hook_source'      : function('dn#rc#configureTernjs'),
-                    \ 'hook_post_update' : function('dn#rc#buildTernjs'),
+                    \ 'hook_source'      : 'call dn#rc#configureTernjs()',
+                    \ 'hook_post_update' : 'call dn#rc#buildTernjs()',
                     \ })
     endif
     " bundles: json support    {{{2
@@ -604,6 +603,8 @@ if dein#load_state(dn#rc#pluginsDir())
     " - vimtex : latex support    {{{3
 	"   . cannot lazy load as per |dein#check_lazy_plugins()|
 	"     else would load {'on_ft': ['tex','latex']}
+    " - vimtex issues warning if tex_flavor not set
+    let g:tex_flavor = 'latex'
     call dein#add('lervag/vimtex')
     " - dn-latex : latex support    {{{3
 	"   . cannot lazy load as per |dein#check_lazy_plugins()|
@@ -636,7 +637,7 @@ if dein#load_state(dn#rc#pluginsDir())
     call dein#add('vim-pandoc/vim-pandoc', {
                 \ 'if'               : 'v:version >= 704 && has("python3")',
                 \ 'on_ft'            : ['markdown', 'markdown.pandoc'],
-                \ 'hook_post_update' : function('dn#rc#buildPandoc'),
+                \ 'hook_post_update' : 'call dn#rc#buildPandoc()',
                 \ })
     " - vim-pandoc-syntax : pandoc md syntax    {{{3
     call dein#add('vim-pandoc/vim-pandoc-syntax', {
@@ -675,7 +676,7 @@ if dein#load_state(dn#rc#pluginsDir())
 	"   . cannot lazy load as per |dein#check_lazy_plugins()|
 	"     else would load {'on_ft': ['perl']}
     call dein#add('vim-perl/vim-perl', {
-                \ 'hook_post_update' : function('dn#rc#perlContrib'),
+                \ 'hook_post_update' : 'call dn#rc#perlContrib()',
                 \ })
     " - dn-perl : perl support    {{{3
 	"   . cannot lazy load as per |dein#check_lazy_plugins()|
@@ -713,7 +714,7 @@ if dein#load_state(dn#rc#pluginsDir())
     call dein#add('davidhalter/jedi-vim', {
                 \ 'if'               : '!has("nvim")',
                 \ 'on_ft'            : ['python'],
-                \ 'hook_post_update' : function('dn#rc#buildJedi'),
+                \ 'hook_post_update' : 'call dn#rc#buildJedi()',
                 \ })
     " - deoplete-jedi : deoplete helper    {{{3
     "   . do not check for python3 in nvim (see note above at 'nvim issues')
@@ -723,7 +724,7 @@ if dein#load_state(dn#rc#pluginsDir())
                 \ 'if'               : '    has("nvim")'
                 \                    . ' && executable("python3")',
                 \ 'depends'          : ['deoplete.nvim'],
-                \ 'hook_post_update' : function('dn#rc#buildJedi'),
+                \ 'hook_post_update' : 'call dn#rc#buildJedi()',
                 \ })
     " - pep8 : indentation support    {{{3
 	"   . cannot lazy load as per |dein#check_lazy_plugins()|
