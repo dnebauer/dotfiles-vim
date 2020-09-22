@@ -29,6 +29,9 @@ endif
 if !empty(glob('/usr/bin/python3', 1, 1)) && !empty(glob('/bin/python3', 1, 1))
     let g:python3_host_prog = '/usr/bin/python3'
 endif
+" variables required by plugins    {{{2
+" - vimtex issues warning if tex_flavor not set    {{{3
+if !exists('g:tex_flavor') | let g:tex_flavor = 'latex' | endif
 " dein requirements    {{{2
 " - required tools and vim version    {{{3
 if !dn#rc#hasDeinRequirements()
@@ -603,8 +606,6 @@ if dein#load_state(dn#rc#pluginsDir())
     " - vimtex : latex support    {{{3
 	"   . cannot lazy load as per |dein#check_lazy_plugins()|
 	"     else would load {'on_ft': ['tex','latex']}
-    " - vimtex issues warning if tex_flavor not set
-    let g:tex_flavor = 'latex'
     call dein#add('lervag/vimtex')
     " - dn-latex : latex support    {{{3
 	"   . cannot lazy load as per |dein#check_lazy_plugins()|
