@@ -26,6 +26,7 @@ use namespace::clean;    # }}}1
     use MooX::HandlesVia;
     use MooX::Options protect_argv => 0;
     use Path::Tiny;
+    use Sys::Syslog qw(:DEFAULT setlogsock);
     use Try::Tiny;
     use Types::Standard;
     use experimental 'switch';
@@ -34,6 +35,9 @@ use namespace::clean;    # }}}1
 
     const my $TRUE  => 1;
     const my $FALSE => 0;
+    Sys::Syslog::openlog( 'ident', 'user' );    # }}}1
+            # ident is prepended to every message - adapt to module
+            # user is the most commonly used facility - leave as is
 
     # debug
     use Data::Dumper::Simple;    # }}}1
