@@ -11,6 +11,7 @@ use autodie qw(open close);
 use Carp qw(croak);
 use Const::Fast;
 use Dn::Common;
+use Dn::Error;
 use Dn::InteractiveIO;
 use Dn::Menu;
 use English qw(-no_match_vars);

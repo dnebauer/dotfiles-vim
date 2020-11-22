@@ -18,6 +18,7 @@ use namespace::clean;    # }}}1
     use Carp qw(confess);
     use Const::Fast;
     use Dn::Common;
+    use Dn::Error;
     use Dn::Menu;
     use English qw(-no_match_vars);
     use Function::Parameters;
