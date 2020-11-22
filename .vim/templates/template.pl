@@ -28,7 +28,7 @@ use namespace::clean;    # }}}1
     use MooX::Options protect_argv => 0;
     use Path::Tiny;
     use Sys::Syslog qw(:DEFAULT setlogsock);
-    use Try::Tiny;
+    use Syntax::Keyword::Try;
     use Types::Standard;
     use experimental 'switch';
 
