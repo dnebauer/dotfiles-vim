@@ -6,15 +6,27 @@
 # Created: ${date}
 
 
+# ERROR HANDLING
+
+# Exit on error. Append "|| true" if you expect an error.
+set -o errexit
+# Exit on error inside any functions or subshells.
+set -o errtrace
+# Do not allow use of undefined vars. Use ${VAR:-} to use an undefined VAR
+set -o nounset
+# Catch error in case mysqldump fails (but gzip succeeds) in `mysqldump |gzip`
+set -o pipefail
+# Turn on traces, useful while debugging but commented out by default
+# set -o xtrace
+
 # VARIABLES
 
-args="${*}"
 msg="Loading libraries" ; echo -ne "\\033[1;37;41m${msg}\\033[0m"
 source "@lib_dir@/libdncommon-bash/liball"  # supplies functions
 dnEraseText "${msg}"
 # provided by libdncommon-bash: dn_self,dn_divider[_top|_bottom]
 # shellcheck disable=SC2154
-global_conf="@pkgconf_dir@/${dn_self}rc"
+system_conf="@pkgconf_dir@/${dn_self}rc"
 local_conf="${HOME}/.${dn_self}rc"
 usage="Usage:"
 # shellcheck disable=SC2034
@@ -22,7 +34,6 @@ param_pad="$( dnRightPad "$( dnStrLen "${usage} ${dn_self}" )" )"
 parameters=""  # **
 #parameters="${parameters}\n${param_pad}"
 #parameters="${parameters} ..."
-args=""
 unset param_pad msg
 
 
@@ -53,12 +64,12 @@ _USAGE
 processConfigFiles () {
 	# set variables
 	local conf name val
-	local global_conf
-    global_conf="$( dnNormalisePath "${1}" )"
+	local system_conf
+    system_conf="$( dnNormalisePath "${1}" )"
 	local local_conf
     local_conf="$( dnNormalisePath "${2}" )"
 	# process config files
-	for conf in "${global_conf}" "${local_conf}" ; do
+	for conf in "${system_conf}" "${local_conf}" ; do
 		if [ -r "${conf}" ] ; then
 			while read name val ; do
 				if [ -n "${val}" ] ; then
@@ -79,30 +90,33 @@ processConfigFiles () {
 #   params: all command line parameters
 #   prints: feedback
 #   return: nil
+#   note:   after execution variable ARGS contains
+#           remaining command line args (after options removed)
 processCommandLine () {
-	# Read the command line options
-	#   - if optstring starts with ':' then error reporting is suppressed
-	#     leave ':' at start as '\?' and '\:' error capturing require it
-	#   - if option is followed by ':' then it is expected to have an argument
-	while getopts ":hx:" opt ; do  # **
-		case ${opt} in
-			'h' ) displayUsage && exit 0;;
-			'x' ) var="${OPTARG}";;
-			\?  ) echo -e "Error: Invalid flag '${OPTARG}' detected"
-				  echo -e "Usage: ${dn_self} ${parameters}"
-				  echo -e "Try '${dn_self} -h' for help"
-				  echo -ne "\a"
-				  exit 1;;
-			\:  ) echo -e "Error: No argument supplied for flag '${OPTARG}'"
-				  echo -e "Usage: ${dn_self} ${parameters}"
-				  echo -e "Try '${dn_self} -h' for help"
-				  echo -ne "\a"
-				  exit 1;;
+	# read the command line options
+    local OPTIONS="$(                             \
+        getopt                                    \
+            --options hvdx:                       \
+            --long    xoption:,help,verbose,debug \
+            --name    "${BASH_SOURCE[0]}"         \
+            -- "${@}"                             \
+    )"
+    [[ ${?} -eq 0 ]] || {
+        echo 'Unable to parse command line options' 1>&2
+        exit 1
+    }
+    eval set -- "${OPTIONS}"
+	while true ; do
+		case "${1}" in
+        -x | --xoption ) varx="${2}"    ; shift 2 ;;
+        -h | --help    ) displayUsage   ; exit 0  ;;
+        -v | --verbose ) set -o verbose ; shift 1 ;;
+        -d | --debug   ) set -o xtrace  ; shift 1 ;;
+        --             ) shift ; break ;;
+        *              ) break ;;
 		esac
 	done
-	shift $(( ${OPTIND} - 1 ))
-	args="${@}"  # reset arguments
-	unset usage parameters
+	ARGS="${@}"  # remaining arguments
 }
 
 
@@ -110,14 +124,13 @@ processCommandLine () {
 
 # Process configuration files
 msg="Reading configuration files" ; echo -ne "$( dnRedReverseText "${msg}" )"
-processConfigFiles "${global_conf}" "${local_conf}"
+processConfigFiles "${system_conf}" "${local_conf}"
 dnEraseText "${msg}"
-unset global_conf local_conf msg
+unset system_conf local_conf msg
 
 # Process command line
+# - results in $ARGS holding remaining non-option command line arguments
 processCommandLine "${@}"
-while [ "${*}" != "${args}" ] ; do shift ; done
-unset args
 
 # Check arguments
 # Check that argument supplied
