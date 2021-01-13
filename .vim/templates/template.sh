@@ -86,13 +86,13 @@ processConfigFiles () {
 		fi
 	done
 }
-# Process command line
+# Process command line options
 #   params: all command line parameters
 #   prints: feedback
 #   return: nil
 #   note:   after execution variable ARGS contains
 #           remaining command line args (after options removed)
-processCommandLine () {
+processOptions () {
 	# read the command line options
     local OPTIONS="$(                             \
         getopt                                    \
@@ -102,7 +102,7 @@ processCommandLine () {
             -- "${@}"                             \
     )"
     [[ ${?} -eq 0 ]] || {
-        echo 'Unable to parse command line options' 1>&2
+        echo 'Invalid command line options' 1>&2
         exit 1
     }
     eval set -- "${OPTIONS}"
@@ -128,9 +128,9 @@ processConfigFiles "${system_conf}" "${local_conf}"
 dnEraseText "${msg}"
 unset system_conf local_conf msg
 
-# Process command line
+# Process command line options
 # - results in $ARGS holding remaining non-option command line arguments
-processCommandLine "${@}"
+processOptions "${@}"
 
 # Check arguments
 # Check that argument supplied
