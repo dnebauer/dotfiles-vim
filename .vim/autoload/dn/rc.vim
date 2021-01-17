@@ -866,7 +866,7 @@ function! dn#rc#pluginRoot(plugin) abort
         echoerr 'Plugin name is not a string'
     endif
     if     count(['vim-plug'], a:plugin)
-        return resolve(expand('~/.vim/autoload/plugin.vim'))
+        return resolve(expand('~/.vim/autoload/plug.vim'))
     elseif count(['dn-perl', 'vim-dn-perl'], a:plugin)
         return dn#rc#pluginsDir() . '/repos/github.com/dnebauer/vim-dn-perl'
     elseif count(['vim-perl'], a:plugin)
