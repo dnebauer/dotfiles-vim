@@ -15,7 +15,7 @@
 "   . available in nvim always
 "   . available in vim if compiled in [has('unnamedplus')]
 set clipboard=unnamed,unnamedplus
-if !has('nvim') && !has('unnamedplus')
+if dn#rc#isVim() && !has('unnamedplus')
     set clipboard-=unnamedplus
 endif
 " Toggle paste : F2    {{{1

@@ -1,7 +1,7 @@
 " Vim configuration: deoplete plugin
 
 " Nvim and deoplete only    {{{1
-if !has('nvim') || !has('g:loaded_deoplete')
+if dn#rc#isVim() || !has('g:loaded_deoplete')
     finish
 endif
 
@@ -17,7 +17,7 @@ let g:neopairs#enable = 1
 " Matchers    {{{1
 call deoplete#custom#set('_', 'matchers', [
             \ 'matcher_fuzzy',
-            \ ])'
+            \ ]vy)'
 
 " Converters    {{{1
 call deoplete#custom#set('_', 'converters', [

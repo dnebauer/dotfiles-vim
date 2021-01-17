@@ -2,7 +2,7 @@
 
 function! s:TexSupport()
     " nvim completion using deoplete    {{{1
-    if has('nvim')
+    if dn#rc#isNvim()
         " input patterns    {{{2
         if !exists('g:deoplete#omni#input_patterns')
             let g:deoplete#omni#input_patterns = {}

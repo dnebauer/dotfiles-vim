@@ -1,7 +1,7 @@
 " Vim configuration: c, cpp and objective c file support
 
 " nvim-specific    {{{1
-if has('nvim')
+if dn#rc#isNvim()
     function! s:VimCCppObjcSupport()
         " set clang dynamic library path    {{{2
         " - unix

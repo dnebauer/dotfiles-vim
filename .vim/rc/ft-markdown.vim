@@ -81,7 +81,7 @@ function! s:MarkdownSupport()
     " add system dictionary to word completions    {{{1
     setlocal complete+=k
     " vim omnicompletion    {{{1
-    if !has('nvim')
+    if dn#rc#isVim()
         setlocal omnifunc=htmlcomplete#CompleteTags
     endif
     " customise surround.vim plugin    {{{1

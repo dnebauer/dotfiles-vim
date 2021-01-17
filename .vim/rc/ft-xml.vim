@@ -4,7 +4,7 @@ function! s:XmlSupport()
     " fold by syntax    {{{1
     setlocal foldmethod=syntax
     " vim omnicompletion    {{{1
-    if !has('nvim')
+    if dn#rc#isVim()
         setlocal omnifunc=xmlcomplete#CompleteTags
     endif    " }}}1
 endfunction

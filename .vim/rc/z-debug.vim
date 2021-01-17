@@ -43,7 +43,7 @@ function! s:DebugPython()
     " }}}2
 endfunction
 
-if dn#rc#os() ==# 'windows' && has('nvim')
+if dn#rc#os() ==# 'windows' && dn#rc#isNvim()
     call s:DebugPython()
 endif
 
