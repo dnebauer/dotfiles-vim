@@ -45,6 +45,15 @@ set showmatch
 set updatetime=250
 let g:gitgutter_max_signs = 2000
 
+" Non-visible characters    {{{1
+" - does not work!
+" - ‹-› = U+2039-U+203a, single [left|right]-pointing angle quotation mark
+"    ★  = U+2605, black star
+"    »  = U+00bb, right-pointing double angle quotation mark
+"    «  = U+00ab, left-pointing double angle quotation mark
+"    •  = U+2022, bullet
+set listchars=tab:‹-›,trail:★,extends:»,precedes:«,nbsp:•
+
 " GUI options    {{{1
 " - a,A = visual selection globally available for pasting,
 " - g = inactive menu items display but greyed out,
