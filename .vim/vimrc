@@ -306,14 +306,10 @@ augroup END
 " bundles: snippets    {{{2
 " - snippets : snippet library    {{{3
 "   . required by: shougo/neosnippet.vim
-Plug 'honza/vim-snippets', { 'on': [] }
+Plug 'honza/vim-snippets'
 " - neosnippet : snippet engine    {{{3
 "   . depends on: honza/vim-snippets
-Plug 'shougo/neosnippet.vim', { 'on': [] }
-augroup vrc_load_snippets
-    autocmd!
-    autocmd InsertCharPre * call plug#load('vim-snippets', 'neosnippet.vim')
-augroup END
+Plug 'shougo/neosnippet.vim'
 " bundles: formatting    {{{2
 " - tabular : align text    {{{3
 Plug 'godlygeek/tabular', {
