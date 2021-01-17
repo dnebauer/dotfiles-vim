@@ -2,8 +2,7 @@
 
 if !has('nvim')  " vim
     function! s:VimCssSupport()
-        " omnicompletion for neocomplete    {{{1
-        setlocal omnifunc=csscomplete#CompleteCSS    " }}}1
+        " omnicompletion - yet to set up    {{{1
     endfunction
     augroup vrc_css_files
         autocmd!

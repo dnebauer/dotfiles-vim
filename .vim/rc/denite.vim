@@ -5,15 +5,23 @@ nnoremap [denite] <Nop>
 nmap , [denite]
 " Cursor movement    {{{1
 " - cursor keys    {{{2
+if exists('*denite#custom#map')
 call denite#custom#map('insert', '<Down>',
             \ '<denite:move_to_next_line>', 'noremap')
+endif
+if exists('*denite#custom#map')
 call denite#custom#map('insert', '<Up>',
             \ '<denite:move_to_previous_line>', 'noremap')
+endif
 " - C-n and C-p    {{{2
+if exists('*denite#custom#map')
 call denite#custom#map('insert', '<C-n>',
             \ '<denite:move_to_next_line>', 'noremap')
+endif
+if exists('*denite#custom#map')
 call denite#custom#map('insert', '<C-p>',
             \ '<denite:move_to_previous_line>', 'noremap')
+endif
 " General settings    {{{1
 augroup vrc_denite_settings
     autocmd!

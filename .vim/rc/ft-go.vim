@@ -33,11 +33,6 @@ function! s:GoSupport()
 	else
 		echoerr 'ft-go.vim: could not find ' . s:json_dir
 	endif
-    " neocomplete configuration    {{{1
-    if !exists('g:neocomplete#sources')
-        let g:neocomplete#sources = {}
-    endif
-    let g:neocomplete#sources.go = ['omni']
     " vim-go configuration    {{{1
     " - mappings    {{{2
     " - \r  : go run    {{{3

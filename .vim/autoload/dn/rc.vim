@@ -56,6 +56,15 @@ if !exists('s:perl_syntax')
                 \ ]
 endif
 
+" s:plugin_cmds - execute after plugins initialised    {{{1
+
+""
+" Commands to be executed after all plugins initialised by plugin manager.
+" These commands should be idempotent as there is no way to prevent them being
+" called multiple times.
+
+let s:plugin_cmds = []
+
 " }}}1
 
 " Public functions
@@ -195,10 +204,12 @@ endfunction
 " * grep sources to use a fuzzy matcher
 " * buffer and (recursive) files sources to sort by rank
 function! dn#rc#configureDenite() abort
-    call denite#custom#source('grep', 'matchers',
-                \             ['matcher_fuzzy'])
-    call denite#custom#source('buffer,file,file_rec', 'sorters',
-                \             ['sorter_rank'])
+    if exists('*denite#custom#source')
+        call denite#custom#source('grep', 'matchers',
+                    \             ['matcher_fuzzy'])
+        call denite#custom#source('buffer,file,file_rec', 'sorters',
+                    \             ['sorter_rank'])
+    endif
 endfunction
 
 " dn#rc#configureEchodoc()    {{{1
@@ -207,18 +218,16 @@ endfunction
 " Set to 1 - enable echodoc plugin at startup.
 " Default setting is 0 - do not enable at startup.
 
-" @setting cmdheight
-" Set 'cmdheight' to 2 to make room for echodoc plugin to display information
-" in the command line area.
+" @setting g:echodoc#type
+" Set to 'popup'.
 
 ""
 " @public
-" Configure echodoc plugin to enable at startup and increase the number of
-" lines for the command area ('cmdheight') to allow the plugin to display
-" information.
+" Configure echodoc plugin to enable at startup and use vim's popup window
+" feature.
 function! dn#rc#configureEchodoc() abort
     let g:echodoc#enable_at_startup = 1
-    set cmdheight=2
+    let g:echodoc#type = 'popup'
 endfunction
 
 " dn#rc#configureTernjs()    {{{1
@@ -248,7 +257,7 @@ endfunction
 " variables.
 " Recommended usage:
 " >
-"   if has('nvim') && dn#rc#os ==# 'windows'
+"   if dn#rc#isNvim && dn#rc#os ==# 'windows'
 "       call dn#rc#configureWinPython()
 "   endif
 " <
@@ -427,29 +436,31 @@ function! dn#rc#gemInstall(package, ...) abort
     endif
 endfunction
 
-" dn#rc#hasDeinRequirements()    {{{1
+" dn#rc#hasPluginManagerRequirements()    {{{1
 
 ""
 " @public
-" Checks for tools required by the dein plugin: rsync and git. Displays an
+" Checks for tools required by the plugin manager: curl and git. Displays an
 " error message if any are missing. Return a bool indicating whether all
 " required tool are available.
-function! dn#rc#hasDeinRequirements() abort
+function! dn#rc#hasPluginManagerRequirements() abort
     let l:err = []  " use as flag and error message
-    " check for required tools: rsync, git
-    let l:tools = ['rsync', 'git']
+    " check for required tools: curl, git
+    let l:tools = ['curl', 'git']
     let l:missing = filter(copy(l:tools), '!executable(v:val)')
     if !empty(l:missing)
         call extend(l:err, [
-                    \ 'Plugin handler dein requires: ' . join(l:tools, ', '),
+                    \ 'Plugin handler requires: ' . join(l:tools, ', '),
                     \ 'Cannot locate: ' . join(l:missing, ', ')])
     endif
-    " check for required version: >= 7.4
-    let l:version = v:version
-    if l:version < 704
-        call extend(l:err, [
-                    \ 'This instance of vim is version' . l:version,
-                    \ 'Plugin handler dein requires vim 7.4 or higher'])
+    " check for required version: vim >= 7.0
+    if dn#rc#isVim()
+        let l:version = v:version
+        if l:version < 700
+            call extend(l:err, [
+                        \ 'This instance of vim is version' . l:version,
+                        \ 'Plugin handler requires vim 7.0 or higher'])
+        endif
     endif
     " return result and report any errors if detected
     if empty(l:err)  " all checks succeeded
@@ -461,20 +472,34 @@ function! dn#rc#hasDeinRequirements() abort
     endif
 endfunction
 
-" dn#rc#installDein()    {{{1
+" dn#rc#installMissingPlugins()    {{{1
 
 ""
 " @public
-" Install dein plugin manager. Prints feedback and returns a boolean
+" Install missing plugins. Assumes the plugin manager is vim-plug.
+function! dn#rc#installMissingPlugins() abort
+    if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+        execute 'PlugInstall --sync'
+        source $MYVIMRC
+    endif
+endfunction
+
+" dn#rc#installPluginManager()    {{{1
+
+""
+" @public
+" Install vim-plug plugin manager. Prints feedback and returns a boolean
 " indicating whether installation was successful.
-function! dn#rc#installDein() abort
-    let l:cmd =   'git clone https://github.com/shougo/dein.vim '
-                \ . dn#rc#pluginRoot('dein')
+function! dn#rc#installPluginManager() abort
+    let l:url = 'https://raw.githubusercontent.com/junegunn'
+                \ . '/vim-plug/master/plug.vim'
+    let l:dir = dn#rc#pluginRoot('vim-plug')
+    let l:cmd = 'curl -fLo ' . l:dir . ' --create-dirs ' . l:url
     let l:feedback = systemlist(l:cmd)
     if !v:shell_error  " succeeded
         return v:true
     else  " failed
-        let l:err = 'Unable to install dein plugin manager using git'
+        let l:err = 'Unable to install vim-plug plugin manager using curl'
         if !empty(l:feedback)
             call map(l:feedback, '"  " . v:val')
             call extend(l:err, ['Error message:'] + l:feedback)
@@ -482,6 +507,32 @@ function! dn#rc#installDein() abort
         call dn#rc#error(l:err)
         return v:false
     endif
+endfunction
+
+" dn#rc#isNvim()    {{{1
+
+""
+" @public
+" Returns a boolean indicating whether neovim is running (rather than vim).
+" Relies on "has('nvim')" being true in nvim but not vim. A previous test
+" relied on the |:terminal| command being available in nvim and not vim (which
+" had the |:shell| command). Now, however, both vim and nvim have both
+" commands.
+function! dn#rc#isNvim() abort
+    return has('nvim')
+endfunction
+
+" dn#rc#isVim()    {{{1
+
+""
+" @public
+" Returns a boolean indicating whether neovim is running (rather than vim).
+" Relies on "has('nvim')" being true in nvim but not vim. A previous test
+" relied on the |:terminal| command being available in nvim and not vim (which
+" had the |:shell| command). Now, however, both vim and nvim have both
+" commands.
+function! dn#rc#isVim() abort
+    return !has('nvim')
 endfunction
 
 " dn#rc#lintEngine()    {{{1
@@ -761,23 +812,63 @@ function! dn#rc#pipInstall(package, ...) abort
     endfor
 endfunction
 
+" dn#rc#pluginCmdsAdd(cmd)    {{{1
+
+""
+" @public
+" Adds {cmd} to the |List| of commands to be executed once the plugin system
+" is initialised, i.e., all initial plugin loading is complete.
+" Note: these commands may be executed before a conditional plugin is loaded,
+" so they should only be defined for plugins which load unconditionally.
+" Note: these commands may be executed multiple times so they should be
+" idempotent.
+function! dn#rc#pluginCmdsAdd(cmd) abort
+    call add(s:plugin_cmds, a:cmd)
+endfunction
+
+" dn#rc#pluginCmdsClear()    {{{1
+
+""
+" @public
+" Deletes all existing commands defined for execution following initialisation
+" of the plugin system.
+function! dn#rc#pluginCmdsClear() abort
+    let s:plugin_cmds = []
+endfunction
+
+" dn#rc#pluginCmdsExecute()    {{{1
+
+""
+" @public
+" Executes all commands defined for execution following initialisation of the
+" plugin system.
+" Note: these commands may be executed before a conditional plugin is loaded,
+" so they should only be defined for plugins which load unconditionally.
+" Note: these commands may be executed multiple times so they should be
+" idempotent.
+function! dn#rc#pluginCmdsExecute() abort
+    for l:cmd in s:plugin_cmds
+        execute l:cmd
+    endfor
+endfunction
+
 " dn#rc#pluginRoot(plugin)    {{{1
 
 ""
 " @public
 " Provide root directory of named {plugin}. The {plugin} names currently
 " supported are:
-" * "dein" or "dein.vim"
+" * "vim-plug"
 " * "dn-perl" or "vim-dn-perl"
 " * "vim-perl"
 function! dn#rc#pluginRoot(plugin) abort
     if type(a:plugin) != type('')
         echoerr 'Plugin name is not a string'
     endif
-    if     count(['dein', 'dein.vim'], a:plugin)
-        return dn#rc#pluginsDir() . '/repos/github.com/shougo/dein.vim'
+    if     count(['vim-plug'], a:plugin)
+        return resolve(expand('~/.vim/autoload/plugin.vim'))
     elseif count(['dn-perl', 'vim-dn-perl'], a:plugin)
-        return  '/repos/github.com/dnebauer/vim-dn-perl'
+        return dn#rc#pluginsDir() . '/repos/github.com/dnebauer/vim-dn-perl'
     elseif count(['vim-perl'], a:plugin)
         return dn#rc#pluginsDir() . '/repos/github.com/vim-perl/vim-perl'
     else
@@ -792,6 +883,17 @@ endfunction
 " Provide plugins directory.
 function! dn#rc#pluginsDir() abort
     return dn#rc#vimPath('plug')
+endfunction
+
+" dn#rc#removeAugroupEunuch()    {{{1
+
+""
+" @public
+" Remove the augroup "eunuch" if it exists.
+function! dn#rc#removeAugroupEunuch() abort
+    if exists('#eunuch')
+        augroup! eunuch
+    endif
 endfunction
 
 " dn#rc#saveOnFocusLost()    {{{1
@@ -944,7 +1046,7 @@ function! dn#rc#setLintEngine(...) abort
     endif
     " overridden in specific circumstances
     " - can't use syntastic in nvim
-    if l:engine ==# 'syntastic' && has('nvim')
+    if l:engine ==# 'syntastic' && dn#rc#isNvim()
         call extend(l:messages, [
                     \ 'Running nvim but syntastic requires vim',
                     \ "Switching to use 'neomake' instead"
@@ -997,7 +1099,7 @@ function! dn#rc#source(dir, self) abort
         if l:path ==# a:self | continue | endif
         " must be vim file
         " - for vim source *.vim; for nvim source *.vim and *.nvim
-        let l:match = !has('nvim') ? '^\p\+\.vim$' : '^\p\+\.n\?vim$'
+        let l:match = dn#rc#isVim() ? '^\p\+\.vim$' : '^\p\+\.n\?vim$'
         if fnamemodify(l:path, ':t') =~? l:match
             execute 'source' l:path
         endif
@@ -1224,7 +1326,7 @@ function! dn#rc#vimPath(type) abort
     if     a:type ==# 'home'
         let l:home = escape($HOME, ' ')
         if     l:os ==# 'windows'
-            if has('nvim')  " nvim
+            if dn#rc#isNvim()  " nvim
                 return resolve(expand('~/AppData/Local/nvim'))
             else  " vim
                 return l:home . '/vimfiles'
@@ -1234,9 +1336,14 @@ function! dn#rc#vimPath(type) abort
         else
             return l:home . '/.vim'
         endif
-    " dein plugin directory root
+    " plugin directory root
     elseif a:type ==# 'plug'
-        return resolve(expand('~/.cache/dein'))
+        if dn#rc#isVim()    " vim
+            return resolve(expand('~/.cache/vim/plugins'))
+        else    " nvim
+            " on linux: ~/.cache/nvim/plugins
+            return stdpath('cache') . '/plugins'
+        endif
     " panzer support directory
     elseif a:type ==# 'panzer'
         let l:home = escape($HOME, ' ')
@@ -1259,6 +1366,8 @@ endfunction
 " @public
 " Provide the build command for the shougo/vimproc plugin. Returns a |String|
 " build command.
+" The build command is 'make', except for MinGW on windows where there are
+" three potential build commands depending on the system architecture.
 function! dn#rc#vimprocBuild() abort
     let l:cmd = 'make'
     if executable('mingw32-make')

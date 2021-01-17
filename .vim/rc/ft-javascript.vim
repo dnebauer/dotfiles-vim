@@ -1,18 +1,9 @@
 " Vim configuration: javascript file support
 
 function! s:JavascriptSupport()
-    " vim omnicompletion with neocomplete    {{{1
+    " vim omnicompletion - yet to set up    {{{1
     if !has('nvim')
-        setlocal omnifunc=javascriptcomplete#CompleteJS
-        " these vars suggested on carlitux/deoplete-ternjs github readme
-        if !exists('g:tern#command') | let g:tern#command = [] | endif
-        if !count(g:tern#command, 'tern')
-            call add(g:tern#command, 'tern')
-        endif
-        if !exists('g:tern#arguments') | let g:tern#arguments = [] | endif
-        if !count(g:tern#arguments, '--persistent')
-            call add(g:tern#arguments, '--persistent')
-        endif
+        " stub
     endif
 
     " nvim completion using deoplete    {{{1

@@ -13,13 +13,6 @@ function! s:PerlSupport()
             \ 'sro'        : '::',
             \ 'kind2scope' : {},
             \ }    " }}}1
-    " vim omnicompletion    {{{1
-    " - plugin: perlomni.vim
-    if !exists('g:neocomplete#sources#omni#input_patterns')
-        let g:neocomplete#sources#omni#input_patterns = {}
-    endif
-    let g:neocomplete#sources#omni#input_patterns.perl =
-                \ '[^. \t]->\%(\h\w*\)\?\|\h\w*::\%(\h\w*\)\?'
     " linting    {{{1
     " ale    {{{2
     " - include t/lib in module search path    {{{3

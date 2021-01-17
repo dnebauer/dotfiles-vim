@@ -100,7 +100,9 @@ call dn#rc#setColorScheme('peaksea', 'desert')
 "     schemes, e.g., solarized
 "   . if the current scheme does not support switching, then vim
 "     may load the default colour scheme before toggling
-call togglebg#map('<F5>')
+if exists('*togglebg#map')
+    call togglebg#map('<F5>')
+endif
 
 " Status line    {{{1
 " - vcs integration
