@@ -93,9 +93,10 @@ call plug#begin(dn#rc#pluginsDir())
 " shougo/neopairs   }                          {carlitux/deoplete-ternjs
 "                                              {deoplete-plugins/deoplete-go
 " 
-" shougo/neomru.vim    } > shougo/denite.nvim  > {iyuuya/denite-ale
-" shougo/neoinclude.vim}                         {chemzqm/denite-extra
-"                                                {ozelentok/denite-gtags
+" shougo/neomru.vim       } > shougo/denite.nvim  > {iyuuya/denite-ale
+" shougo/neoinclude.vim   }                         {chemzqm/denite-extra
+" roxma/nvim-yarp         }                         {ozelentok/denite-gtags
+" roxma/vim-hug-neovim-rpc}
 " 
 " tpope/vim-repeat > {tpope/vim-unimpaired
 "                    {tpope/vim-surround
@@ -180,17 +181,11 @@ Plug 'terryma/vim-multiple-cursors'
 " - gnupg : transparently edit gpg-encrypted files    {{{3
 Plug 'jamessan/vim-gnupg'
 " bundles: searching and finding    {{{2
-" - neoinclude : completion framework helper    {{{3
-"   . used by: shougo/denite.nvim
-Plug 'shougo/neoinclude.vim'
-" - neomru : denite helper - recently used files    {{{3
-"   . used by: shougo/denite.nvim
-Plug 'shougo/neomru.vim'
 " - denite : integrated information display    {{{3
 "   . gave up loading denite on demand as the dependencies are
 "     too fragile; only works dependably if force load at start
 "   . uses: shougo/neoinclude.vim, shougo/neomru.vim, chemzqm/denite-extra,
-"           ozelentok/denite-gtags
+"           ozelentok/denite-gtags, roxma/nvim-yarp, roxma/vim-hug-neovim-rpc
 Plug 'shougo/denite.nvim'
 call dn#rc#pluginCmdsAdd('call dn#rc#configureDenite()')
 " - session : denite helper - extra sources    {{{3
@@ -203,6 +198,23 @@ endif
 " - ale : denite helper - ale errors/warnings    {{{3
 if dn#rc#lintEngine() ==# 'ale'
     Plug 'iyuuya/denite-ale'
+endif
+" - neoinclude : completion framework helper    {{{3
+"   . used by: shougo/denite.nvim
+Plug 'shougo/neoinclude.vim'
+" - neomru : denite helper - recently used files    {{{3
+"   . used by: shougo/denite.nvim in vim
+Plug 'shougo/neomru.vim'
+" - vim-hug-neovim-rpc : denite helper - rpc    {{{3
+"   . used by: shougo/denite.nvim in vim8
+if dn#rc#isVim() && v:version >= 800
+    Plug 'roxma/vim-hug-neovim-rpc'
+endif
+" - nvim-yarp : denite helper - rpc    {{{3
+"   . used by: shougo/denite.nvim
+"   . depends on: roxma/vim-hug-neovim-rpc
+if dn#rc#isVim() && v:version >= 800
+    Plug 'roxma/nvim-yarp'
 endif
 " bundles: cut and paste    {{{2
 " - highlightedyank : highlight yanked text    {{{3
