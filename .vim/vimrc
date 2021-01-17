@@ -290,7 +290,6 @@ if exists('v:completed_item')
     augroup vrc_load_echodoc
         autocmd!
         autocmd CompleteDone * call plug#load('echodoc.vim')
-                    \ | autocmd! vrc_load_echodoc
     augroup END
     call dn#rc#configureEchodoc()
 endif
@@ -303,7 +302,6 @@ Plug 'raimondi/delimitMate', { 'on': [] }
 augroup vrc_load_delimitmate
     autocmd!
     autocmd InsertEnter * call plug#load('delimitMate')
-                \ | autocmd! vrc_load_delimitmate
 augroup END
 " bundles: snippets    {{{2
 " - snippets : snippet library    {{{3
@@ -315,7 +313,6 @@ Plug 'shougo/neosnippet.vim', { 'on': [] }
 augroup vrc_load_snippets
     autocmd!
     autocmd InsertCharPre * call plug#load('vim-snippets', 'neosnippet.vim')
-                \ | augroup! vrc_load_snippets
 augroup END
 " bundles: formatting    {{{2
 " - tabular : align text    {{{3
