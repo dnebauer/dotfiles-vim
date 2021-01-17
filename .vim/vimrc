@@ -274,7 +274,12 @@ endif
 Plug 'shougo/neco-vim', { 'for': ['vim'] }
 " - echodoc : plugin helper that prints to echo area    {{{3
 if exists('v:completed_item')
-    Plug 'shougo/echodoc.vim'
+    Plug 'shougo/echodoc.vim', { 'on': [] }
+    augroup vrc_load_echodoc
+        autocmd!
+        autocmd CompleteDone * call plug#load('echodoc.vim')
+                    \ | autocmd! vrc_load_echodoc
+    augroup END
     call dn#rc#configureEchodoc()
 endif
 " - perlomni : perl completion    {{{3
@@ -282,14 +287,24 @@ if dn#rc#isNvim() || v:version >= 702
     Plug 'c9s/perlomni.vim', { 'for': ['perl'] }
 endif
 " - delimitMate : completion helper closes paired syntax    {{{3
-Plug 'raimondi/delimitMate'
+Plug 'raimondi/delimitMate', { 'on': [] }
+augroup vrc_load_delimitmate
+    autocmd!
+    autocmd InsertEnter * call plug#load('delimitMate')
+                \ | autocmd! vrc_load_delimitmate
+augroup END
 " bundles: snippets    {{{2
 " - snippets : snippet library    {{{3
 "   . required by: shougo/neosnippet.vim
-Plug 'honza/vim-snippets'
+Plug 'honza/vim-snippets', { 'on': [] }
 " - neosnippet : snippet engine    {{{3
 "   . depends on: honza/vim-snippets
-Plug 'shougo/neosnippet.vim'
+Plug 'shougo/neosnippet.vim', { 'on': [] }
+augroup vrc_load_snippets
+    autocmd!
+    autocmd InsertCharPre * call plug#load('vim-snippets', 'neosnippet.vim')
+                \ | augroup! vrc_load_snippets
+augroup END
 " bundles: formatting    {{{2
 " - tabular : align text    {{{3
 Plug 'godlygeek/tabular', {
@@ -429,15 +444,10 @@ Plug 'jhradilek/vim-docbk', { 'for': ['docbk'] }
 Plug 'dnebauer/vim-dn-docbk', { 'for': ['docbk'] }
 " bundles: go support    {{{2
 " - vim-go : language support    {{{3
-"   . on 23 October 2018 vim-go plugin began issuing a startup warning if
-"     nvim version < 0.3.1 (when debian testing had version 0.2.2), so
-"     suppress plugin version warning with global plugin variable
-"   . TODO: re-check for warning with later versions
 if (dn#rc#isVim() && has('patch-8.0.1453'))
             \ || (dn#rc#isNvim() && has('nvim-0.4.0'))
     Plug 'fatih/vim-go', { 'for': ['go'], 'do': ':GoUpdateBinaries' }
 endif
-let g:go_version_warning = 0
 " - deoplete-go : deoplete helper    {{{3
 if dn#rc#isNvim()
     Plug 'deoplete-plugins/deoplete-go', { 'for': ['go'], 'do': 'make' }
@@ -567,10 +577,8 @@ if dn#rc#isVim()
                 \ 'for': ['python'], 'do': function('dn#rc#buildJedi') }
 endif
 " - deoplete-jedi : deoplete helper    {{{3
-"   . do not check for python3 in nvim (see note above at 'nvim issues')
-"   . TODO: check whether still a problem for python3 in nvim
 "   . depends on: shougo/deoplete.nvim
-if dn#rc#isNvim() && executable('python3')
+if executable('python3')
     Plug 'zchee/deoplete-jedi', {
                 \ 'for': ['python'], 'do': function('dn#rc#buildJedi') }
 endif
@@ -578,8 +586,7 @@ endif
 Plug 'hynek/vim-python-pep8-indent', { 'for': 'python' }
 " bundles: tiddlywiki support    {{{2
 " tiddlywiki-ftplugin : wikitext support    {{{3
-" - can't lazy load as no 'plugin' directory
-" - TODO: should this not load only for tiddler filetype?
+" - load at startup to get filetype detection
 Plug 'dnebauer/vim-tiddlywiki-ftplugin'
 " bundles: tmux support    {{{2
 " navigator : split navigation    {{{3
