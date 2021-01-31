@@ -34,6 +34,7 @@ param_pad="$( dnRightPad "$( dnStrLen "${usage} ${dn_self}" )" )"
 parameters=""  # **
 #parameters="${parameters}\n${param_pad}"
 #parameters="${parameters} ..."
+required_tools=()
 unset param_pad msg
 
 
@@ -118,9 +119,30 @@ processOptions () {
 	done
 	ARGS="${@}"  # remaining arguments
 }
+# Join items
+#   params: 1  - delimiter
+#           2+ - items to be joined
+#   prints: string containing joined items
+#   return: nil
+function joinBy () {
+    local d=$1
+    shift
+    local f=$1
+    shift
+    printf %s "$f" "${@/#/$d}"
+}
 
 
 # MAIN
+
+# Check for required tools
+missing=()
+for tool in "${required_tools[@]}" ; do
+    command -v "${tool}" &>/dev/null || missing+=("${tool}")
+done
+[[ ${#missing[@]} -eq 0 ]] \
+    || dnFailScript "Can't run without: $(joinBy ', ' "${missing[@]}")"
+unset missing tools required_tools
 
 # Process configuration files
 msg="Reading configuration files" ; echo -ne "$( dnRedReverseText "${msg}" )"
