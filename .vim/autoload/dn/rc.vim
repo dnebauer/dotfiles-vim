@@ -1184,7 +1184,13 @@ endfunction
 " <
 " If either variable is missing when it is required, the function exits and
 " the symlink check is aborted silently.
+"
+" This test is performed only once per file per buffer, even if an associated
+" event is triggered multiple times.
 function! dn#rc#symlinkWarning() abort
+    " only do this once
+    if exists('b:checked_symlink') && b:checked_symlink | return | endif
+    let b:checked_symlink = v:true
     " only check certain buffers:
     " - buffer must be associated with a file
     if empty(bufname('%')) | return | endif
