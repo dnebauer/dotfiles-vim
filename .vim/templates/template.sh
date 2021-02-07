@@ -22,7 +22,7 @@ set -o pipefail
 # VARIABLES
 
 msg="Loading libraries" ; echo -ne "\\033[1;37;41m${msg}\\033[0m"
-source "@lib_dir@/libdncommon-bash/liball"  # supplies functions
+source "@libexec_dir@/libdncommon-bash/liball"  # supplies functions
 dnEraseText "${msg}"
 # provided by libdncommon-bash: dn_self,dn_divider[_top|_bottom]
 # shellcheck disable=SC2154
