@@ -48,11 +48,19 @@ use namespace::clean;    # }}}1
     # opt  (-o)    {{{1
     option 'opt' => (
         is       => 'ro',
-        format   => 's',
-        required => $TRUE,
+        format   => 's@',
+        required => $FALSE,
+        default  => sub { [] },
         short    => 'o',
         doc      => 'An option',
     );
+
+    method _opt () {
+        my $opt;
+        my @opt = @{ $self->opt };
+        if (@opt) { $opt = $opt[0]; }
+        return $opt;
+    }
 
     # flag (-f)    {{{1
     option 'flag' => (
