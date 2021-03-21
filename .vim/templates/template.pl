@@ -3,7 +3,7 @@
 use Moo;    # {{{1
 use strictures 2;
 use 5.006;
-use 5.22.1;
+use 5.022_001;
 use version; our $VERSION = qv('0.1');
 use namespace::clean;    # }}}1
 
@@ -17,9 +17,6 @@ use namespace::clean;    # }}}1
     use autodie qw(open close);
     use Carp qw(confess);
     use Const::Fast;
-    use Dn::Common;
-    use Dn::Error;
-    use Dn::Menu;
     use English qw(-no_match_vars);
     use Function::Parameters;
     use Getopt::Long::Descriptive qw(describe_options);
@@ -32,7 +29,7 @@ use namespace::clean;    # }}}1
     use Types::Standard;
     use experimental 'switch';
 
-    my $cp = Dn::Common->new();
+    with qw(Dn::Role::HasPath);
 
     const my $TRUE  => 1;
     const my $FALSE => 0;
@@ -266,7 +263,7 @@ Really?
 
 =head2 Perl modules
 
-autodie, Carp, Const::Fast, Dn::Common, Dn::Menu, English, experimental,
+autodie, Carp, Const::Fast, Dn::Role::HasPath, English, experimental,
 Function::Parameters, Moo, MooX::HandlesVia, MooX::Options, namespace::clean,
 Path::Tiny, strictures, Try::Tiny, Types::Common::Numeric,
 Types::Common::String, Types::Path::Tiny, Types::Standard, version.
