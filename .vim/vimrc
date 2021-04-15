@@ -15,7 +15,7 @@
 "   . nvim: if has('nvim')    }}}2
 
 " PLUGINS:    {{{1
-" using github.com/shougo/dein.vim
+" using github.com/junegunn/vim-plug
 " python required by several plugins    {{{2
 " - in python 3.5 there is no python3 exe installed
 if dn#rc#isNvim() && dn#rc#os() ==# 'windows'
