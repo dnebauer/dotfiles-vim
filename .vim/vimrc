@@ -58,7 +58,7 @@ call plug#begin(dn#rc#pluginsDir())
 " plugin dependencies    {{{2
 " - the vim-plug plugin manager does not handle dependencies so they must be
 "   managed manually
-" - what follow is a dependency chart
+" - what follows is a dependency chart
 " - one-to-one relationships look like:
 "     A > B
 "   where plugin B depends on plugin A
@@ -259,7 +259,11 @@ if executable('w3m')
                 \ }
 endif
 " - address : notmuch email addresses    {{{3
-Plug 'adborden/vim-notmuch-address', { 'for': ['mail'] }
+if executable('notmuch')
+    Plug 'adborden/vim-notmuch-address', { 'for': ['mail', 'notmuch-compose'] }
+else
+    call dn#rc#error(['vim-notmuch-address: notmuch is not installed'])
+endif
 " bundles: printing    {{{2
 " - dn-print-dialog : pure vim print dialog    {{{3
 "   . depends on: dnebauer/vim-dn-utils
