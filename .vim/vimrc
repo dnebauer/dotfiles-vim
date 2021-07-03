@@ -260,7 +260,7 @@ if executable('w3m')
 endif
 " - address : notmuch email addresses    {{{3
 if executable('notmuch')
-    Plug 'adborden/vim-notmuch-address', { 'for': ['mail', 'notmuch-compose'] }
+    Plug 'dnebauer/vim-notmuch-address', { 'for': ['mail', 'notmuch-compose'] }
 else
     call dn#rc#error(['vim-notmuch-address: notmuch is not installed'])
 endif
