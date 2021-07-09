@@ -96,6 +96,16 @@ else  " no gui
     endif
 endif
 
+" Terminal    {{{1
+" - used for interactive terminal programs
+if exists('*termopen')
+    command! -nargs=+ -complete=file T
+                \ tab new | setlocal nonumber nolist noswapfile bufhidden=wipe |
+                \ call termopen([<f-args>]) |
+                \ startinsert
+    cabbrev ! T
+endif
+
 " Outline viewer (<F8>)    {{{1
 nnoremap <F8> :TagbarToggle<CR>
 
