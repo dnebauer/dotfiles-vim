@@ -91,7 +91,9 @@ if has('gui_running')
         set guifont=Bitstream\ Vera\ Sans\ Mono:h10
     endif
 else  " no gui
-    set guifont=-unknown-freesans-medium-r-normal--0-0-0-0-p-0-iso10646-1
+    if !has('nvim')
+        set guifont=-unknown-freesans-medium-r-normal--0-0-0-0-p-0-iso10646-1
+    endif
 endif
 
 " Outline viewer (<F8>)    {{{1
