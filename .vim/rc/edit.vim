@@ -1,5 +1,7 @@
 " Vim configuration: editing
 
+scriptencoding utf8  " required for C-Space mapping
+
 " Clipboard    {{{1
 " - PRIMARY X11 selection
 "   . vim visual selection (y,d,p,c,s,x, middle mouse button)
@@ -23,6 +25,12 @@ set pastetoggle=<F2>
 
 " Undo    {{{1
 nnoremap <Leader>u :GundoToggle<CR>
+
+" Insert hard space    {{{1
+" - map unicode non-breaking space (U+00A0) to C-Space
+" - would prefer C-S-Space but terminal vim has a problem with mapping it
+"   (see https://vi.stackexchange.com/a/13329 for details)
+inoremap <buffer><silent><C-Space>  
 
 " Delete trailing whitespace    {{{1
 let g:DeleteTrailingWhitespace        = 1

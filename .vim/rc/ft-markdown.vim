@@ -1,7 +1,5 @@
 " Vim configuration: markdown file support
 
-scriptencoding utf8  " required for C-Space mapping
-
 function! s:MarkdownSupport()
     " only give feedback on first run    {{{1
     " - this function is run three times when opening vim with md file
@@ -71,11 +69,6 @@ function! s:MarkdownSupport()
     let g:pandoc#compiler#arguments
                 \ = ' ---quiet'
                 \ . ' ---panzer-support="' . dn#rc#panzerPath() . '"'
-    " insert hard space    {{{1
-    " - map unicode non-breaking space to C-Space
-    " - would prefer C-S-Space but terminal vim has a problem with mapping it
-    "   (see https://vi.stackexchange.com/a/13329 for details)
-    inoremap <buffer><silent><C-Space>  
     " improve sentence text object    {{{1
     call textobj#sentence#init()
     " add system dictionary to word completions    {{{1
